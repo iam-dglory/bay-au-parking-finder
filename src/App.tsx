@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Home } from './pages/Home'
 import { AddSpot } from './pages/AddSpot'
-import { MySpots } from './pages/MySpots'
+import { ListSpot } from './pages/ListSpot'
+import { MyActivity } from './pages/MyActivity'
 import { LocationPicker } from './components/LocationPicker'
+import { AddChoiceSheet } from './components/AddChoiceSheet'
 import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation } from './lib/cities'
 
-type Tab = 'home' | 'add' | 'mine'
+type Tab = 'home' | 'addSign' | 'listSpot' | 'mine'
 type Location = { lat: number; lng: number; label: string }
 
 export default function App() {
@@ -14,6 +16,7 @@ export default function App() {
   const [location, setLocation] = useState<Location | null>(null)
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
+  const [showAddChoice, setShowAddChoice] = useState(false)
 
   useEffect(() => {
     ensureSession()
@@ -46,43 +49,61 @@ export default function App() {
     )
   }
 
+  function goHome() {
+    setAddKey((k) => k + 1)
+    setTab('home')
+  }
+
   return (
     <div className="flex h-full flex-col bg-slate-50">
       <div className="min-h-0 flex-1">
         {tab === 'home' && <Home center={location} locationLabel={location.label} />}
-        {tab === 'add' && (
-          <AddSpot
-            key={addKey}
-            center={location}
-            onDone={() => {
-              setAddKey((k) => k + 1)
-              setTab('home')
-            }}
-          />
-        )}
-        {tab === 'mine' && <MySpots center={location} />}
+        {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
+        {tab === 'listSpot' && <ListSpot key={addKey} center={location} onDone={goHome} />}
+        {tab === 'mine' && <MyActivity center={location} />}
       </div>
 
       <nav className="flex shrink-0 border-t border-slate-200 bg-white">
-        {(
-          [
-            { id: 'home', label: 'Find parking', icon: '📍' },
-            { id: 'add', label: 'Add a sign', icon: '➕' },
-            { id: 'mine', label: 'My reports', icon: '🗂️' },
-          ] as const
-        ).map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setTab(item.id)}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${
-              tab === item.id ? 'text-slate-900' : 'text-slate-400'
-            }`}
-          >
-            <span className="text-lg leading-none">{item.icon}</span>
-            {item.label}
-          </button>
-        ))}
+        <button
+          onClick={() => setTab('home')}
+          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'home' ? 'text-slate-900' : 'text-slate-400'}`}
+        >
+          <span className="text-lg leading-none">📍</span>
+          Find parking
+        </button>
+        <button
+          onClick={() => setShowAddChoice(true)}
+          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${
+            tab === 'addSign' || tab === 'listSpot' ? 'text-slate-900' : 'text-slate-400'
+          }`}
+        >
+          <span className="text-lg leading-none">➕</span>
+          Add
+        </button>
+        <button
+          onClick={() => setTab('mine')}
+          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'mine' ? 'text-slate-900' : 'text-slate-400'}`}
+        >
+          <span className="text-lg leading-none">🗂️</span>
+          My activity
+        </button>
       </nav>
+
+      {showAddChoice && (
+        <AddChoiceSheet
+          onChooseSign={() => {
+            setShowAddChoice(false)
+            setAddKey((k) => k + 1)
+            setTab('addSign')
+          }}
+          onChooseListing={() => {
+            setShowAddChoice(false)
+            setAddKey((k) => k + 1)
+            setTab('listSpot')
+          }}
+          onClose={() => setShowAddChoice(false)}
+        />
+      )}
     </div>
   )
 }

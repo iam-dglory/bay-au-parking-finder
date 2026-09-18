@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
-import type { ParkingSpot, SpotStatus } from '../types'
+import type { Listing, ParkingSpot, SpotStatus } from '../types'
 import { STATUS_COLORS } from '../lib/statusColors'
 
 function pinIcon(color: string) {
@@ -31,6 +31,15 @@ function pickIcon() {
   })
 }
 
+function listingIcon() {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:24px;height:24px;border-radius:6px;background:#6366f1;border:3px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;font-family:system-ui">$</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  })
+}
+
 function Recenter({ center }: { center: [number, number] }) {
   const map = useMap()
   useEffect(() => {
@@ -51,14 +60,18 @@ function ClickCatcher({ onPick }: { onPick: (lat: number, lng: number) => void }
 export function MapView({
   center,
   spots,
+  listings,
   onSelectSpot,
+  onSelectListing,
   pickMode,
   pickedLocation,
   onPickLocation,
 }: {
   center: { lat: number; lng: number }
   spots: (ParkingSpot & { status: SpotStatus })[]
+  listings?: Listing[]
   onSelectSpot?: (spot: ParkingSpot & { status: SpotStatus }) => void
+  onSelectListing?: (listing: Listing) => void
   pickMode?: boolean
   pickedLocation?: { lat: number; lng: number } | null
   onPickLocation?: (lat: number, lng: number) => void
@@ -77,6 +90,14 @@ export function MapView({
           position={[spot.lat, spot.lng]}
           icon={pinIcon(STATUS_COLORS[spot.status.status].hex)}
           eventHandlers={{ click: () => onSelectSpot?.(spot) }}
+        />
+      ))}
+      {listings?.map((listing) => (
+        <Marker
+          key={listing.id}
+          position={[listing.lat, listing.lng]}
+          icon={listingIcon()}
+          eventHandlers={{ click: () => onSelectListing?.(listing) }}
         />
       ))}
       {pickMode && <ClickCatcher onPick={(lat, lng) => onPickLocation?.(lat, lng)} />}

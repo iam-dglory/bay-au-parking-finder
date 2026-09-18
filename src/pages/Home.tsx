@@ -2,18 +2,23 @@ import { useMemo, useState } from 'react'
 import { MapView } from '../components/MapView'
 import { SpotCard } from '../components/SpotCard'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
+import { ListingCard } from '../components/ListingCard'
+import { BookingSheet } from '../components/BookingSheet'
 import { FilterBar } from '../components/FilterBar'
 import { useNearbyParking } from '../lib/useNearbyParking'
+import { useNearbyListings } from '../lib/useNearbyListings'
 import { rankSpots } from '../lib/parkingStatus'
-import type { ParkingSpot, SpotStatus } from '../types'
+import type { Listing, ParkingSpot, SpotStatus } from '../types'
 
 export function Home({ center, locationLabel }: { center: { lat: number; lng: number }; locationLabel: string }) {
   const [radiusM, setRadiusM] = useState(1000)
   const [freeOnly, setFreeOnly] = useState(false)
   const [view, setView] = useState<'map' | 'list'>('map')
-  const [selected, setSelected] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
+  const [selectedSpot, setSelectedSpot] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null)
 
   const { spots, loading, error, refresh } = useNearbyParking(center, radiusM)
+  const { listings, refresh: refreshListings } = useNearbyListings(center, radiusM * 2)
 
   const ranked = useMemo(() => {
     const all = rankSpots(spots)
@@ -25,7 +30,9 @@ export function Home({ center, locationLabel }: { center: { lat: number; lng: nu
       <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
         <div>
           <h1 className="text-base font-semibold text-slate-900">Parking near {locationLabel}</h1>
-          <p className="text-xs text-slate-500">{ranked.length} spots found</p>
+          <p className="text-xs text-slate-500">
+            {ranked.length} free spots · {listings.length} rentable
+          </p>
         </div>
         <div className="flex overflow-hidden rounded-full border border-slate-200 text-sm">
           <button onClick={() => setView('map')} className={`px-3 py-1.5 ${view === 'map' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>
@@ -50,19 +57,38 @@ export function Home({ center, locationLabel }: { center: { lat: number; lng: nu
 
       <div className="min-h-0 flex-1">
         {view === 'map' ? (
-          <MapView center={center} spots={ranked} onSelectSpot={setSelected} />
+          <MapView center={center} spots={ranked} listings={freeOnly ? [] : listings} onSelectSpot={setSelectedSpot} onSelectListing={setSelectedListing} />
         ) : (
-          <div className="h-full space-y-2 overflow-y-auto p-4">
-            {loading && <p className="text-center text-sm text-slate-400">Loading…</p>}
-            {!loading && ranked.length === 0 && <p className="text-center text-sm text-slate-400">No parking spots recorded near here yet.</p>}
-            {ranked.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} onClick={() => setSelected(spot)} />
-            ))}
+          <div className="h-full overflow-y-auto p-4">
+            <div className="space-y-2">
+              {loading && <p className="text-center text-sm text-slate-400">Loading…</p>}
+              {!loading && ranked.length === 0 && <p className="text-center text-sm text-slate-400">No free parking spots recorded near here yet.</p>}
+              {ranked.map((spot) => (
+                <SpotCard key={spot.id} spot={spot} onClick={() => setSelectedSpot(spot)} />
+              ))}
+            </div>
+
+            {!freeOnly && (
+              <div className="mt-6 space-y-2">
+                <h2 className="text-sm font-semibold text-slate-700">Rentable spots nearby</h2>
+                {listings.length === 0 && <p className="text-sm text-slate-400">No one's listed a spot for rent near here yet.</p>}
+                {listings.map((listing) => (
+                  <ListingCard key={listing.id} listing={listing} onClick={() => setSelectedListing(listing)} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      <SpotDetailSheet spot={selected} onClose={() => setSelected(null)} />
+      <SpotDetailSheet spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
+      <BookingSheet
+        listing={selectedListing}
+        onClose={() => setSelectedListing(null)}
+        onBooked={() => {
+          refreshListings()
+        }}
+      />
     </div>
   )
 }

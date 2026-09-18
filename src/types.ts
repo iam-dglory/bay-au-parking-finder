@@ -49,3 +49,39 @@ export const SIGN_TYPE_LABELS: Record<SignType, string> = {
   NO_STOPPING_CLEARWAY: 'No stopping (clearway)',
   LOADING_ZONE: 'Loading zone',
 }
+
+export interface Listing {
+  id: string
+  address_text: string
+  country: string | null
+  currency: string
+  price_per_hour: number
+  description: string | null
+  days_active: number[]
+  time_from: string | null
+  time_to: string | null
+  lat: number
+  lng: number
+  distance_m: number
+  owner_id: string
+}
+
+export interface Booking {
+  id: string
+  listing_id: string
+  driver_id: string
+  starts_at: string
+  ends_at: string
+  total_price: number
+  currency: string
+  status: 'confirmed' | 'cancelled'
+  created_at: string
+}
+
+export const CURRENCY_OPTIONS: { code: string; symbol: string; label: string }[] = [
+  { code: 'USD', symbol: '$', label: 'USD ($)' },
+  { code: 'AUD', symbol: 'A$', label: 'AUD (A$)' },
+  { code: 'INR', symbol: '₹', label: 'INR (₹)' },
+  { code: 'EUR', symbol: '€', label: 'EUR (€)' },
+  { code: 'GBP', symbol: '£', label: 'GBP (£)' },
+]
