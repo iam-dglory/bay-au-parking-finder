@@ -1,6 +1,7 @@
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
+import { formatMoney } from '../lib/listingAvailability'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -40,10 +41,7 @@ export function SpotDetailSheet({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">{spot.address_text}</h2>
-            <p className="text-sm text-slate-500">
-              {spot.suburb ? `${spot.suburb}, ` : ''}
-              {spot.state}
-            </p>
+            <p className="text-sm text-slate-500">{[spot.suburb, spot.state, spot.country].filter(Boolean).join(', ')}</p>
           </div>
           <button onClick={onClose} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="Close">
             ✕
@@ -67,7 +65,7 @@ export function SpotDetailSheet({
                 {rule.time_from && rule.time_to ? ` · ${formatTimeStr(rule.time_from)}–${formatTimeStr(rule.time_to)}` : ''}
               </p>
               {rule.max_stay_minutes && <p className="text-slate-500">Max stay: {rule.max_stay_minutes / 60}h</p>}
-              {rule.price_per_hour != null && <p className="text-slate-500">${rule.price_per_hour.toFixed(2)}/hr</p>}
+              {rule.price_per_hour != null && <p className="text-slate-500">{formatMoney(rule.currency ?? 'USD', rule.price_per_hour)}/hr</p>}
               {rule.notes && <p className="mt-1 text-slate-400 italic">{rule.notes}</p>}
             </div>
           ))}

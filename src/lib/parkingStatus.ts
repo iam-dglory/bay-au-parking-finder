@@ -1,4 +1,5 @@
 import type { ParkingRule, ParkingSpot, SpotStatus } from '../types'
+import { formatMoney } from './listingAvailability'
 
 function toMinutes(time: string | null): number {
   if (!time) return 0
@@ -84,7 +85,7 @@ function evaluateRule(rule: ParkingRule, now: Date): SpotStatus {
     case 'PAID_METER':
       return {
         status: 'paid',
-        label: `Paid — $${rule.price_per_hour?.toFixed(2) ?? '?'}/hr`,
+        label: rule.price_per_hour != null ? `Paid — ${formatMoney(rule.currency ?? 'USD', rule.price_per_hour)}/hr` : 'Paid parking',
         detail: rule.notes ?? 'Ticket / meter parking',
         price_per_hour: rule.price_per_hour,
         changesAt: windowEndToday(rule, now),
@@ -128,6 +129,15 @@ function evaluateRule(rule: ParkingRule, now: Date): SpotStatus {
         ruleApplied: rule,
       }
     }
+    case 'INFORMAL_TOLERATED':
+      return {
+        status: 'free',
+        label: 'Informally okay',
+        detail: rule.notes ?? 'No official rule — reported as commonly tolerated here, not guaranteed',
+        price_per_hour: null,
+        changesAt: null,
+        ruleApplied: rule,
+      }
     case 'FREE_UNLIMITED':
     default:
       return {

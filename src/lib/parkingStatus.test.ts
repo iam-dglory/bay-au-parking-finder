@@ -11,6 +11,7 @@ function rule(overrides: Partial<ParkingRule>): ParkingRule {
     time_from: '08:30',
     time_to: '18:00',
     price_per_hour: null,
+    currency: null,
     notes: null,
     ...overrides,
   }
@@ -71,6 +72,12 @@ describe('evaluateSpotStatus', () => {
     const status = evaluateSpotStatus([], dateAt(10, 0))
     expect(status.status).toBe('free')
   })
+
+  it('treats informally-tolerated parking (e.g. India) as free but distinctly labelled', () => {
+    const status = evaluateSpotStatus([rule({ sign_type: 'INFORMAL_TOLERATED', time_from: null, time_to: null })], dateAt(10, 0))
+    expect(status.status).toBe('free')
+    expect(status.label).toBe('Informally okay')
+  })
 })
 
 describe('rankSpots', () => {
@@ -80,6 +87,7 @@ describe('rankSpots', () => {
       address_text: 'Test St',
       suburb: null,
       state: null,
+      country: null,
       lat: 0,
       lng: 0,
       distance_m: 100,

@@ -1,14 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { SignType } from '../types'
-
-const SIGN_OPTIONS: { type: SignType; label: string; hint: string }[] = [
-  { type: 'FREE_UNLIMITED', label: 'Free, no limit', hint: 'Plain "P" sign, no restrictions' },
-  { type: 'TIME_LIMITED', label: 'Free, time limited', hint: 'e.g. 1P, 2P, 4P signs' },
-  { type: 'PAID_METER', label: 'Paid / ticket', hint: 'Meter or pay-by-app parking' },
-  { type: 'PERMIT_ONLY', label: 'Permit only', hint: 'Resident permit holders' },
-  { type: 'NO_STOPPING_CLEARWAY', label: 'Clearway', hint: 'No stopping during set hours' },
-  { type: 'LOADING_ZONE', label: 'Loading zone', hint: 'Reserved for loading vehicles' },
-]
+import { getSignOptionsForCountry, hasLocalPreset, getDefaultCurrency } from '../lib/countrySignPresets'
+import { CURRENCY_OPTIONS } from '../types'
 
 const DAYS: { value: number; label: string }[] = [
   { value: 1, label: 'Mon' },
@@ -28,13 +21,21 @@ export interface ReportSpotFormValue {
   timeFrom: string | null
   timeTo: string | null
   pricePerHour: number | null
+  currency: string | null
   notes: string
 }
 
+const KNOWN_COUNTRIES = ['Australia', 'India', 'United States', 'United Kingdom']
+const ALWAYS_FREE_TYPES: SignType[] = ['FREE_UNLIMITED', 'INFORMAL_TOLERATED']
+
 export function ReportSpotForm({
+  country,
+  onCountryChange,
   onSubmit,
   submitting,
 }: {
+  country: string | null
+  onCountryChange: (country: string) => void
   onSubmit: (value: ReportSpotFormValue) => void
   submitting: boolean
 }) {
@@ -45,10 +46,17 @@ export function ReportSpotForm({
   const [timeFrom, setTimeFrom] = useState('08:30')
   const [timeTo, setTimeTo] = useState('18:00')
   const [pricePerHour, setPricePerHour] = useState(5)
+  const [currency, setCurrency] = useState(() => getDefaultCurrency(country))
   const [allDay, setAllDay] = useState(false)
   const [notes, setNotes] = useState('')
 
-  const needsTimeWindow = signType && signType !== 'FREE_UNLIMITED'
+  useEffect(() => {
+    setCurrency(getDefaultCurrency(country))
+  }, [country])
+
+  const signOptions = getSignOptionsForCountry(country)
+  const isAlwaysFree = signType ? ALWAYS_FREE_TYPES.includes(signType) : false
+  const needsTimeWindow = signType && !isAlwaysFree
   const needsMaxStay = signType === 'TIME_LIMITED'
   const needsPrice = signType === 'PAID_METER'
 
@@ -62,10 +70,11 @@ export function ReportSpotForm({
       addressText: addressText.trim(),
       signType,
       maxStayMinutes: needsMaxStay ? maxStayHours * 60 : null,
-      daysActive: signType === 'FREE_UNLIMITED' || allDay ? [0, 1, 2, 3, 4, 5, 6] : daysActive,
-      timeFrom: needsTimeWindow && !allDay ? timeFrom : signType === 'FREE_UNLIMITED' ? null : '00:00',
-      timeTo: needsTimeWindow && !allDay ? timeTo : signType === 'FREE_UNLIMITED' ? null : '23:59',
+      daysActive: isAlwaysFree || allDay ? [0, 1, 2, 3, 4, 5, 6] : daysActive,
+      timeFrom: needsTimeWindow && !allDay ? timeFrom : isAlwaysFree ? null : '00:00',
+      timeTo: needsTimeWindow && !allDay ? timeTo : isAlwaysFree ? null : '23:59',
       pricePerHour: needsPrice ? pricePerHour : null,
+      currency: needsPrice ? currency : null,
       notes,
     })
   }
@@ -83,9 +92,30 @@ export function ReportSpotForm({
       </div>
 
       <div>
+        <label className="text-sm font-medium text-slate-700">Country</label>
+        <input
+          list="known-countries"
+          value={country ?? ''}
+          onChange={(e) => onCountryChange(e.target.value)}
+          placeholder="Detecting from map pin…"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+        />
+        <datalist id="known-countries">
+          {KNOWN_COUNTRIES.map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
+        <p className="mt-1 text-xs text-slate-400">
+          {hasLocalPreset(country)
+            ? `Showing sign types that match how parking is usually signed in ${country}.`
+            : "Showing a generic set — this country doesn't have a tailored list yet, but reporting still works fine."}
+        </p>
+      </div>
+
+      <div>
         <label className="text-sm font-medium text-slate-700">What does the sign say?</label>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          {SIGN_OPTIONS.map((opt) => (
+          {signOptions.map((opt) => (
             <button
               key={opt.type}
               onClick={() => setSignType(opt.type)}
@@ -115,16 +145,32 @@ export function ReportSpotForm({
       )}
 
       {needsPrice && (
-        <div>
-          <label className="text-sm font-medium text-slate-700">Price per hour ($)</label>
-          <input
-            type="number"
-            min={0}
-            step={0.5}
-            value={pricePerHour}
-            onChange={(e) => setPricePerHour(Number(e.target.value))}
-            className="mt-1 w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
-          />
+        <div className="flex gap-3">
+          <div>
+            <label className="text-sm font-medium text-slate-700">Currency</label>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="mt-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            >
+              {CURRENCY_OPTIONS.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-700">Price per hour</label>
+            <input
+              type="number"
+              min={0}
+              step={0.5}
+              value={pricePerHour}
+              onChange={(e) => setPricePerHour(Number(e.target.value))}
+              className="mt-1 w-28 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            />
+          </div>
         </div>
       )}
 

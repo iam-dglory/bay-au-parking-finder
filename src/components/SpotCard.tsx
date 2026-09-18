@@ -22,8 +22,7 @@ export function SpotCard({
         <div>
           <p className="font-medium text-slate-900">{spot.address_text}</p>
           <p className="text-sm text-slate-500">
-            {spot.suburb ? `${spot.suburb}, ` : ''}
-            {spot.state} · {formatDistance(spot.distance_m)}
+            {[spot.suburb, spot.state].filter(Boolean).join(', ') || spot.country || ''} · {formatDistance(spot.distance_m)}
           </p>
         </div>
       </div>

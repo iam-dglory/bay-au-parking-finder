@@ -5,6 +5,7 @@ export type SignType =
   | 'PERMIT_ONLY'
   | 'NO_STOPPING_CLEARWAY'
   | 'LOADING_ZONE'
+  | 'INFORMAL_TOLERATED'
 
 export interface ParkingRule {
   id: string
@@ -15,6 +16,7 @@ export interface ParkingRule {
   time_from: string | null
   time_to: string | null
   price_per_hour: number | null
+  currency: string | null
   notes: string | null
 }
 
@@ -23,6 +25,7 @@ export interface ParkingSpot {
   address_text: string
   suburb: string | null
   state: string | null
+  country: string | null
   lat: number
   lng: number
   distance_m: number
@@ -48,6 +51,7 @@ export const SIGN_TYPE_LABELS: Record<SignType, string> = {
   PERMIT_ONLY: 'Permit holders only',
   NO_STOPPING_CLEARWAY: 'No stopping (clearway)',
   LOADING_ZONE: 'Loading zone',
+  INFORMAL_TOLERATED: 'Informally tolerated (no fixed rule)',
 }
 
 export interface Listing {

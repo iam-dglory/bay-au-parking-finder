@@ -41,7 +41,7 @@ export function MyActivity({ center }: { center: { lat: number; lng: number } })
     const [signsRes, listingsRes, bookingsRes] = await Promise.all([
       supabase
         .from('parking_spots')
-        .select('id, address_text, suburb, state, lat, lng, created_by, parking_rules(*)')
+        .select('id, address_text, suburb, state, country, lat, lng, created_by, parking_rules(*)')
         .eq('created_by', userId)
         .order('created_at', { ascending: false }),
       supabase
@@ -63,6 +63,7 @@ export function MyActivity({ center }: { center: { lat: number; lng: number } })
           address_text: row.address_text,
           suburb: row.suburb,
           state: row.state,
+          country: row.country,
           lat: row.lat,
           lng: row.lng,
           distance_m: 0,
