@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import type { Listing } from '../types'
-import { computeBookingTotal, formatMoney, isWithinDeclaredHours } from '../lib/listingAvailability'
+import { computeBookingPricing, formatMoney, isWithinDeclaredHours, ADVANCE_BOOKING_HOURS } from '../lib/listingAvailability'
 import { supabase } from '../lib/supabaseClient'
+import { logVisit } from '../lib/visits'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -42,11 +43,12 @@ export function BookingSheet({
 
   if (!listing) return null
 
-  const total = computeBookingTotal(listing.price_per_hour, durationHours)
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`
+  const pricing = startsAt ? computeBookingPricing(listing.price_per_hour, durationHours, startsAt) : null
   const outsideHours = startsAt ? !isWithinDeclaredHours(listing, startsAt) : false
 
   async function handleConfirm() {
-    if (!startsAt || !endsAt) return
+    if (!startsAt || !endsAt || !pricing) return
     setSubmitting(true)
     setError(null)
     const { data: userData } = await supabase.auth.getUser()
@@ -56,7 +58,8 @@ export function BookingSheet({
       driver_id: driverId,
       starts_at: startsAt.toISOString(),
       ends_at: endsAt.toISOString(),
-      total_price: total,
+      total_price: pricing.total,
+      reservation_fee: pricing.reservationFee,
       currency: listing!.currency,
       status: 'confirmed',
     })
@@ -71,6 +74,10 @@ export function BookingSheet({
     }
     setSuccess(true)
     onBooked()
+  }
+
+  function handleDirections() {
+    logVisit('listing', listing!.id, listing!.address_text, listing!.country)
   }
 
   return (
@@ -97,11 +104,20 @@ export function BookingSheet({
         )}
 
         {success ? (
-          <div className="mt-6 rounded-xl bg-emerald-50 p-4 text-center">
+          <div className="mt-6 space-y-2 rounded-xl bg-emerald-50 p-4 text-center">
             <p className="text-2xl">🎉</p>
             <p className="mt-1 font-medium text-emerald-800">Booked!</p>
             <p className="text-sm text-emerald-700">Find it under "My bookings".</p>
-            <button onClick={onClose} className="mt-4 w-full rounded-xl bg-slate-900 py-2.5 font-medium text-white hover:bg-slate-800">
+            <a
+              href={directionsUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={handleDirections}
+              className="mt-2 block w-full rounded-xl bg-slate-900 py-2.5 font-medium text-white hover:bg-slate-800"
+            >
+              Get directions
+            </a>
+            <button onClick={onClose} className="block w-full rounded-xl border border-emerald-200 py-2.5 font-medium text-emerald-700 hover:bg-emerald-100">
               Done
             </button>
           </div>
@@ -147,20 +163,44 @@ export function BookingSheet({
               </p>
             )}
 
-            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5">
-              <span className="text-sm text-slate-600">Total</span>
-              <span className="font-semibold text-slate-900">{formatMoney(listing.currency, total)}</span>
-            </div>
+            {pricing && (
+              <div className="space-y-1 rounded-xl bg-slate-50 px-3 py-2.5">
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <span>Parking ({durationHours}h)</span>
+                  <span>{formatMoney(listing.currency, pricing.base)}</span>
+                </div>
+                {pricing.isAdvance && (
+                  <div className="flex items-center justify-between text-sm text-indigo-600">
+                    <span>Reservation fee (locks in your spot {ADVANCE_BOOKING_HOURS}h+ ahead)</span>
+                    <span>+{formatMoney(listing.currency, pricing.reservationFee)}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between border-t border-slate-200 pt-1.5 text-sm font-semibold text-slate-900">
+                  <span>Total</span>
+                  <span>{formatMoney(listing.currency, pricing.total)}</span>
+                </div>
+              </div>
+            )}
 
             {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
 
             <button
               onClick={handleConfirm}
-              disabled={submitting || !startsAt || durationHours <= 0}
+              disabled={submitting || !startsAt || durationHours <= 0 || !pricing}
               className="w-full rounded-xl bg-slate-900 py-3 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {submitting ? 'Booking…' : `Confirm & pay ${formatMoney(listing.currency, total)} (test — no real charge)`}
+              {submitting || !pricing ? 'Booking…' : `Confirm & pay ${formatMoney(listing.currency, pricing.total)} (test — no real charge)`}
             </button>
+
+            <a
+              href={directionsUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={handleDirections}
+              className="block w-full rounded-xl border border-slate-200 py-2.5 text-center text-sm font-medium text-slate-600 hover:bg-slate-50"
+            >
+              Get directions
+            </a>
           </div>
         )}
       </div>

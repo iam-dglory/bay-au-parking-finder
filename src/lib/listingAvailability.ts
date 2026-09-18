@@ -25,6 +25,26 @@ export function computeBookingTotal(pricePerHour: number, durationHours: number)
   return Math.round(pricePerHour * durationHours * 100) / 100
 }
 
+export const ADVANCE_BOOKING_HOURS = 24
+export const ADVANCE_BOOKING_FEE_RATE = 0.2
+
+export interface BookingPricing {
+  base: number
+  reservationFee: number
+  total: number
+  isAdvance: boolean
+}
+
+/** Booking ≥24h ahead reserves/guarantees the spot for you, which carries a
+ * 20% "lock it in" premium over booking last-minute. */
+export function computeBookingPricing(pricePerHour: number, durationHours: number, startsAt: Date, now: Date = new Date()): BookingPricing {
+  const base = computeBookingTotal(pricePerHour, durationHours)
+  const hoursAhead = (startsAt.getTime() - now.getTime()) / 3600_000
+  const isAdvance = hoursAhead >= ADVANCE_BOOKING_HOURS
+  const reservationFee = isAdvance ? Math.round(base * ADVANCE_BOOKING_FEE_RATE * 100) / 100 : 0
+  return { base, reservationFee, total: Math.round((base + reservationFee) * 100) / 100, isAdvance }
+}
+
 export function formatMoney(currency: string, amount: number): string {
   const symbol = CURRENCY_OPTIONS.find((c) => c.code === currency)?.symbol ?? currency + ' '
   return `${symbol}${amount.toFixed(2)}`

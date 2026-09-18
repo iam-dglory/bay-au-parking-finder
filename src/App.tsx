@@ -10,10 +10,14 @@ import { getBrowserLocation } from './lib/cities'
 
 type Tab = 'home' | 'addSign' | 'listSpot' | 'mine'
 type Location = { lat: number; lng: number; label: string }
+type LocationStatus = 'detecting' | 'resolved' | 'manual'
+
+const LOCATION_DETECT_TIMEOUT_MS = 7000
 
 export default function App() {
   const [authReady, setAuthReady] = useState(false)
   const [location, setLocation] = useState<Location | null>(null)
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>('detecting')
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
   const [showAddChoice, setShowAddChoice] = useState(false)
@@ -25,24 +29,59 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    let settled = false
+    const timeout = setTimeout(() => {
+      if (!settled) {
+        settled = true
+        setLocationStatus('manual')
+      }
+    }, LOCATION_DETECT_TIMEOUT_MS)
+
     getBrowserLocation()
-      .then((pos) => setLocation((prev) => prev ?? { lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' }))
-      .catch(() => {
-        /* fall back to manual city picker */
+      .then((pos) => {
+        if (settled) return
+        settled = true
+        clearTimeout(timeout)
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' })
+        setLocationStatus('resolved')
       })
+      .catch(() => {
+        if (settled) return
+        settled = true
+        clearTimeout(timeout)
+        setLocationStatus('manual')
+      })
+
+    return () => clearTimeout(timeout)
   }, [])
 
   if (!authReady) {
     return <div className="flex h-full items-center justify-center text-sm text-slate-400">Loading…</div>
   }
 
-  if (!location) {
+  if (locationStatus === 'detecting') {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+        <span className="animate-pulse text-4xl">📍</span>
+        <p className="text-sm font-medium text-slate-700">Finding you…</p>
+        <p className="text-xs text-slate-400">Allow location access for the fastest results</p>
+      </div>
+    )
+  }
+
+  if (locationStatus === 'manual' || !location) {
     return (
       <LocationPicker
-        onPick={(lat, lng, label) => setLocation({ lat, lng, label })}
+        onPick={(lat, lng, label) => {
+          setLocation({ lat, lng, label })
+          setLocationStatus('resolved')
+        }}
         onUseGps={() =>
           getBrowserLocation()
-            .then((pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' }))
+            .then((pos) => {
+              setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' })
+              setLocationStatus('resolved')
+            })
             .catch(() => alert('Could not access your location. Pick a city instead.'))
         }
       />
@@ -57,7 +96,7 @@ export default function App() {
   return (
     <div className="flex h-full flex-col bg-slate-50">
       <div className="min-h-0 flex-1">
-        {tab === 'home' && <Home center={location} locationLabel={location.label} />}
+        {tab === 'home' && <Home center={location} locationLabel={location.label} onChangeLocation={() => setLocationStatus('manual')} />}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
         {tab === 'listSpot' && <ListSpot key={addKey} center={location} onDone={goHome} />}
         {tab === 'mine' && <MyActivity center={location} />}

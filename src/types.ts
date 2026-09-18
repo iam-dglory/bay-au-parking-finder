@@ -77,9 +77,20 @@ export interface Booking {
   starts_at: string
   ends_at: string
   total_price: number
+  reservation_fee: number
   currency: string
   status: 'confirmed' | 'cancelled'
   created_at: string
+}
+
+export interface SpotVisit {
+  id: string
+  user_id: string
+  kind: 'free_sign' | 'listing'
+  ref_id: string
+  address_text: string
+  country: string | null
+  visited_at: string
 }
 
 export const CURRENCY_OPTIONS: { code: string; symbol: string; label: string }[] = [

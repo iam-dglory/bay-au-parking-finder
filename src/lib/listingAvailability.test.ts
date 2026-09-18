@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isWithinDeclaredHours, computeBookingTotal, formatMoney } from './listingAvailability'
+import { isWithinDeclaredHours, computeBookingTotal, formatMoney, computeBookingPricing } from './listingAvailability'
 import type { Listing } from '../types'
 
 function listing(overrides: Partial<Listing>): Listing {
@@ -48,6 +48,38 @@ describe('computeBookingTotal', () => {
   it('multiplies price by duration and rounds to cents', () => {
     expect(computeBookingTotal(5.5, 2)).toBe(11)
     expect(computeBookingTotal(3.333, 1.5)).toBe(5)
+  })
+})
+
+describe('computeBookingPricing', () => {
+  const now = dateAt(10, 0)
+
+  it('charges no reservation fee for a same-day booking', () => {
+    const startsAt = new Date(now.getTime() + 2 * 3600_000) // 2h ahead
+    const pricing = computeBookingPricing(10, 2, startsAt, now)
+    expect(pricing.isAdvance).toBe(false)
+    expect(pricing.reservationFee).toBe(0)
+    expect(pricing.total).toBe(pricing.base)
+  })
+
+  it('charges a 20% reservation fee for a booking >=24h ahead', () => {
+    const startsAt = new Date(now.getTime() + 25 * 3600_000) // 25h ahead
+    const pricing = computeBookingPricing(10, 2, startsAt, now) // base = 20
+    expect(pricing.isAdvance).toBe(true)
+    expect(pricing.reservationFee).toBe(4)
+    expect(pricing.total).toBe(24)
+  })
+
+  it('treats exactly 24h ahead as an advance booking', () => {
+    const startsAt = new Date(now.getTime() + 24 * 3600_000)
+    const pricing = computeBookingPricing(10, 1, startsAt, now)
+    expect(pricing.isAdvance).toBe(true)
+  })
+
+  it('treats 23h59m ahead as not advance', () => {
+    const startsAt = new Date(now.getTime() + 24 * 3600_000 - 60_000)
+    const pricing = computeBookingPricing(10, 1, startsAt, now)
+    expect(pricing.isAdvance).toBe(false)
   })
 })
 

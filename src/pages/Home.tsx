@@ -10,7 +10,15 @@ import { useNearbyListings } from '../lib/useNearbyListings'
 import { rankSpots } from '../lib/parkingStatus'
 import type { Listing, ParkingSpot, SpotStatus } from '../types'
 
-export function Home({ center, locationLabel }: { center: { lat: number; lng: number }; locationLabel: string }) {
+export function Home({
+  center,
+  locationLabel,
+  onChangeLocation,
+}: {
+  center: { lat: number; lng: number }
+  locationLabel: string
+  onChangeLocation: () => void
+}) {
   const [radiusM, setRadiusM] = useState(1000)
   const [freeOnly, setFreeOnly] = useState(false)
   const [view, setView] = useState<'map' | 'list'>('map')
@@ -28,12 +36,14 @@ export function Home({ center, locationLabel }: { center: { lat: number; lng: nu
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <div>
-          <h1 className="text-base font-semibold text-slate-900">Parking near {locationLabel}</h1>
+        <button onClick={onChangeLocation} className="text-left" aria-label="Change location">
+          <h1 className="flex items-center gap-1 text-base font-semibold text-slate-900">
+            Parking near {locationLabel} <span className="text-xs font-normal text-slate-400">✎</span>
+          </h1>
           <p className="text-xs text-slate-500">
-            {ranked.length} free spots · {listings.length} rentable
+            {ranked.length} free spots · {listings.length} bookable
           </p>
-        </div>
+        </button>
         <div className="flex overflow-hidden rounded-full border border-slate-200 text-sm">
           <button onClick={() => setView('map')} className={`px-3 py-1.5 ${view === 'map' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>
             Map
@@ -70,8 +80,8 @@ export function Home({ center, locationLabel }: { center: { lat: number; lng: nu
 
             {!freeOnly && (
               <div className="mt-6 space-y-2">
-                <h2 className="text-sm font-semibold text-slate-700">Rentable spots nearby</h2>
-                {listings.length === 0 && <p className="text-sm text-slate-400">No one's listed a spot for rent near here yet.</p>}
+                <h2 className="text-sm font-semibold text-slate-700">Bookable parking nearby</h2>
+                {listings.length === 0 && <p className="text-sm text-slate-400">No bookable parking areas listed near here yet.</p>}
                 {listings.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} onClick={() => setSelectedListing(listing)} />
                 ))}

@@ -2,6 +2,7 @@ import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
 import { formatMoney } from '../lib/listingAvailability'
+import { logVisit } from '../lib/visits'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -75,6 +76,7 @@ export function SpotDetailSheet({
           href={directionsUrl}
           target="_blank"
           rel="noreferrer"
+          onClick={() => logVisit('free_sign', spot.id, spot.address_text, spot.country)}
           className="mt-5 block w-full rounded-xl bg-slate-900 py-3 text-center font-medium text-white hover:bg-slate-800"
         >
           Get directions
