@@ -11,6 +11,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/geolocation": "^8.2.2",
     "@supabase/supabase-js": "^2.112.1",
     "leaflet": "^1.9.4",
     "react": "^19.2.8",
@@ -18,6 +20,9 @@
     "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
     "@tailwindcss/vite": "^4.3.3",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^24.13.3",
