@@ -75,12 +75,10 @@ export default function App() {
           setLocationStatus('resolved')
         }}
         onUseGps={() =>
-          getBrowserLocation()
-            .then((pos) => {
-              setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' })
-              setLocationStatus('resolved')
-            })
-            .catch(() => alert('Could not access your location. Pick a city instead.'))
+          getBrowserLocation().then((pos) => {
+            setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'you' })
+            setLocationStatus('resolved')
+          })
         }
       />
     )

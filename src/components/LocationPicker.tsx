@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Country from 'country-state-city/lib/country'
 import State from 'country-state-city/lib/state'
-import { MapPin, LocateFixed, ChevronDown, Search, Loader2 } from 'lucide-react'
+import { MapPin, LocateFixed, ChevronDown, Search, Loader2, TriangleAlert } from 'lucide-react'
 import { searchCities, type CitySearchResult } from '../lib/geocoding'
 
 const ALL_COUNTRIES = Country.getAllCountries()
@@ -9,7 +9,7 @@ const DEFAULT_COUNTRY = 'AU'
 const DEFAULT_STATE = 'NSW'
 const SEARCH_DEBOUNCE_MS = 400
 
-export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng: number, label: string) => void; onUseGps: () => void }) {
+export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng: number, label: string) => void; onUseGps: () => Promise<void> }) {
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY)
   const [stateCode, setStateCode] = useState(DEFAULT_STATE)
   const [citySearch, setCitySearch] = useState('')
@@ -17,6 +17,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   const [searching, setSearching] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [locating, setLocating] = useState(false)
+  const [gpsError, setGpsError] = useState<string | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -61,9 +62,16 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     onPick(city.lat, city.lng, city.stateName ? `${city.name}, ${city.stateName}` : city.name)
   }
 
-  function handleUseGps() {
+  async function handleUseGps() {
     setLocating(true)
-    onUseGps()
+    setGpsError(null)
+    try {
+      await onUseGps()
+    } catch {
+      setGpsError("Couldn't get your location. Check that location access is allowed for this app, or search for your city below.")
+    } finally {
+      setLocating(false)
+    }
   }
 
   return (
@@ -74,17 +82,25 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
             <MapPin className="h-6 w-6 text-white" strokeWidth={2} />
           </div>
           <h1 className="text-xl font-semibold text-slate-900">Where are you parking?</h1>
-          <p className="text-sm text-slate-500">Available across Australia, and everywhere else in the world.</p>
+          <p className="text-sm text-slate-500">Search any city or suburb, worldwide.</p>
         </div>
 
-        <button
-          onClick={handleUseGps}
-          disabled={locating}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 font-medium text-white transition hover:bg-slate-800 disabled:opacity-60"
-        >
-          <LocateFixed className="h-4 w-4" strokeWidth={2} />
-          {locating ? 'Locating…' : 'Use my current location'}
-        </button>
+        <div>
+          <button
+            onClick={handleUseGps}
+            disabled={locating}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 font-medium text-white transition hover:bg-slate-800 disabled:opacity-60"
+          >
+            {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2} />}
+            {locating ? 'Locating…' : 'Use my current location'}
+          </button>
+          {gpsError && (
+            <p className="mt-2 flex items-start gap-1.5 text-left text-xs text-rose-600">
+              <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+              {gpsError}
+            </p>
+          )}
+        </div>
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200" />

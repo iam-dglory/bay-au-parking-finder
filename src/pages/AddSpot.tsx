@@ -63,6 +63,10 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
 
   return (
     <div className="flex h-full flex-col">
+      <div className="border-b border-slate-200 bg-white px-4 py-3">
+        <h1 className="text-base font-semibold text-slate-900">Add a sign</h1>
+        <p className="text-xs text-slate-500">Drop a pin where the sign actually is</p>
+      </div>
       <div className="h-56 shrink-0 border-b border-slate-200">
         <MapView center={center} spots={[]} pickMode pickedLocation={picked} onPickLocation={handlePick} />
       </div>
