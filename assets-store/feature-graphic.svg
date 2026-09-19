@@ -1,0 +1,33 @@
+<svg width="1024" height="500" viewBox="0 0 1024 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+
+  <!-- decorative faint dots suggesting a map -->
+  <g fill="#334155" opacity="0.5">
+    <circle cx="120" cy="90" r="4"/>
+    <circle cx="180" cy="140" r="4"/>
+    <circle cx="90" cy="200" r="4"/>
+    <circle cx="900" cy="120" r="4"/>
+    <circle cx="960" cy="200" r="4"/>
+    <circle cx="880" cy="380" r="4"/>
+    <circle cx="950" cy="420" r="4"/>
+    <circle cx="60" cy="400" r="4"/>
+    <circle cx="140" cy="440" r="4"/>
+  </g>
+
+  <!-- icon badge -->
+  <g transform="translate(120 175)">
+    <rect width="150" height="150" rx="34" fill="#ffffff"/>
+    <g transform="translate(75 75) scale(4.6) translate(-12 -12)">
+      <path fill="#0f172a" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    </g>
+  </g>
+
+  <text x="330" y="255" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="96" font-weight="700" fill="#ffffff">Bay</text>
+  <text x="332" y="305" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="30" font-weight="400" fill="#94a3b8">Find parking, everywhere</text>
+</svg>

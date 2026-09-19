@@ -33,6 +33,7 @@ android/app/build
 android/app/src/main/assets/public
 android/captures
 android/.idea
+android/keystore.properties
 *.keystore
 *.jks
 
