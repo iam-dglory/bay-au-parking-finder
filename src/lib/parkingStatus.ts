@@ -1,5 +1,5 @@
 import type { ParkingRule, ParkingSpot, SpotStatus } from '../types'
-import { formatMoney } from './listingAvailability'
+import { formatMoney } from './money'
 
 function toMinutes(time: string | null): number {
   if (!time) return 0

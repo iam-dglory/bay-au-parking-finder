@@ -88,6 +88,7 @@ describe('rankSpots', () => {
       suburb: null,
       state: null,
       country: null,
+      latest_ping: null,
       lat: 0,
       lng: 0,
       distance_m: 100,

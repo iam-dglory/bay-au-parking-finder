@@ -20,6 +20,11 @@ export interface ParkingRule {
   notes: string | null
 }
 
+export interface SpotStatusPing {
+  status: 'occupied' | 'free'
+  created_at: string
+}
+
 export interface ParkingSpot {
   id: string
   address_text: string
@@ -31,6 +36,7 @@ export interface ParkingSpot {
   distance_m: number
   created_by: string
   rules: ParkingRule[]
+  latest_ping: SpotStatusPing | null
 }
 
 export type UsabilityStatus = 'free' | 'paid' | 'restricted'
@@ -54,39 +60,10 @@ export const SIGN_TYPE_LABELS: Record<SignType, string> = {
   INFORMAL_TOLERATED: 'Informally tolerated (no fixed rule)',
 }
 
-export interface Listing {
-  id: string
-  address_text: string
-  country: string | null
-  currency: string
-  price_per_hour: number
-  description: string | null
-  days_active: number[]
-  time_from: string | null
-  time_to: string | null
-  lat: number
-  lng: number
-  distance_m: number
-  owner_id: string
-}
-
-export interface Booking {
-  id: string
-  listing_id: string
-  driver_id: string
-  starts_at: string
-  ends_at: string
-  total_price: number
-  reservation_fee: number
-  currency: string
-  status: 'confirmed' | 'cancelled'
-  created_at: string
-}
-
 export interface SpotVisit {
   id: string
   user_id: string
-  kind: 'free_sign' | 'listing'
+  kind: 'free_sign'
   ref_id: string
   address_text: string
   country: string | null

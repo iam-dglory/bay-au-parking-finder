@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
+import { MapPin, Plus, ClipboardList } from 'lucide-react'
 import { Home } from './pages/Home'
 import { AddSpot } from './pages/AddSpot'
-import { ListSpot } from './pages/ListSpot'
 import { MyActivity } from './pages/MyActivity'
 import { LocationPicker } from './components/LocationPicker'
-import { AddChoiceSheet } from './components/AddChoiceSheet'
 import { ensureSession } from './lib/supabaseClient'
-import { getBrowserLocation } from './lib/cities'
+import { getBrowserLocation } from './lib/geolocation'
 
-type Tab = 'home' | 'addSign' | 'listSpot' | 'mine'
+type Tab = 'home' | 'addSign' | 'mine'
 type Location = { lat: number; lng: number; label: string }
 type LocationStatus = 'detecting' | 'resolved' | 'manual'
 
@@ -20,7 +19,6 @@ export default function App() {
   const [locationStatus, setLocationStatus] = useState<LocationStatus>('detecting')
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
-  const [showAddChoice, setShowAddChoice] = useState(false)
 
   useEffect(() => {
     ensureSession()
@@ -62,7 +60,7 @@ export default function App() {
   if (locationStatus === 'detecting') {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-        <span className="animate-pulse text-4xl">📍</span>
+        <MapPin className="h-9 w-9 animate-pulse text-slate-900" strokeWidth={1.75} />
         <p className="text-sm font-medium text-slate-700">Finding you…</p>
         <p className="text-xs text-slate-400">Allow location access for the fastest results</p>
       </div>
@@ -98,7 +96,6 @@ export default function App() {
       <div className="min-h-0 flex-1">
         {tab === 'home' && <Home center={location} locationLabel={location.label} onChangeLocation={() => setLocationStatus('manual')} />}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
-        {tab === 'listSpot' && <ListSpot key={addKey} center={location} onDone={goHome} />}
         {tab === 'mine' && <MyActivity center={location} />}
       </div>
 
@@ -107,42 +104,27 @@ export default function App() {
           onClick={() => setTab('home')}
           className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'home' ? 'text-slate-900' : 'text-slate-400'}`}
         >
-          <span className="text-lg leading-none">📍</span>
+          <MapPin className="h-5 w-5" strokeWidth={1.75} />
           Find parking
         </button>
         <button
-          onClick={() => setShowAddChoice(true)}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${
-            tab === 'addSign' || tab === 'listSpot' ? 'text-slate-900' : 'text-slate-400'
-          }`}
+          onClick={() => {
+            setAddKey((k) => k + 1)
+            setTab('addSign')
+          }}
+          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'addSign' ? 'text-slate-900' : 'text-slate-400'}`}
         >
-          <span className="text-lg leading-none">➕</span>
-          Add
+          <Plus className="h-5 w-5" strokeWidth={1.75} />
+          Add a sign
         </button>
         <button
           onClick={() => setTab('mine')}
           className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'mine' ? 'text-slate-900' : 'text-slate-400'}`}
         >
-          <span className="text-lg leading-none">🗂️</span>
+          <ClipboardList className="h-5 w-5" strokeWidth={1.75} />
           My activity
         </button>
       </nav>
-
-      {showAddChoice && (
-        <AddChoiceSheet
-          onChooseSign={() => {
-            setShowAddChoice(false)
-            setAddKey((k) => k + 1)
-            setTab('addSign')
-          }}
-          onChooseListing={() => {
-            setShowAddChoice(false)
-            setAddKey((k) => k + 1)
-            setTab('listSpot')
-          }}
-          onClose={() => setShowAddChoice(false)}
-        />
-      )}
     </div>
   )
 }

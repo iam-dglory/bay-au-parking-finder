@@ -1,5 +1,7 @@
+import { Car, CircleCheck } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
+import { getOccupancyInfo, formatOccupancyAge } from '../lib/occupancy'
 
 function formatDistance(m: number) {
   if (m < 1000) return `${Math.round(m)} m`
@@ -13,6 +15,7 @@ export function SpotCard({
   spot: ParkingSpot & { status: SpotStatus }
   onClick: () => void
 }) {
+  const occupancy = getOccupancyInfo(spot.latest_ping)
   return (
     <button
       onClick={onClick}
@@ -26,8 +29,14 @@ export function SpotCard({
           </p>
         </div>
       </div>
-      <div className="mt-2">
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <StatusBadge status={spot.status} />
+        {occupancy.status !== 'unknown' && (
+          <span className={`inline-flex items-center gap-1 text-xs ${occupancy.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'}`}>
+            {occupancy.status === 'occupied' ? <Car className="h-3.5 w-3.5" strokeWidth={2} /> : <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} />}
+            {formatOccupancyAge(occupancy.ageMinutes!)}
+          </span>
+        )}
       </div>
     </button>
   )

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { MapView } from '../components/MapView'
 import { ReportSpotForm, type ReportSpotFormValue } from '../components/ReportSpotForm'
 import { supabase } from '../lib/supabaseClient'
-import { detectCountry } from '../lib/reverseGeocode'
+import { detectCountry } from '../lib/geocoding'
 
 export function AddSpot({ center, onDone }: { center: { lat: number; lng: number }; onDone: () => void }) {
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null)
