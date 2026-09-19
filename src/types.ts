@@ -37,6 +37,7 @@ export interface ParkingSpot {
   created_by: string
   rules: ParkingRule[]
   latest_ping: SpotStatusPing | null
+  latest_claim: { expires_at: string } | null
 }
 
 export type UsabilityStatus = 'free' | 'paid' | 'restricted'

@@ -89,6 +89,7 @@ describe('rankSpots', () => {
       state: null,
       country: null,
       latest_ping: null,
+      latest_claim: null,
       lat: 0,
       lng: 0,
       distance_m: 100,

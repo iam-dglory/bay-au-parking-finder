@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { X, Car, CircleCheck, Navigation } from 'lucide-react'
+import { X, Car, CircleCheck, Navigation, Bookmark, Clock } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
 import { formatMoney } from '../lib/money'
 import { logVisit } from '../lib/visits'
 import { getOccupancyInfo, formatOccupancyAge, submitOccupancyPing } from '../lib/occupancy'
+import { getClaimInfo, submitClaim, CLAIM_DURATION_MINUTES } from '../lib/claims'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -29,23 +30,34 @@ function formatTimeStr(t: string | null) {
 export function SpotDetailSheet({
   spot,
   onClose,
-  onPingSubmitted,
+  onUpdated,
 }: {
   spot: (ParkingSpot & { status: SpotStatus }) | null
   onClose: () => void
-  onPingSubmitted?: () => void
+  onUpdated?: () => void
 }) {
   const [pinging, setPinging] = useState(false)
+  const [booking, setBooking] = useState(false)
 
   if (!spot) return null
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`
   const occupancy = getOccupancyInfo(spot.latest_ping)
+  const claim = getClaimInfo(spot.latest_claim)
+  const canBook = spot.status.status !== 'restricted'
 
   async function handlePing(status: 'occupied' | 'free') {
     setPinging(true)
     await submitOccupancyPing(spot!.id, status)
     setPinging(false)
-    onPingSubmitted?.()
+    onUpdated?.()
+  }
+
+  async function handleBook() {
+    setBooking(true)
+    await submitClaim(spot!.id)
+    logVisit(spot!.id, spot!.address_text, spot!.country)
+    setBooking(false)
+    onUpdated?.()
   }
 
   return (
@@ -76,9 +88,27 @@ export function SpotDetailSheet({
               <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Reported free · {formatOccupancyAge(occupancy.ageMinutes!)}
             </span>
           )}
+          {claim.active && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">
+              <Clock className="h-3.5 w-3.5" strokeWidth={2} /> Claimed · {claim.minutesLeft} min left
+            </span>
+          )}
         </div>
 
         <p className="mt-3 text-sm text-slate-600">{spot.status.detail}</p>
+
+        {canBook ? (
+          <button
+            onClick={handleBook}
+            disabled={booking}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
+          >
+            <Bookmark className="h-4 w-4" strokeWidth={2} />
+            {booking ? 'Booking…' : `Book this spot (holds it ${CLAIM_DURATION_MINUTES} min)`}
+          </button>
+        ) : (
+          <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">This spot can't be booked — it's restricted, not open parking.</p>
+        )}
 
         <div className="mt-3 flex gap-2">
           <button

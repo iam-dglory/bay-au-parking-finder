@@ -48,6 +48,7 @@ export function MyActivity({ center }: { center: { lat: number; lng: number } })
           created_by: row.created_by,
           rules: row.parking_rules ?? [],
           latest_ping: null,
+          latest_claim: null,
         }
         return { ...spot, status: evaluateSpotStatus(spot.rules) }
       }),
@@ -72,7 +73,7 @@ export function MyActivity({ center }: { center: { lat: number; lng: number } })
 
       <section className="p-4">
         <h2 className="mb-2 text-sm font-semibold text-slate-700">Parking history</h2>
-        <p className="mb-2 -mt-1 text-xs text-slate-400">Places you've gotten directions to</p>
+        <p className="mb-2 -mt-1 text-xs text-slate-400">Places you've booked or gotten directions to</p>
         {visits.length === 0 && <p className="text-sm text-slate-400">Nowhere yet — get directions to a spot and it'll show up here.</p>}
         <div className="space-y-1.5">
           {visits.map((v) => (

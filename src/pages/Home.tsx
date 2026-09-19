@@ -84,7 +84,7 @@ export function Home({
         )}
       </div>
 
-      <SpotDetailSheet spot={selected} onClose={() => setSelectedSpot(null)} onPingSubmitted={refresh} />
+      <SpotDetailSheet spot={selected} onClose={() => setSelectedSpot(null)} onUpdated={refresh} />
     </div>
   )
 }
