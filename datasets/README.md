@@ -1,12 +1,14 @@
 # Datasets
 
-Raw snapshots of the open government data Bay is built on. Fetched **2026-09-22** — these are point-in-time exports, not live mirrors. The app itself re-syncs the live sensor feed on a schedule (see `../scripts/`); everything else here was a one-off import, so re-fetch and re-run the matching import/migration if you want to refresh it.
+Every dataset whose actual data we pulled during this project — not just ones we ended up using. Fetched **2026-09-22** — these are point-in-time exports, not live mirrors. The app itself re-syncs the live sensor feed on a schedule (see `../scripts/`); everything else here was a one-off fetch, so re-run the fetch if you want a fresher copy.
 
 All datasets are published under their respective councils' open data licences (Creative Commons Attribution, unless noted) — attribute the source council if you republish.
 
 ## `melbourne-city-of-melbourne/`
 
-Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) — confirmed by exhaustive search (Sep 2026) to be the *only* Greater Melbourne council publishing bay-level parking data; neighbouring councils (Yarra, Port Phillip, Stonnington, Boroondara, etc.) publish nothing comparable.
+Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) — confirmed by exhaustive search (Sep 2026) to be the *only* Greater Melbourne council publishing bay-level parking data; neighbouring councils (Yarra, Port Phillip, Stonnington, Boroondara, etc.) publish nothing comparable (see "Investigated, no data" below).
+
+### Used in the app
 
 | File | Source dataset | Rows | Used for |
 |---|---|---|---|
@@ -16,7 +18,15 @@ Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, South
 | `sign-plates-located-in-each-parking-zone.json` | [sign-plates-located-in-each-parking-zone](https://data.melbourne.vic.gov.au/explore/dataset/sign-plates-located-in-each-parking-zone/) | 1,821 | Legacy zone signage (2P/LZ/PP-style codes) for the older, non-Pay-Stay zone system |
 | `parking-zones-linked-to-street-segments.json` | [parking-zones-linked-to-street-segments](https://data.melbourne.vic.gov.au/explore/dataset/parking-zones-linked-to-street-segments/) | 926 | Joins legacy zones to road segments → bay coordinates |
 | `on-street-parking-bay-sensors.json` | [on-street-parking-bay-sensors](https://data.melbourne.vic.gov.au/explore/dataset/on-street-parking-bay-sensors/) | 6,324 | **Live** in-ground sensor occupancy (verified genuinely live: ~85% of sensors report within the last hour). Matched to `parking_spots` by nearest coordinate (≤5m) — the two datasets use incompatible kerbside-id numbering. This snapshot is a point-in-time copy; the app re-fetches this URL on a schedule, see `../scripts/sync_melbourne_sensors.py` and the server-side `pg_cron` version in `../supabase/migrations/`. |
-| `off-street-car-parks-2024-commercial.json` | [off-street-car-parks-with-capacity-and-type](https://data.melbourne.vic.gov.au/explore/dataset/off-street-car-parks-with-capacity-and-type/) | 143 (filtered) | Public/commercial multi-storey car parks with total capacity (~59,600 spaces). Filtered from the full 151,199-row, 23-year property census down to `census_year=2024, parking_type=Commercial` — the full file also has residential/private-garage counts irrelevant to a public parking finder. No live availability is published for these, capacity only. |
+| `off-street-car-parks-2024-commercial.json` | [off-street-car-parks-with-capacity-and-type](https://data.melbourne.vic.gov.au/explore/dataset/off-street-car-parks-with-capacity-and-type/) | 143 (filtered) | Public/commercial multi-storey car parks with total capacity (~59,600 spaces). Filtered from the full census below down to `census_year=2024, parking_type=Commercial`. No live availability is published for these, capacity only. |
+
+### Fetched and investigated, not used
+
+| File | Source dataset | Rows | Why we pulled it | Why it's not used |
+|---|---|---|---|---|
+| `off-street-car-parks-full-census.json` | [off-street-car-parks-with-capacity-and-type](https://data.melbourne.vic.gov.au/explore/dataset/off-street-car-parks-with-capacity-and-type/) | 151,199 (full, unfiltered) | The complete 23-year (2002–2024) property census this app's filtered subset comes from | Most rows are `Residential` (home garages) or `Private` (staff/tenant-only allocations) — not public parking. Kept in full here for anyone who wants the raw source rather than our filter. |
+| `sign-plates-located-in-each-pay-stay-zone.json` | [sign-plates-located-in-each-pay-stay-zone](https://data.melbourne.vic.gov.au/explore/dataset/sign-plates-located-in-each-pay-stay-zone/) | 1,495 | Checking whether it held individual bay numbers (chasing a user report of small sequential numbers painted on kerbs) | Zone-level sign text/hours only, no bay-level numbering — redundant with `pay-stay-parking-restrictions.json`, which we already had |
+| `on-street-car-parking-meters-with-location.json` | [on-street-car-parking-meters-with-location](https://data.melbourne.vic.gov.au/explore/dataset/on-street-car-parking-meters-with-location/) | 1,404 | Checking for richer per-bay payment info | Just physical meter/machine locations + accepted payment methods (card/tap-and-go) — one meter often serves several bays, no restriction rules attached. Lower value than what we already have via Pay Stay. |
 
 ## `brisbane-city-council/`
 
@@ -24,6 +34,16 @@ Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, South
 |---|---|---|---|
 | `parking-sign-locations.json` | [parking-sign-locations](https://data.brisbane.qld.gov.au/explore/dataset/parking-sign-locations/) | 51,984 | Brisbane CBD sign locations + restriction type/hours (`parkingrestrictiondaysandtimes`, `parkingrestrictioncode`) — Brisbane's own version of what Melbourne's Pay Stay/legacy datasets provide |
 
+## Investigated, no data pulled (existence-only)
+
+These were found via catalog search (`discover.data.vic.gov.au`, `data.gov.au`) during the Sep 2026 coverage audit. We confirmed they exist and read their descriptions, but never fetched actual records — either because the description made clear they wouldn't help (zone boundaries only, no bay-level data) or because after Melbourne + Brisbane the marginal value didn't justify the time. Listed here so "what have we looked at" is honest and complete, not because the data is archived:
+
+- **City of Port Phillip** (St Kilda, South Melbourne, Port Melbourne): `city-of-port-phillip-parking-machines` (meter locations only), `city-of-port-phillip-accessible-parking`
+- **City of Yarra** (Richmond, Fitzroy, Collingwood): `yarra-permit-parking-zones` (zone *boundaries*, not individual bays)
+- **City of Casey** (outer south-east Melbourne, ~40km away): `city-of-casey-parking-restriction-zones`, `car-parks-locations-in-city-of-casey`
+- **City of Ballarat**, **City of Greater Geelong** (both well outside metro Melbourne): each publish several parking datasets (meters, permit zones, real-time availability for Geelong) — worth a proper look if/when expanding beyond Melbourne metro
+- **Brisbane City Council**: `parking-regulated-permit-parking-areas`, `brisbane-parking-meters` (meter locations) — not pulled since `parking-sign-locations.json` already covers restriction rules
+
 ## Coverage reality check
 
-If you're deciding where to expand next: bay-level open data like this is rare. Before adding a new city, search that city/state's open data portal for "parking" the way this was done for Melbourne (`discover.data.vic.gov.au` / `data.gov.au` full-text search across *all* organisations, not just the city's own council) — most councils simply don't publish it, and there's no substitute for checking rather than assuming.
+If you're deciding where to expand next: bay-level open data like this is rare. Before adding a new city, search that city/state's open data portal for "parking" the way this was done for Melbourne (full-text search across *all* organisations, not just the city's own council) — most councils simply don't publish it, and there's no substitute for checking rather than assuming.
