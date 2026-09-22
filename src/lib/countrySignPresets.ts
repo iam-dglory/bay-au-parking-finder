@@ -20,6 +20,7 @@ export const GENERIC_SIGN_OPTIONS: SignOption[] = [
   { type: 'PAID_METER', label: 'Paid parking', hint: 'Meter, ticket machine, or pay-by-app' },
   { type: 'PERMIT_ONLY', label: 'Permit / residents only', hint: 'Restricted to permit holders' },
   { type: 'NO_STOPPING_CLEARWAY', label: 'No parking / no stopping', hint: 'Not allowed at all, or only at certain times' },
+  { type: 'ACCESSIBLE_PERMIT', label: 'Accessible parking permit', hint: 'Reserved for holders of a disability/accessible parking permit' },
 ]
 
 const AUSTRALIA_SIGN_OPTIONS: SignOption[] = [
@@ -29,14 +30,16 @@ const AUSTRALIA_SIGN_OPTIONS: SignOption[] = [
   { type: 'PERMIT_ONLY', label: 'Permit only', hint: 'Resident permit holders' },
   { type: 'NO_STOPPING_CLEARWAY', label: 'Clearway', hint: 'No stopping during set hours' },
   { type: 'LOADING_ZONE', label: 'Loading zone', hint: 'Reserved for loading vehicles' },
+  { type: 'ACCESSIBLE_PERMIT', label: 'Accessible / ACROD permit', hint: 'Reserved for disability parking permit holders' },
 ]
 
 const INDIA_SIGN_OPTIONS: SignOption[] = [
   { type: 'INFORMAL_TOLERATED', label: 'Informally okay', hint: 'No sign or rule, but people park here without issue' },
   { type: 'PAID_METER', label: 'Pay & Park zone', hint: 'Municipal or contractor-run paid zone, attendant collects cash' },
   { type: 'PERMIT_ONLY', label: 'Society / RWA reserved', hint: 'Reserved for residents of a society or building' },
-  { type: 'NO_STOPPING_CLEARWAY', label: 'No parking (enforced)', hint: 'Towing/fines actually happen here — main roads, near police posts' },
+  { type: 'NO_STOPPING_CLEARWAY', label: 'No parking (enforced)', hint: 'Towing/fines actually happen here, e.g. main roads, near police posts' },
   { type: 'FREE_UNLIMITED', label: 'Open, no restriction', hint: 'Genuinely free and unrestricted' },
+  { type: 'ACCESSIBLE_PERMIT', label: 'Disability reserved', hint: 'Marked for accessible parking' },
 ]
 
 const UNITED_STATES_SIGN_OPTIONS: SignOption[] = [
@@ -44,7 +47,8 @@ const UNITED_STATES_SIGN_OPTIONS: SignOption[] = [
   { type: 'TIME_LIMITED', label: 'Time limited', hint: 'e.g. "2 hour parking 8am-6pm"' },
   { type: 'PAID_METER', label: 'Metered', hint: 'Parking meter or pay station' },
   { type: 'PERMIT_ONLY', label: 'Residential permit zone', hint: 'Permit required, e.g. "Zone 4 permit only"' },
-  { type: 'NO_STOPPING_CLEARWAY', label: 'Street cleaning / no parking', hint: 'e.g. "No parking Tue 8-10am — street cleaning"' },
+  { type: 'NO_STOPPING_CLEARWAY', label: 'Street cleaning / no parking', hint: 'e.g. "No parking Tue 8-10am, street cleaning"' },
+  { type: 'ACCESSIBLE_PERMIT', label: 'Disabled / handicap permit', hint: 'Reserved for a valid disability placard or plate' },
 ]
 
 const UNITED_KINGDOM_SIGN_OPTIONS: SignOption[] = [
@@ -53,6 +57,7 @@ const UNITED_KINGDOM_SIGN_OPTIONS: SignOption[] = [
   { type: 'PAID_METER', label: 'Pay & Display', hint: 'Ticket machine or pay-by-phone bay' },
   { type: 'PERMIT_ONLY', label: "Residents' bay", hint: 'Permit holders only' },
   { type: 'NO_STOPPING_CLEARWAY', label: 'Yellow lines', hint: 'Single or double yellow line restrictions' },
+  { type: 'ACCESSIBLE_PERMIT', label: 'Blue Badge holders only', hint: 'Reserved for Blue Badge disabled parking permit holders' },
 ]
 
 const PRESETS_BY_COUNTRY: Record<string, SignOption[]> = {

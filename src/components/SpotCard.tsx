@@ -1,8 +1,7 @@
-import { Car, CircleCheck, Clock } from 'lucide-react'
+import { Car, CircleCheck, Radio } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
-import { getOccupancyInfo, formatOccupancyAge } from '../lib/occupancy'
-import { getClaimInfo } from '../lib/claims'
+import { getOccupancyInfo, getSensorOccupancyInfo, formatOccupancyAge, formatMinutesAgo, OCCUPANCY_CORROBORATION_THRESHOLD } from '../lib/occupancy'
 
 function formatDistance(m: number) {
   if (m < 1000) return `${Math.round(m)} m`
@@ -17,7 +16,8 @@ export function SpotCard({
   onClick: () => void
 }) {
   const occupancy = getOccupancyInfo(spot.latest_ping)
-  const claim = getClaimInfo(spot.latest_claim)
+  const confirmed = occupancy.corroboratingCount >= OCCUPANCY_CORROBORATION_THRESHOLD
+  const sensor = getSensorOccupancyInfo(spot.sensor_status)
   return (
     <button
       onClick={onClick}
@@ -33,17 +33,27 @@ export function SpotCard({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <StatusBadge status={spot.status} />
-        {occupancy.status !== 'unknown' && (
-          <span className={`inline-flex items-center gap-1 text-xs ${occupancy.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'}`}>
-            {occupancy.status === 'occupied' ? <Car className="h-3.5 w-3.5" strokeWidth={2} /> : <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} />}
-            {formatOccupancyAge(occupancy.ageMinutes!)}
+        {sensor ? (
+          <span
+            className={`inline-flex items-center gap-1 text-xs ${
+              sensor.possiblyStuck ? 'text-amber-600' : sensor.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'
+            }`}
+          >
+            <Radio className="h-3.5 w-3.5" strokeWidth={2} />
+            Live sensor: {sensor.status === 'occupied' ? 'Occupied' : 'Free'} · confirmed {formatMinutesAgo(sensor.confirmedAgoMinutes)}
+            {sensor.possiblyStuck ? ' (offline)' : ''}
           </span>
-        )}
-        {claim.active && (
-          <span className="inline-flex items-center gap-1 text-xs text-indigo-600">
-            <Clock className="h-3.5 w-3.5" strokeWidth={2} />
-            Claimed · {claim.minutesLeft}m left
-          </span>
+        ) : (
+          occupancy.status !== 'unknown' && (
+            <span
+              className={`inline-flex items-center gap-1 text-xs ${
+                !confirmed ? 'text-amber-600' : occupancy.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'
+              }`}
+            >
+              {occupancy.status === 'occupied' ? <Car className="h-3.5 w-3.5" strokeWidth={2} /> : <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} />}
+              {confirmed ? 'Confirmed' : 'Unconfirmed'} · {formatOccupancyAge(occupancy.ageMinutes!)}
+            </span>
+          )
         )}
       </div>
     </button>

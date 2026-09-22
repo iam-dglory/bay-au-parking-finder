@@ -8,6 +8,7 @@ describe('getSignOptionsForCountry', () => {
 
     const australia = getSignOptionsForCountry('Australia')
     expect(australia.some((o) => o.type === 'NO_STOPPING_CLEARWAY' && o.label.toLowerCase().includes('clearway'))).toBe(true)
+    expect(australia.some((o) => o.type === 'ACCESSIBLE_PERMIT')).toBe(true)
   })
 
   it('is case- and whitespace-insensitive', () => {

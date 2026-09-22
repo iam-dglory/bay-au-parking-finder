@@ -1,12 +1,25 @@
 import { useState } from 'react'
-import { X, Car, CircleCheck, Navigation, Bookmark, Clock } from 'lucide-react'
+import { X, Car, CircleCheck, Navigation, TriangleAlert, Clock3, Info, Camera as CameraIcon, Radio } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
 import { formatMoney } from '../lib/money'
 import { logVisit } from '../lib/visits'
-import { getOccupancyInfo, formatOccupancyAge, submitOccupancyPing } from '../lib/occupancy'
-import { getClaimInfo, submitClaim, CLAIM_DURATION_MINUTES } from '../lib/claims'
+import {
+  getOccupancyInfo,
+  getSensorOccupancyInfo,
+  formatOccupancyAge,
+  formatMinutesAgo,
+  formatCorroboration,
+  submitOccupancyPing,
+  TooFarAwayError,
+  OCCUPANCY_PROXIMITY_METERS,
+  OCCUPANCY_CORROBORATION_THRESHOLD,
+} from '../lib/occupancy'
+import { getBrowserLocation, LocationError } from '../lib/geolocation'
+import { formatMaxStay } from '../lib/formatDuration'
+import { haversineMeters } from '../lib/distance'
+import { captureSignPhoto, uploadSignPhoto, type CapturedPhoto } from '../lib/photos'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -37,27 +50,49 @@ export function SpotDetailSheet({
   onUpdated?: () => void
 }) {
   const [pinging, setPinging] = useState(false)
-  const [booking, setBooking] = useState(false)
+  const [pingError, setPingError] = useState<string | null>(null)
+  const [attachedPhoto, setAttachedPhoto] = useState<CapturedPhoto | null>(null)
+  const [capturingPhoto, setCapturingPhoto] = useState(false)
 
   if (!spot) return null
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`
   const occupancy = getOccupancyInfo(spot.latest_ping)
-  const claim = getClaimInfo(spot.latest_claim)
-  const canBook = spot.status.status !== 'restricted'
+  const confirmed = occupancy.corroboratingCount >= OCCUPANCY_CORROBORATION_THRESHOLD
+  const corroboration = formatCorroboration(occupancy.corroboratingCount)
+  const sensor = getSensorOccupancyInfo(spot.sensor_status)
+
+  async function handleAttachPhoto() {
+    setCapturingPhoto(true)
+    const captured = await captureSignPhoto('Photo as proof (optional)')
+    if (captured) setAttachedPhoto(captured)
+    setCapturingPhoto(false)
+  }
 
   async function handlePing(status: 'occupied' | 'free') {
     setPinging(true)
-    await submitOccupancyPing(spot!.id, status)
-    setPinging(false)
-    onUpdated?.()
-  }
+    setPingError(null)
+    try {
+      const pos = await getBrowserLocation()
+      const reporterLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+      if (haversineMeters({ lat: spot!.lat, lng: spot!.lng }, reporterLocation) > OCCUPANCY_PROXIMITY_METERS) {
+        throw new TooFarAwayError()
+      }
 
-  async function handleBook() {
-    setBooking(true)
-    await submitClaim(spot!.id)
-    logVisit(spot!.id, spot!.address_text, spot!.country)
-    setBooking(false)
-    onUpdated?.()
+      const photoUrl = attachedPhoto ? await uploadSignPhoto(attachedPhoto) : undefined
+      await submitOccupancyPing(spot!.id, status, { lat: spot!.lat, lng: spot!.lng }, reporterLocation, photoUrl)
+      setAttachedPhoto(null)
+      onUpdated?.()
+    } catch (err) {
+      if (err instanceof LocationError) {
+        setPingError("Couldn't confirm your location. Check location access and try again.")
+      } else if (err instanceof Error) {
+        setPingError(err.message)
+      } else {
+        setPingError('Something went wrong. Try again.')
+      }
+    } finally {
+      setPinging(false)
+    }
   }
 
   return (
@@ -70,45 +105,77 @@ export function SpotDetailSheet({
           <div>
             <h2 className="text-lg font-semibold text-slate-900">{spot.address_text}</h2>
             <p className="text-sm text-slate-500">{[spot.suburb, spot.state, spot.country].filter(Boolean).join(', ')}</p>
+            {spot.kerbside_id && (
+              <p className="mt-1 text-xs font-medium text-slate-400">
+                Council bay ref: <span className="text-slate-600">{spot.kerbside_id}</span>
+              </p>
+            )}
           </div>
           <button onClick={onClose} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="Close">
             <X className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </div>
 
+        {spot.moderation_status !== 'approved' && (
+          <p className="mt-3 flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+            <Clock3 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+            {spot.moderation_status === 'pending'
+              ? "Pending review. Only you can see this until it's approved."
+              : "Not approved. This sign isn't shown publicly. Check the photo matches a real, current sign."}
+          </p>
+        )}
+
+        {spot.photo_url && (
+          <img src={spot.photo_url} alt="Photo of the parking sign" className="mt-3 h-40 w-full rounded-lg object-cover" />
+        )}
+
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusBadge status={spot.status} />
-          {occupancy.status === 'occupied' && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
-              <Car className="h-3.5 w-3.5" strokeWidth={2} /> Reported occupied · {formatOccupancyAge(occupancy.ageMinutes!)}
+          {sensor ? (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+                sensor.possiblyStuck
+                  ? 'border border-amber-300 bg-amber-50 text-amber-700'
+                  : sensor.status === 'occupied'
+                    ? 'bg-rose-100 text-rose-700'
+                    : 'bg-emerald-100 text-emerald-700'
+              }`}
+            >
+              <Radio className="h-3.5 w-3.5" strokeWidth={2} />
+              Live sensor: {sensor.status === 'occupied' ? 'Occupied' : 'Free'} · confirmed {formatMinutesAgo(sensor.confirmedAgoMinutes)}
+              {sensor.possiblyStuck ? ' · sensor offline, may be outdated' : ''}
             </span>
-          )}
-          {occupancy.status === 'free' && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
-              <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Reported free · {formatOccupancyAge(occupancy.ageMinutes!)}
-            </span>
-          )}
-          {claim.active && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">
-              <Clock className="h-3.5 w-3.5" strokeWidth={2} /> Claimed · {claim.minutesLeft} min left
-            </span>
+          ) : (
+            <>
+              {occupancy.status === 'occupied' &&
+                (confirmed ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
+                    <Car className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                    <Car className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+                  </span>
+                ))}
+              {occupancy.status === 'free' &&
+                (confirmed ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                    <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed free · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                    <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+                  </span>
+                ))}
+            </>
           )}
         </div>
 
-        <p className="mt-3 text-sm text-slate-600">{spot.status.detail}</p>
-
-        {canBook ? (
-          <button
-            onClick={handleBook}
-            disabled={booking}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
-          >
-            <Bookmark className="h-4 w-4" strokeWidth={2} />
-            {booking ? 'Booking…' : `Book this spot (holds it ${CLAIM_DURATION_MINUTES} min)`}
-          </button>
-        ) : (
-          <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">This spot can't be booked — it's restricted, not open parking.</p>
+        {occupancy.photoUrl && (
+          <img src={occupancy.photoUrl} alt="Photo attached with this report" className="mt-2 h-28 w-full rounded-lg object-cover" />
         )}
+
+        <p className="mt-3 text-sm text-slate-600">{spot.status.detail}</p>
 
         <div className="mt-3 flex gap-2">
           <button
@@ -127,6 +194,34 @@ export function SpotDetailSheet({
           </button>
         </div>
 
+        {attachedPhoto ? (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-slate-200 p-2">
+            <img src={attachedPhoto.previewUrl} alt="Photo to attach" className="h-10 w-10 rounded object-cover" />
+            <p className="flex-1 text-xs text-slate-500">Photo ready. It'll be added to your next report.</p>
+            <button onClick={() => setAttachedPhoto(null)} className="text-xs text-slate-400 hover:text-slate-600">
+              Remove
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleAttachPhoto}
+            disabled={capturingPhoto}
+            className="mt-2 flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 disabled:opacity-50"
+          >
+            <CameraIcon className="h-3.5 w-3.5" strokeWidth={2} />
+            {capturingPhoto ? 'Opening camera...' : 'Add a photo as proof (optional)'}
+          </button>
+        )}
+
+        {pingError && (
+          <p className="mt-2 flex items-start gap-1.5 text-xs text-rose-600">
+            <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} /> {pingError}
+          </p>
+        )}
+        <p className="mt-1.5 text-xs text-slate-400">
+          You need to be near this spot to report on it. A report stays unconfirmed until someone else agrees.
+        </p>
+
         <div className="mt-4 space-y-2">
           <h3 className="text-sm font-semibold text-slate-700">Signed rules</h3>
           {spot.rules.length === 0 && <p className="text-sm text-slate-500">No rules recorded yet.</p>}
@@ -137,12 +232,17 @@ export function SpotDetailSheet({
                 {formatDays(rule.days_active)}
                 {rule.time_from && rule.time_to ? ` · ${formatTimeStr(rule.time_from)}–${formatTimeStr(rule.time_to)}` : ''}
               </p>
-              {rule.max_stay_minutes && <p className="text-slate-500">Max stay: {rule.max_stay_minutes / 60}h</p>}
+              {rule.max_stay_minutes && <p className="text-slate-500">Max stay: {formatMaxStay(rule.max_stay_minutes)}</p>}
               {rule.price_per_hour != null && <p className="text-slate-500">{formatMoney(rule.currency ?? 'USD', rule.price_per_hour)}/hr</p>}
               {rule.notes && <p className="mt-1 text-slate-400 italic">{rule.notes}</p>}
             </div>
           ))}
         </div>
+
+        <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+          Community-sourced. Always confirm with the physical sign before parking.
+        </p>
 
         <a
           href={directionsUrl}

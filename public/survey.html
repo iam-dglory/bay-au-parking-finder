@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bay feedback survey</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  header {
+    background: #0f172a;
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  header .logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  header .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  header h1 { margin: 4px 0 2px; font-size: 20px; }
+  header p { margin: 0; color: #94a3b8; font-size: 13px; }
+  main { max-width: 480px; margin: 0 auto; padding: 20px 16px 60px; }
+  .field { margin-bottom: 22px; }
+  label.title { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .hint { font-size: 12px; color: #64748b; margin: -4px 0 8px; }
+  .stars { display: flex; gap: 4px; }
+  .stars button {
+    background: none; border: none; cursor: pointer; padding: 4px; font-size: 28px;
+    color: #cbd5e1; line-height: 1;
+  }
+  .stars button.filled { color: #fbbf24; }
+  .na-toggle { margin-top: 6px; font-size: 12px; color: #64748b; }
+  .na-toggle label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  textarea, input[type=text] {
+    width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px;
+    font-size: 14px; font-family: inherit; resize: vertical;
+  }
+  textarea:focus, input:focus { outline: none; border-color: #64748b; }
+  .required { color: #e11d48; }
+  button.submit {
+    width: 100%; background: #0f172a; color: white; border: none; border-radius: 12px;
+    padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  button.submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .error { color: #e11d48; font-size: 13px; margin-top: 8px; }
+  .done { text-align: center; padding: 60px 20px; }
+  .done .check { font-size: 48px; color: #10b981; }
+  .done h2 { margin: 12px 0 4px; }
+  .done p { color: #64748b; font-size: 14px; }
+  #form.hidden, .done.hidden { display: none; }
+  .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin: 32px 0 16px; }
+  .section-label:first-of-type { margin-top: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pills button {
+    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 999px; padding: 8px 16px;
+    font-size: 14px; font-family: inherit; cursor: pointer; color: #334155;
+  }
+  .pills button.selected { background: #0f172a; border-color: #0f172a; color: white; }
+  .key-question { background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-bottom: 22px; }
+  .key-question label.title { color: #1e3a8a; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="logo/bay-logo.png" alt="Bay" /></div>
+  <h1>Bay feedback survey</h1>
+  <p>A few minutes of your time helps us fix what's broken and build what's missing.</p>
+</header>
+<main>
+  <form id="form">
+    <div class="section-label">About your trip</div>
+
+    <div class="field">
+      <label class="title">Where did you start from?</label>
+      <input type="text" data-field="trip_start" placeholder="e.g. home in Brunswick" />
+    </div>
+
+    <div class="field">
+      <label class="title">Where were you going?</label>
+      <input type="text" data-field="trip_destination" placeholder="e.g. a meeting in the CBD" />
+    </div>
+
+    <div class="field">
+      <label class="title">Did Bay help you find parking?</label>
+      <div class="pills" data-pill-field="bay_helped_find_parking">
+        <button type="button" data-value="Yes">Yes</button>
+        <button type="button" data-value="Partially">Partially</button>
+        <button type="button" data-value="No">No</button>
+        <button type="button" data-value="Didn't get that far">Didn't get that far</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">Did the information match what you actually saw?</label>
+      <div class="pills" data-pill-field="info_matched_reality">
+        <button type="button" data-value="Yes">Yes</button>
+        <button type="button" data-value="Mostly">Mostly</button>
+        <button type="button" data-value="No">No</button>
+        <button type="button" data-value="Didn't check">Didn't check</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">Did you find the interface confusing?</label>
+      <div class="pills" data-pill-field="ui_confusing">
+        <button type="button" data-value="No, it was clear">No, it was clear</button>
+        <button type="button" data-value="A bit">A bit</button>
+        <button type="button" data-value="Yes, quite confusing">Yes, quite confusing</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">Did you encounter a bay that was actually full or unavailable despite Bay saying otherwise?</label>
+      <div class="pills" data-pill-field="encountered_full_bay">
+        <button type="button" data-value="Yes">Yes</button>
+        <button type="button" data-value="No">No</button>
+        <button type="button" data-value="Not sure">Not sure</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">Would you use Bay again?</label>
+      <div class="pills" data-pill-field="would_use_again">
+        <button type="button" data-value="Yes">Yes</button>
+        <button type="button" data-value="Maybe">Maybe</button>
+        <button type="button" data-value="No">No</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">What's one thing you expected Bay to do, but it couldn't?</label>
+      <textarea data-field="expected_but_missing" rows="2"></textarea>
+    </div>
+
+    <div class="key-question">
+      <label class="title">What made you stop using Bay? (if you did)</label>
+      <p class="hint">Be as blunt as you like — this is the single most useful thing you can tell us.</p>
+      <textarea data-field="what_made_you_stop" rows="3"></textarea>
+    </div>
+
+    <div class="section-label">Rate your experience</div>
+
+    <div class="field">
+      <label class="title">Overall, how would you rate Bay so far? <span class="required">*</span></label>
+      <div class="stars" data-field="overall_rating"></div>
+    </div>
+
+    <div class="field">
+      <label class="title">How easy was it to find parking near you?</label>
+      <div class="stars" data-field="ease_of_finding_parking"></div>
+      <div class="na-toggle"><label><input type="checkbox" data-na="ease_of_finding_parking" /> Haven't tried this yet</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">How accurate did the parking sign info seem, compared to what you actually saw?</label>
+      <div class="stars" data-field="accuracy_rating"></div>
+      <div class="na-toggle"><label><input type="checkbox" data-na="accuracy_rating" /> Couldn't check / not sure</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">How well did the app detect your location?</label>
+      <div class="stars" data-field="location_detection_rating"></div>
+      <div class="na-toggle"><label><input type="checkbox" data-na="location_detection_rating" /> Haven't tried this yet</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">If you used "Mark occupied / Mark free", how useful was it?</label>
+      <div class="stars" data-field="occupancy_feature_rating"></div>
+      <div class="na-toggle"><label><input type="checkbox" data-na="occupancy_feature_rating" /> Haven't used it</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">How helpful was the Guide page?</label>
+      <div class="stars" data-field="guide_helpfulness_rating"></div>
+      <div class="na-toggle"><label><input type="checkbox" data-na="guide_helpfulness_rating" /> Haven't opened it</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">How likely are you to recommend Bay to someone who parks in the city?</label>
+      <div class="stars" data-field="recommend_rating"></div>
+    </div>
+
+    <div class="section-label">Open feedback</div>
+
+    <div class="field">
+      <label class="title">What's the most useful part of the app so far?</label>
+      <textarea data-field="most_useful_feature" rows="2"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">What's the most confusing or frustrating part?</label>
+      <textarea data-field="most_confusing_part" rows="2"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">Did you run into any bugs or something that seemed wrong? Describe it.</label>
+      <textarea data-field="bugs_encountered" rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">What feature do you wish Bay had?</label>
+      <textarea data-field="missing_features" rows="2"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">Anything else you'd like to tell us?</label>
+      <textarea data-field="additional_comments" rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">Your tester number, if you know it (optional)</label>
+      <p class="hint">Shown as "Hi, Test User N" when you open Bay. Helps us match feedback to what we can see in the logs.</p>
+      <input type="text" inputmode="numeric" data-field="tester_number_claimed" placeholder="e.g. 3" />
+    </div>
+
+    <p id="error" class="error" style="display:none"></p>
+    <button type="submit" class="submit" id="submitBtn">Submit feedback</button>
+  </form>
+
+  <div class="done hidden" id="done">
+    <div class="check">&#10003;</div>
+    <h2>Thanks for taking the time.</h2>
+    <p>This is exactly the kind of detail that helps us fix and improve Bay.</p>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://ezwiagssiuvmhayvsmbk.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah';
+
+  const RATING_FIELDS = [
+    'overall_rating',
+    'ease_of_finding_parking',
+    'accuracy_rating',
+    'location_detection_rating',
+    'occupancy_feature_rating',
+    'guide_helpfulness_rating',
+    'recommend_rating',
+  ];
+
+  const ratingValues = {};
+
+  RATING_FIELDS.forEach((field) => {
+    const container = document.querySelector(`.stars[data-field="${field}"]`);
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = '★';
+      btn.addEventListener('click', () => {
+        ratingValues[field] = i;
+        [...container.children].forEach((c, idx) => c.classList.toggle('filled', idx < i));
+      });
+      container.appendChild(btn);
+    }
+  });
+
+  const pillValues = {};
+
+  document.querySelectorAll('[data-pill-field]').forEach((group) => {
+    const field = group.dataset.pillField;
+    [...group.children].forEach((btn) => {
+      btn.addEventListener('click', () => {
+        pillValues[field] = btn.dataset.value;
+        [...group.children].forEach((b) => b.classList.toggle('selected', b === btn));
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-na]').forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      const field = checkbox.dataset.na;
+      const container = document.querySelector(`.stars[data-field="${field}"]`);
+      if (checkbox.checked) {
+        delete ratingValues[field];
+        [...container.children].forEach((c) => c.classList.remove('filled'));
+        container.style.opacity = '0.35';
+        container.style.pointerEvents = 'none';
+      } else {
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+      }
+    });
+  });
+
+  const form = document.getElementById('form');
+  const errorEl = document.getElementById('error');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+
+    if (!ratingValues.overall_rating) {
+      errorEl.textContent = 'Please give an overall rating before submitting.';
+      errorEl.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const payload = { ...ratingValues, ...pillValues };
+    document.querySelectorAll('textarea[data-field], input[type=text][data-field]').forEach((el) => {
+      const val = el.value.trim();
+      if (val) payload[el.dataset.field] = val;
+    });
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/app_survey_responses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Request failed (${res.status})`);
+      }
+      form.classList.add('hidden');
+      document.getElementById('done').classList.remove('hidden');
+    } catch (err) {
+      errorEl.textContent = "Couldn't submit right now. Please try again in a moment.";
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit feedback';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Country from 'country-state-city/lib/country'
 import State from 'country-state-city/lib/state'
-import { MapPin, LocateFixed, ChevronDown, Search, Loader2, TriangleAlert } from 'lucide-react'
+import { LocateFixed, ChevronDown, Search, Loader2, TriangleAlert } from 'lucide-react'
 import { searchCities, type CitySearchResult } from '../lib/geocoding'
+import { LocationError } from '../lib/geolocation'
+import { LOGO_URL } from '../lib/assets'
 
 const ALL_COUNTRIES = Country.getAllCountries()
 const DEFAULT_COUNTRY = 'AU'
@@ -22,6 +24,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const states = useMemo(() => State.getStatesOfCountry(countryCode), [countryCode])
+  const selectedStateName = useMemo(() => states.find((s) => s.isoCode === stateCode)?.name, [states, stateCode])
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -31,14 +34,14 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     }
     setSearching(true)
     debounceRef.current = setTimeout(async () => {
-      const found = await searchCities(citySearch, countryCode)
+      const found = await searchCities(citySearch, countryCode, selectedStateName)
       setResults(found)
       setSearching(false)
     }, SEARCH_DEBOUNCE_MS)
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [citySearch, countryCode])
+  }, [citySearch, countryCode, selectedStateName])
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -67,20 +70,35 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     setGpsError(null)
     try {
       await onUseGps()
-    } catch {
-      setGpsError("Couldn't get your location. Check that location access is allowed for this app, or search for your city below.")
+    } catch (err) {
+      const reason = err instanceof LocationError ? err.reason : undefined
+      if (reason === 'permission_denied') {
+        setGpsError(
+          "Location access is turned off for Bay. Open your phone's Settings → Apps → Bay → Permissions → Location, allow it, then try again, or search for your city below.",
+        )
+      } else if (reason === 'timeout') {
+        setGpsError("Location took too long to respond. You may be indoors or have a weak GPS signal. Try again, or search for your city below.")
+      } else {
+        setGpsError("Couldn't get your location. Check that location access is allowed for this app, or search for your city below.")
+      }
     } finally {
       setLocating(false)
     }
   }
 
   return (
-    <div className="flex h-full flex-col items-center overflow-y-auto bg-white px-6 py-10 text-center">
-      <div className="flex w-full max-w-sm flex-1 flex-col justify-center gap-8">
+    <div className="flex h-full flex-col overflow-y-auto bg-white text-center">
+      <div className="flex shrink-0 flex-col items-center gap-2 bg-slate-900 px-6 py-9">
+        <div className="flex items-center gap-2">
+          <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl" />
+          <span className="text-2xl font-semibold tracking-tight text-white">Bay</span>
+        </div>
+        <p className="text-sm text-slate-300">Find real parking, everywhere.</p>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center px-6 py-8">
+      <div className="flex w-full max-w-sm flex-col gap-8 pt-4">
         <div className="flex flex-col items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900">
-            <MapPin className="h-6 w-6 text-white" strokeWidth={2} />
-          </div>
           <h1 className="text-xl font-semibold text-slate-900">Where are you parking?</h1>
           <p className="text-sm text-slate-500">Search any city or suburb, worldwide.</p>
         </div>
@@ -170,7 +188,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
             </div>
             {showSuggestions && citySearch.trim() && (
               <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-                {!searching && results.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">No matches — try a different spelling.</p>}
+                {!searching && results.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">No matches. Try a different spelling.</p>}
                 {results.map((c, i) => (
                   <button
                     key={`${c.name}-${c.lat}-${c.lng}-${i}`}
@@ -184,6 +202,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

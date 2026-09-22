@@ -1,0 +1,2290 @@
+[
+  {
+    "census_year": "2024",
+    "block_id": 6,
+    "property_id": "578328",
+    "base_property_id": "573333",
+    "building_address": "Carpark Federation Square 2 Swanston Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 450,
+    "longitude": 144.969917465,
+    "latitude": -37.81784465,
+    "location": {
+      "lon": 144.969917465,
+      "lat": -37.81784465
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 11,
+    "property_id": "103957",
+    "base_property_id": "103957",
+    "building_address": "517-537 Flinders Lane MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 117,
+    "longitude": 144.956601666,
+    "latitude": -37.81988483,
+    "location": {
+      "lon": 144.956601666,
+      "lat": -37.81988483
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 12,
+    "property_id": "103997",
+    "base_property_id": "103997",
+    "building_address": "472-482 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 330,
+    "longitude": 144.958272108,
+    "latitude": -37.81974183,
+    "location": {
+      "lon": 144.958272108,
+      "lat": -37.81974183
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 12,
+    "property_id": "110091",
+    "base_property_id": "110091",
+    "building_address": "15-33 William Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 300,
+    "longitude": 144.959187534,
+    "latitude": -37.8192157,
+    "location": {
+      "lon": 144.959187534,
+      "lat": -37.8192157
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 14,
+    "property_id": "101099",
+    "base_property_id": "101099",
+    "building_address": "16-26 Bond Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 461,
+    "longitude": 144.963057442,
+    "latitude": -37.81814577,
+    "location": {
+      "lon": 144.963057442,
+      "lat": -37.81814577
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 17,
+    "property_id": "103592",
+    "base_property_id": "103592",
+    "building_address": "11-37 Exhibition Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 200,
+    "longitude": 144.971726206,
+    "latitude": -37.81546152,
+    "location": {
+      "lon": 144.971726206,
+      "lat": -37.81546152
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 17,
+    "property_id": "104025",
+    "base_property_id": "104025",
+    "building_address": "114-128 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 1275,
+    "longitude": 144.970735282,
+    "latitude": -37.81595762,
+    "location": {
+      "lon": 144.970735282,
+      "lat": -37.81595762
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 17,
+    "property_id": "574438",
+    "base_property_id": "574438",
+    "building_address": "84-94 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 56,
+    "longitude": 144.971675624,
+    "latitude": -37.81587662,
+    "location": {
+      "lon": 144.971675624,
+      "lat": -37.81587662
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 18,
+    "property_id": "513723",
+    "base_property_id": "513723",
+    "building_address": "1-17 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 60,
+    "longitude": 144.975130993,
+    "latitude": -37.81552595,
+    "location": {
+      "lon": 144.975130993,
+      "lat": -37.81552595
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 22,
+    "property_id": "705123",
+    "base_property_id": "102104",
+    "building_address": "Podium Rialto 525 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 536,
+    "longitude": 144.957538457,
+    "latitude": -37.81866171,
+    "location": {
+      "lon": 144.957538457,
+      "lat": -37.81866171
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 23,
+    "property_id": "102099",
+    "base_property_id": "102099",
+    "building_address": "419-429 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 33,
+    "longitude": 144.960653096,
+    "latitude": -37.81752881,
+    "location": {
+      "lon": 144.960653096,
+      "lat": -37.81752881
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 25,
+    "property_id": "110857",
+    "base_property_id": "110857",
+    "building_address": "233-239 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 75,
+    "longitude": 144.966088099,
+    "latitude": -37.81602805,
+    "location": {
+      "lon": 144.966088099,
+      "lat": -37.81602805
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 26,
+    "property_id": "102073",
+    "base_property_id": "102073",
+    "building_address": "141-165 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 350,
+    "longitude": 144.968755295,
+    "latitude": -37.81543178,
+    "location": {
+      "lon": 144.968755295,
+      "lat": -37.81543178
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 27,
+    "property_id": "597183",
+    "base_property_id": "102071",
+    "building_address": "Grand Hyatt Melbourne Retail 121-131 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 620,
+    "longitude": 144.969846661,
+    "latitude": -37.81516811,
+    "location": {
+      "lon": 144.969846661,
+      "lat": -37.81516811
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 28,
+    "property_id": "102057",
+    "base_property_id": "102057",
+    "building_address": "1-9 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 18,
+    "longitude": 144.973720068,
+    "latitude": -37.81372701,
+    "location": {
+      "lon": 144.973720068,
+      "lat": -37.81372701
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 31,
+    "property_id": "108968",
+    "base_property_id": "108968",
+    "building_address": "613-639 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 300,
+    "longitude": 144.954365839,
+    "latitude": -37.81818484,
+    "location": {
+      "lon": 144.954365839,
+      "lat": -37.81818484
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 37,
+    "property_id": "102155",
+    "base_property_id": "102155",
+    "building_address": "106-120 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 327,
+    "longitude": 144.969379679,
+    "latitude": -37.81398456,
+    "location": {
+      "lon": 144.969379679,
+      "lat": -37.81398456
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 43,
+    "property_id": "110146",
+    "base_property_id": "110146",
+    "building_address": "130-148 William Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 236,
+    "longitude": 144.958939222,
+    "latitude": -37.81595642,
+    "location": {
+      "lon": 144.958939222,
+      "lat": -37.81595642
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 44,
+    "property_id": "597186",
+    "base_property_id": "101146",
+    "building_address": "Galleria 385 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 213,
+    "longitude": 144.962944195,
+    "latitude": -37.81491502,
+    "location": {
+      "lon": 144.962944195,
+      "lat": -37.81491502
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 47,
+    "property_id": "625840",
+    "base_property_id": "103597",
+    "building_address": "111-129 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 398,
+    "longitude": 144.970109211,
+    "latitude": -37.81281453,
+    "location": {
+      "lon": 144.970109211,
+      "lat": -37.81281453
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 48,
+    "property_id": "105969",
+    "base_property_id": "105969",
+    "building_address": "34-60 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 932,
+    "longitude": 144.971918925,
+    "latitude": -37.81246632,
+    "location": {
+      "lon": 144.971918925,
+      "lat": -37.81246632
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 48,
+    "property_id": "105970",
+    "base_property_id": "105970",
+    "building_address": "22-32 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 25,
+    "longitude": 144.972561488,
+    "latitude": -37.81244283,
+    "location": {
+      "lon": 144.972561488,
+      "lat": -37.81244283
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 53,
+    "property_id": "108074",
+    "base_property_id": "108074",
+    "building_address": "185-199 Queen Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 98,
+    "longitude": 144.959968648,
+    "latitude": -37.81428585,
+    "location": {
+      "lon": 144.959968648,
+      "lat": -37.81428585
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 54,
+    "property_id": "101187",
+    "base_property_id": "101187",
+    "building_address": "392-406 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 308,
+    "longitude": 144.961756204,
+    "latitude": -37.81416355,
+    "location": {
+      "lon": 144.961756204,
+      "lat": -37.81416355
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 57,
+    "property_id": "101219",
+    "base_property_id": "101219",
+    "building_address": "The Paramount 100-116 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 418,
+    "longitude": 144.969777753,
+    "latitude": -37.81170307,
+    "location": {
+      "lon": 144.969777753,
+      "lat": -37.81170307
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 57,
+    "property_id": "108584",
+    "base_property_id": "108584",
+    "building_address": "170-190 Russell Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 409,
+    "longitude": 144.968139068,
+    "latitude": -37.81199368,
+    "location": {
+      "lon": 144.968139068,
+      "lat": -37.81199368
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 62,
+    "property_id": "105862",
+    "base_property_id": "105862",
+    "building_address": "542-546 Little Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 373,
+    "longitude": 144.956367186,
+    "latitude": -37.81477885,
+    "location": {
+      "lon": 144.956367186,
+      "lat": -37.81477885
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 65,
+    "property_id": "103312",
+    "base_property_id": "103312",
+    "building_address": "222-260 Elizabeth Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 205,
+    "longitude": 144.962878241,
+    "latitude": -37.81261442,
+    "location": {
+      "lon": 144.962878241,
+      "lat": -37.81261442
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 66,
+    "property_id": "105693",
+    "base_property_id": "105693",
+    "building_address": "217-231 Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 390,
+    "longitude": 144.965886757,
+    "latitude": -37.8117591,
+    "location": {
+      "lon": 144.965886757,
+      "lat": -37.8117591
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 67,
+    "property_id": "108582",
+    "base_property_id": "108582",
+    "building_address": "Mantra On Russell 210-222 Russell Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 427,
+    "longitude": 144.967994718,
+    "latitude": -37.81132789,
+    "location": {
+      "lon": 144.967994718,
+      "lat": -37.81132789
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 68,
+    "property_id": "103620",
+    "base_property_id": "103620",
+    "building_address": "196-226 Exhibition Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 479,
+    "longitude": 144.97049616,
+    "latitude": -37.81055707,
+    "location": {
+      "lon": 144.97049616,
+      "lat": -37.81055707
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 83,
+    "property_id": "105457",
+    "base_property_id": "105457",
+    "building_address": "371-389 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 447,
+    "longitude": 144.958131312,
+    "latitude": -37.81163718,
+    "location": {
+      "lon": 144.958131312,
+      "lat": -37.81163718
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 85,
+    "property_id": "105745",
+    "base_property_id": "103309",
+    "building_address": "322 Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 312,
+    "longitude": 144.962604413,
+    "latitude": -37.81157761,
+    "location": {
+      "lon": 144.962604413,
+      "lat": -37.81157761
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 85,
+    "property_id": "105746",
+    "base_property_id": "105746",
+    "building_address": "Melbourne Central 183-265 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 722,
+    "longitude": 144.963018917,
+    "latitude": -37.81073331,
+    "location": {
+      "lon": 144.963018917,
+      "lat": -37.81073331
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 91,
+    "property_id": "105467",
+    "base_property_id": "105467",
+    "building_address": "496-508 La Trobe Street WEST MELBOURNE VIC 3003",
+    "clue_small_area": "West Melbourne (Residential)",
+    "parking_type": "Commercial",
+    "parking_spaces": 63,
+    "longitude": 144.952095474,
+    "latitude": -37.8125726,
+    "location": {
+      "lon": 144.952095474,
+      "lat": -37.8125726
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 94,
+    "property_id": "105484",
+    "base_property_id": "105484",
+    "building_address": "296-310 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 531,
+    "longitude": 144.960434848,
+    "latitude": -37.81010387,
+    "location": {
+      "lon": 144.960434848,
+      "lat": -37.81010387
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 97,
+    "property_id": "103615",
+    "base_property_id": "103615",
+    "building_address": "333-351 Exhibition Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 742,
+    "longitude": 144.968026666,
+    "latitude": -37.8078604,
+    "location": {
+      "lon": 144.968026666,
+      "lat": -37.8078604
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 97,
+    "property_id": "105491",
+    "base_property_id": "105491",
+    "building_address": "58-66 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 23,
+    "longitude": 144.966943315,
+    "latitude": -37.80829662,
+    "location": {
+      "lon": 144.966943315,
+      "lat": -37.80829662
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 131,
+    "property_id": "103978",
+    "base_property_id": "103978",
+    "building_address": "18-38 Siddeley Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 290,
+    "longitude": 144.953818379,
+    "latitude": -37.82273183,
+    "location": {
+      "lon": 144.953818379,
+      "lat": -37.82273183
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 131,
+    "property_id": "103979",
+    "base_property_id": "103979",
+    "building_address": "Melbourne Convention Centre Carpark 671-701 Flinders Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 588,
+    "longitude": 144.952176926,
+    "latitude": -37.82233869,
+    "location": {
+      "lon": 144.952176926,
+      "lat": -37.82233869
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 204,
+    "property_id": "591507",
+    "base_property_id": "591507",
+    "building_address": "MU Eastern Precinct Carpark 375 Cardigan Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 722,
+    "longitude": 144.965634842,
+    "latitude": -37.79761356,
+    "location": {
+      "lon": 144.965634842,
+      "lat": -37.79761356
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 205,
+    "property_id": "642282",
+    "base_property_id": "642282",
+    "building_address": "265-281 Faraday Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 460,
+    "longitude": 144.964979943,
+    "latitude": -37.79893423,
+    "location": {
+      "lon": 144.964979943,
+      "lat": -37.79893423
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 319,
+    "property_id": "703218",
+    "base_property_id": "106292",
+    "building_address": "Arden Plaza & Offices 111-133 Canning Street NORTH MELBOURNE VIC 3051",
+    "clue_small_area": "North Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 328,
+    "longitude": 144.940736597,
+    "latitude": -37.79616005,
+    "location": {
+      "lon": 144.940736597,
+      "lat": -37.79616005
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 375,
+    "property_id": "101095",
+    "base_property_id": "101095",
+    "building_address": "14-20 Blackwood Street NORTH MELBOURNE VIC 3051",
+    "clue_small_area": "North Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 331,
+    "longitude": 144.955157789,
+    "latitude": -37.80175068,
+    "location": {
+      "lon": 144.955157789,
+      "lat": -37.80175068
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 613,
+    "property_id": "593695",
+    "base_property_id": "109643",
+    "building_address": "The Albert 158 Albert Street EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 60,
+    "longitude": 144.985625385,
+    "latitude": -37.81004656,
+    "location": {
+      "lon": 144.985625385,
+      "lat": -37.81004656
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 614,
+    "property_id": "104535",
+    "base_property_id": "104535",
+    "building_address": "94-106 Grey Street EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 450,
+    "longitude": 144.985158308,
+    "latitude": -37.81142372,
+    "location": {
+      "lon": 144.985158308,
+      "lat": -37.81142372
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 644,
+    "property_id": "109669",
+    "base_property_id": "109669",
+    "building_address": "68-90 Victoria Parade EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 500,
+    "longitude": 144.974276441,
+    "latitude": -37.80855929,
+    "location": {
+      "lon": 144.974276441,
+      "lat": -37.80855929
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 660,
+    "property_id": "602280",
+    "base_property_id": "109256",
+    "building_address": "Carpark Olympic Park 90 Olympic Boulevard MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 154,
+    "longitude": 144.982385438,
+    "latitude": -37.82487805,
+    "location": {
+      "lon": 144.982385438,
+      "lat": -37.82487805
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 720,
+    "property_id": "108627",
+    "base_property_id": "108627",
+    "building_address": "415-421 St Kilda Road MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 98,
+    "longitude": 144.977042736,
+    "latitude": -37.83774552,
+    "location": {
+      "lon": 144.977042736,
+      "lat": -37.83774552
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 736,
+    "property_id": "706735",
+    "base_property_id": "110408",
+    "building_address": "18 Hoff Boulevard SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 117,
+    "longitude": 144.963565642,
+    "latitude": -37.82580013,
+    "location": {
+      "lon": 144.963565642,
+      "lat": -37.82580013
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 736,
+    "property_id": "110412",
+    "base_property_id": "110412",
+    "building_address": "127-129 Kavanagh Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 60,
+    "longitude": 144.962021758,
+    "latitude": -37.82660069,
+    "location": {
+      "lon": 144.962021758,
+      "lat": -37.82660069
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 760,
+    "property_id": "108645",
+    "base_property_id": "108645",
+    "building_address": "517 St Kilda Road MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 8,
+    "longitude": 144.979312384,
+    "latitude": -37.84459472,
+    "location": {
+      "lon": 144.979312384,
+      "lat": -37.84459472
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 801,
+    "property_id": "110325",
+    "base_property_id": "110325",
+    "building_address": "2 Riverside Quay SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 575,
+    "longitude": 144.963338023,
+    "latitude": -37.82132921,
+    "location": {
+      "lon": 144.963338023,
+      "lat": -37.82132921
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 804,
+    "property_id": "110527",
+    "base_property_id": "110484",
+    "building_address": "South Wharf Carpark 15 Convention Centre Place SOUTH WHARF VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 1150,
+    "longitude": 144.952378154,
+    "latitude": -37.82539976,
+    "location": {
+      "lon": 144.952378154,
+      "lat": -37.82539976
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 804,
+    "property_id": "623557",
+    "base_property_id": "110484",
+    "building_address": "Melbourne Exhibition Centre 2 Clarendon Street SOUTH WHARF VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 1696,
+    "longitude": 144.952378154,
+    "latitude": -37.82539976,
+    "location": {
+      "lon": 144.952378154,
+      "lat": -37.82539976
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 806,
+    "property_id": "110469",
+    "base_property_id": "640947",
+    "building_address": "Crown Casino Carpark 25-29 Clarke Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 3100,
+    "longitude": 144.958342688,
+    "latitude": -37.82559018,
+    "location": {
+      "lon": 144.958342688,
+      "lat": -37.82559018
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 931,
+    "property_id": "103908",
+    "base_property_id": "103908",
+    "building_address": "Royal Childrens Hospital 48-50 Flemington Road PARKVILLE VIC 3052",
+    "clue_small_area": "Parkville",
+    "parking_type": "Commercial",
+    "parking_spaces": 2000,
+    "longitude": 144.949547006,
+    "latitude": -37.79372054,
+    "location": {
+      "lon": 144.949547006,
+      "lat": -37.79372054
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1101,
+    "property_id": "108973",
+    "base_property_id": "108973",
+    "building_address": "Southern Cross Station 85-161 Spencer Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 154,
+    "longitude": 144.952339293,
+    "latitude": -37.81815357,
+    "location": {
+      "lon": 144.952339293,
+      "lat": -37.81815357
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1101,
+    "property_id": "110843",
+    "base_property_id": "110843",
+    "building_address": "Spencer Outlet Centre 163-261 Spencer Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 583,
+    "longitude": 144.951186966,
+    "latitude": -37.81501701,
+    "location": {
+      "lon": 144.951186966,
+      "lat": -37.81501701
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1105,
+    "property_id": "578096",
+    "base_property_id": "578096",
+    "building_address": "715-727 Bourke Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 300,
+    "longitude": 144.950258352,
+    "latitude": -37.81864991,
+    "location": {
+      "lon": 144.950258352,
+      "lat": -37.81864991
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1105,
+    "property_id": "598590",
+    "base_property_id": "598590",
+    "building_address": "720-750 Collins Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 430,
+    "longitude": 144.949273602,
+    "latitude": -37.81999403,
+    "location": {
+      "lon": 144.949273602,
+      "lat": -37.81999403
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1108,
+    "property_id": "573414",
+    "base_property_id": "573414",
+    "building_address": "National@Docklands 788-812 Bourke Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 60,
+    "longitude": 144.945122417,
+    "latitude": -37.81888389,
+    "location": {
+      "lon": 144.945122417,
+      "lat": -37.81888389
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1108,
+    "property_id": "609481",
+    "base_property_id": "609481",
+    "building_address": "EXO Apartments 33-61 Merchant Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 573,
+    "longitude": 144.943788121,
+    "latitude": -37.82092615,
+    "location": {
+      "lon": 144.943788121,
+      "lat": -37.82092615
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1110,
+    "property_id": "620312",
+    "base_property_id": "593737",
+    "building_address": "NW Building 23-37 Star Crescent DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 680,
+    "longitude": 144.937857365,
+    "latitude": -37.8131707,
+    "location": {
+      "lon": 144.937857365,
+      "lat": -37.8131707
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1110,
+    "property_id": "608355",
+    "base_property_id": "608355",
+    "building_address": "364-378 Docklands Drive DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 144,
+    "longitude": 144.941909182,
+    "latitude": -37.81284813,
+    "location": {
+      "lon": 144.941909182,
+      "lat": -37.81284813
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1,
+    "property_id": "108843",
+    "base_property_id": "108843",
+    "building_address": "2-92 Rebecca Walk MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 50,
+    "longitude": 144.956396886,
+    "latitude": -37.82131421,
+    "location": {
+      "lon": 144.956396886,
+      "lat": -37.82131421
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1,
+    "property_id": "611394",
+    "base_property_id": "611394",
+    "building_address": "545-557 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 139,
+    "longitude": 144.956518441,
+    "latitude": -37.82099397,
+    "location": {
+      "lon": 144.956518441,
+      "lat": -37.82099397
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 12,
+    "property_id": "103998",
+    "base_property_id": "103998",
+    "building_address": "452-470 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 296,
+    "longitude": 144.958601136,
+    "latitude": -37.81946849,
+    "location": {
+      "lon": 144.958601136,
+      "lat": -37.81946849
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 14,
+    "property_id": "103947",
+    "base_property_id": "103947",
+    "building_address": "317-323 Flinders Lane MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 55,
+    "longitude": 144.963723758,
+    "latitude": -37.81771478,
+    "location": {
+      "lon": 144.963723758,
+      "lat": -37.81771478
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 21,
+    "property_id": "103960",
+    "base_property_id": "103960",
+    "building_address": "522-552 Flinders Lane MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 1001,
+    "longitude": 144.955922861,
+    "latitude": -37.81942855,
+    "location": {
+      "lon": 144.955922861,
+      "lat": -37.81942855
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 24,
+    "property_id": "102089",
+    "base_property_id": "102089",
+    "building_address": "327-343 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 169,
+    "longitude": 144.963253733,
+    "latitude": -37.81706704,
+    "location": {
+      "lon": 144.963253733,
+      "lat": -37.81706704
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 31,
+    "property_id": "105945",
+    "base_property_id": "105945",
+    "building_address": "601-611 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 55,
+    "longitude": 144.954905366,
+    "latitude": -37.81802782,
+    "location": {
+      "lon": 144.954905366,
+      "lat": -37.81802782
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 43,
+    "property_id": "108068",
+    "base_property_id": "108068",
+    "building_address": "111-129 Queen Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 69,
+    "longitude": 144.960636631,
+    "latitude": -37.81581152,
+    "location": {
+      "lon": 144.960636631,
+      "lat": -37.81581152
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 46,
+    "property_id": "105963",
+    "base_property_id": "105963",
+    "building_address": "Council House 196-212 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 109,
+    "longitude": 144.96715672,
+    "latitude": -37.81384227,
+    "location": {
+      "lon": 144.96715672,
+      "lat": -37.81384227
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 62,
+    "property_id": "105861",
+    "base_property_id": "105861",
+    "building_address": "548-558 Little Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 335,
+    "longitude": 144.955942078,
+    "latitude": -37.81491966,
+    "location": {
+      "lon": 144.955942078,
+      "lat": -37.81491966
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 113,
+    "property_id": "110685",
+    "base_property_id": "108118",
+    "building_address": "Queen Victoria Market Car Park Queen Victoria Market 391 Queen Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 564,
+    "longitude": 144.957205484,
+    "latitude": -37.80765748,
+    "location": {
+      "lon": 144.957205484,
+      "lat": -37.80765748
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 115,
+    "property_id": "104101",
+    "base_property_id": "104101",
+    "building_address": "58-64 Franklin Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 360,
+    "longitude": 144.960816133,
+    "latitude": -37.80741948,
+    "location": {
+      "lon": 144.960816133,
+      "lat": -37.80741948
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 206,
+    "property_id": "101688",
+    "base_property_id": "101683",
+    "building_address": "96 Grattan Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 600,
+    "longitude": 144.966027671,
+    "latitude": -37.79970114,
+    "location": {
+      "lon": 144.966027671,
+      "lat": -37.79970114
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 218,
+    "property_id": "102675",
+    "base_property_id": "102675",
+    "building_address": "Carlton Clocktower Complex 247-253 Drummond Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 244,
+    "longitude": 144.967956866,
+    "latitude": -37.79983347,
+    "location": {
+      "lon": 144.967956866,
+      "lat": -37.79983347
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 247,
+    "property_id": "106237",
+    "base_property_id": "106237",
+    "building_address": "204-218 Lygon Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 408,
+    "longitude": 144.967142521,
+    "latitude": -37.8021884,
+    "location": {
+      "lon": 144.967142521,
+      "lat": -37.8021884
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 270,
+    "property_id": "636694",
+    "base_property_id": "104468",
+    "building_address": "Kenneth Myer Building 144 30 Royal Parade PARKVILLE VIC 3010",
+    "clue_small_area": "Parkville",
+    "parking_type": "Commercial",
+    "parking_spaces": 140,
+    "longitude": 144.961258672,
+    "latitude": -37.79738772,
+    "location": {
+      "lon": 144.961258672,
+      "lat": -37.79738772
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 345,
+    "property_id": "102379",
+    "base_property_id": "102379",
+    "building_address": "44-60 Curzon Street NORTH MELBOURNE VIC 3051",
+    "clue_small_area": "North Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 38,
+    "longitude": 144.948385979,
+    "latitude": -37.80337828,
+    "location": {
+      "lon": 144.948385979,
+      "lat": -37.80337828
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 423,
+    "property_id": "109712",
+    "base_property_id": "109712",
+    "building_address": "325-341 Victoria Street WEST MELBOURNE VIC 3003",
+    "clue_small_area": "West Melbourne (Residential)",
+    "parking_type": "Commercial",
+    "parking_spaces": 48,
+    "longitude": 144.950271795,
+    "latitude": -37.80553547,
+    "location": {
+      "lon": 144.950271795,
+      "lat": -37.80553547
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 724,
+    "property_id": "108650",
+    "base_property_id": "108650",
+    "building_address": "553 St Kilda Road MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 183,
+    "longitude": 144.980378149,
+    "latitude": -37.84685298,
+    "location": {
+      "lon": 144.980378149,
+      "lat": -37.84685298
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 748,
+    "property_id": "108658",
+    "base_property_id": "108658",
+    "building_address": "312-318 St Kilda Road SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 240,
+    "longitude": 144.970707242,
+    "latitude": -37.82912559,
+    "location": {
+      "lon": 144.970707242,
+      "lat": -37.82912559
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 753,
+    "property_id": "110606",
+    "base_property_id": "110380",
+    "building_address": "Southgate 3 Southgate Avenue SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 581,
+    "longitude": 144.966262253,
+    "latitude": -37.82066924,
+    "location": {
+      "lon": 144.966262253,
+      "lat": -37.82066924
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 801,
+    "property_id": "570659",
+    "base_property_id": "570659",
+    "building_address": "64-78 City Road SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 667,
+    "longitude": 144.965166881,
+    "latitude": -37.82171941,
+    "location": {
+      "lon": 144.965166881,
+      "lat": -37.82171941
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 802,
+    "property_id": "613006",
+    "base_property_id": "613006",
+    "building_address": "28 Freshwater Place SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 247,
+    "longitude": 144.962268843,
+    "latitude": -37.82266873,
+    "location": {
+      "lon": 144.962268843,
+      "lat": -37.82266873
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 803,
+    "property_id": "111175",
+    "base_property_id": "110477",
+    "building_address": "Crown Entertainment Complex 8 Whiteman Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 1390,
+    "longitude": 144.958660189,
+    "latitude": -37.82312164,
+    "location": {
+      "lon": 144.958660189,
+      "lat": -37.82312164
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 813,
+    "property_id": "110411",
+    "base_property_id": "110411",
+    "building_address": "The Primrose Potter Australian Ballet Centre 2-6 Kavanagh Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 436,
+    "longitude": 144.967311836,
+    "latitude": -37.82201714,
+    "location": {
+      "lon": 144.967311836,
+      "lat": -37.82201714
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 920,
+    "property_id": "104437",
+    "base_property_id": "104437",
+    "building_address": "Royal Melbourne Hospital 300-328 Grattan Street PARKVILLE VIC 3050",
+    "clue_small_area": "Parkville",
+    "parking_type": "Commercial",
+    "parking_spaces": 904,
+    "longitude": 144.955962786,
+    "latitude": -37.79854141,
+    "location": {
+      "lon": 144.955962786,
+      "lat": -37.79854141
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 920,
+    "property_id": "618951",
+    "base_property_id": "618951",
+    "building_address": "Royal Womens Hospital 18-22 Flemington Road PARKVILLE VIC 3050",
+    "clue_small_area": "Parkville",
+    "parking_type": "Commercial",
+    "parking_spaces": 958,
+    "longitude": 144.955040398,
+    "latitude": -37.79885182,
+    "location": {
+      "lon": 144.955040398,
+      "lat": -37.79885182
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1102,
+    "property_id": "588807",
+    "base_property_id": "588807",
+    "building_address": "208-226 Harbour Esplanade DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 134,
+    "longitude": 144.945225249,
+    "latitude": -37.81314287,
+    "location": {
+      "lon": 144.945225249,
+      "lat": -37.81314287
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1110,
+    "property_id": "593729",
+    "base_property_id": "593729",
+    "building_address": "The District Docklands East Car Park 50-94 Waterfront Way DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 2236,
+    "longitude": 144.939410985,
+    "latitude": -37.81220918,
+    "location": {
+      "lon": 144.939410985,
+      "lat": -37.81220918
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1110,
+    "property_id": "618853",
+    "base_property_id": "618853",
+    "building_address": "396-416 Docklands Drive DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 238,
+    "longitude": 144.940049531,
+    "latitude": -37.81332685,
+    "location": {
+      "lon": 144.940049531,
+      "lat": -37.81332685
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 620,
+    "property_id": "109652",
+    "base_property_id": "109652",
+    "building_address": "298-336 Victoria Parade EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 350,
+    "longitude": 144.982294313,
+    "latitude": -37.80943194,
+    "location": {
+      "lon": 144.982294313,
+      "lat": -37.80943194
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 646,
+    "property_id": "100341",
+    "base_property_id": "100341",
+    "building_address": "410-418 Albert Street EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 324,
+    "longitude": 144.977085023,
+    "latitude": -37.80923116,
+    "location": {
+      "lon": 144.977085023,
+      "lat": -37.80923116
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 651,
+    "property_id": "111469",
+    "base_property_id": "111469",
+    "building_address": "33-61 Cathedral Place EAST MELBOURNE VIC 3002",
+    "clue_small_area": "East Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 300,
+    "longitude": 144.976509812,
+    "latitude": -37.81131182,
+    "location": {
+      "lon": 144.976509812,
+      "lat": -37.81131182
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 654,
+    "property_id": "580630",
+    "base_property_id": "580630",
+    "building_address": "100 Batman Avenue MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 82,
+    "longitude": 144.975507997,
+    "latitude": -37.81793581,
+    "location": {
+      "lon": 144.975507997,
+      "lat": -37.81793581
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 659,
+    "property_id": "645935",
+    "base_property_id": "100847",
+    "building_address": "National Tennis Centre Melbourne Park 55 Olympic Boulevard MELBOURNE VIC 3004",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 909,
+    "longitude": 144.980338234,
+    "latitude": -37.82179823,
+    "location": {
+      "lon": 144.980338234,
+      "lat": -37.82179823
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 734,
+    "property_id": "110465",
+    "base_property_id": "110465",
+    "building_address": "71-75 Clarke Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 253,
+    "longitude": 144.960367947,
+    "latitude": -37.82801064,
+    "location": {
+      "lon": 144.960367947,
+      "lat": -37.82801064
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 735,
+    "property_id": "110444",
+    "base_property_id": "110444",
+    "building_address": "100-110 Kings Way SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 15,
+    "longitude": 144.961692323,
+    "latitude": -37.82797347,
+    "location": {
+      "lon": 144.961692323,
+      "lat": -37.82797347
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 735,
+    "property_id": "110637",
+    "base_property_id": "110637",
+    "building_address": "31-49 Moray Street SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 180,
+    "longitude": 144.961389841,
+    "latitude": -37.82763033,
+    "location": {
+      "lon": 144.961389841,
+      "lat": -37.82763033
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 752,
+    "property_id": "110736",
+    "base_property_id": "110736",
+    "building_address": "NGV International 130-200 St Kilda Road SOUTHBANK VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 850,
+    "longitude": 144.968633818,
+    "latitude": -37.82281706,
+    "location": {
+      "lon": 144.968633818,
+      "lat": -37.82281706
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 804,
+    "property_id": "110538",
+    "base_property_id": "110538",
+    "building_address": "112-168 Normanby Road SOUTH WHARF VIC 3006",
+    "clue_small_area": "Southbank",
+    "parking_type": "Commercial",
+    "parking_spaces": 688,
+    "longitude": 144.950226106,
+    "latitude": -37.82683539,
+    "location": {
+      "lon": 144.950226106,
+      "lat": -37.82683539
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 870,
+    "property_id": "102178",
+    "base_property_id": "102178",
+    "building_address": "Alfred Hospital 23-99 Commercial Road PRAHRAN VIC 3181",
+    "clue_small_area": "Melbourne (Remainder)",
+    "parking_type": "Commercial",
+    "parking_spaces": 1729,
+    "longitude": 144.982663953,
+    "latitude": -37.84633593,
+    "location": {
+      "lon": 144.982663953,
+      "lat": -37.84633593
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 919,
+    "property_id": "103256",
+    "base_property_id": "103256",
+    "building_address": "Victorian Comprehensive Cancer Centre 301-327 Grattan Street MELBOURNE VIC 3000",
+    "clue_small_area": "Parkville",
+    "parking_type": "Commercial",
+    "parking_spaces": 320,
+    "longitude": 144.956578445,
+    "latitude": -37.80009421,
+    "location": {
+      "lon": 144.956578445,
+      "lat": -37.80009421
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1104,
+    "property_id": "598658",
+    "base_property_id": "576023",
+    "building_address": "The Podium Building 2-24 Waterview Walk DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 113,
+    "longitude": 144.947975341,
+    "latitude": -37.81925128,
+    "location": {
+      "lon": 144.947975341,
+      "lat": -37.81925128
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1105,
+    "property_id": "578095",
+    "base_property_id": "578095",
+    "building_address": "694-704 Collins Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 265,
+    "longitude": 144.950870472,
+    "latitude": -37.81949296,
+    "location": {
+      "lon": 144.950870472,
+      "lat": -37.81949296
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1108,
+    "property_id": "604124",
+    "base_property_id": "604124",
+    "building_address": "816-828 Bourke Street DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 40,
+    "longitude": 144.943968986,
+    "latitude": -37.81927362,
+    "location": {
+      "lon": 144.943968986,
+      "lat": -37.81927362
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 1109,
+    "property_id": "601815",
+    "base_property_id": "601815",
+    "building_address": "Aquavista 397-407 Docklands Drive DOCKLANDS VIC 3008",
+    "clue_small_area": "Docklands",
+    "parking_type": "Commercial",
+    "parking_spaces": 329,
+    "longitude": 144.940199413,
+    "latitude": -37.81427742,
+    "location": {
+      "lon": 144.940199413,
+      "lat": -37.81427742
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 13,
+    "property_id": "104002",
+    "base_property_id": "104002",
+    "building_address": "376-388 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 315,
+    "longitude": 144.9615299,
+    "latitude": -37.81884626,
+    "location": {
+      "lon": 144.9615299,
+      "lat": -37.81884626
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 14,
+    "property_id": "104007",
+    "base_property_id": "104007",
+    "building_address": "300-316 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 574,
+    "longitude": 144.964040969,
+    "latitude": -37.81805379,
+    "location": {
+      "lon": 144.964040969,
+      "lat": -37.81805379
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 16,
+    "property_id": "104018",
+    "base_property_id": "104018",
+    "building_address": "172-192 Flinders Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 895,
+    "longitude": 144.968542835,
+    "latitude": -37.81663861,
+    "location": {
+      "lon": 144.968542835,
+      "lat": -37.81663861
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 23,
+    "property_id": "606103",
+    "base_property_id": "606103",
+    "building_address": "388-394 Flinders Lane MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 38,
+    "longitude": 144.961057119,
+    "latitude": -37.81799198,
+    "location": {
+      "lon": 144.961057119,
+      "lat": -37.81799198
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 24,
+    "property_id": "102092",
+    "base_property_id": "102092",
+    "building_address": "359-373 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 265,
+    "longitude": 144.96244181,
+    "latitude": -37.81728432,
+    "location": {
+      "lon": 144.96244181,
+      "lat": -37.81728432
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 28,
+    "property_id": "102063",
+    "base_property_id": "102060",
+    "building_address": "Collins Place 45 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 552,
+    "longitude": 144.972628037,
+    "latitude": -37.81430615,
+    "location": {
+      "lon": 144.972628037,
+      "lat": -37.81430615
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 28,
+    "property_id": "103969",
+    "base_property_id": "103969",
+    "building_address": "12-20 Flinders Lane MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 126,
+    "longitude": 144.973571871,
+    "latitude": -37.81424291,
+    "location": {
+      "lon": 144.973571871,
+      "lat": -37.81424291
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 34,
+    "property_id": "102135",
+    "base_property_id": "102135",
+    "building_address": "344-350 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 65,
+    "longitude": 144.962688973,
+    "latitude": -37.81601764,
+    "location": {
+      "lon": 144.962688973,
+      "lat": -37.81601764
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 36,
+    "property_id": "108534",
+    "base_property_id": "108534",
+    "building_address": "150-154 Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 61,
+    "longitude": 144.968180974,
+    "latitude": -37.8141971,
+    "location": {
+      "lon": 144.968180974,
+      "lat": -37.8141971
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 42,
+    "property_id": "105950",
+    "base_property_id": "105950",
+    "building_address": "520-536 Little Collins Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 41,
+    "longitude": 144.957088016,
+    "latitude": -37.81686865,
+    "location": {
+      "lon": 144.957088016,
+      "lat": -37.81686865
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 52,
+    "property_id": "101173",
+    "base_property_id": "101173",
+    "building_address": "562-574 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 445,
+    "longitude": 144.95675564,
+    "latitude": -37.81550891,
+    "location": {
+      "lon": 144.95675564,
+      "lat": -37.81550891
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 56,
+    "property_id": "101204",
+    "base_property_id": "101204",
+    "building_address": "194-200 Bourke Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 130,
+    "longitude": 144.967282791,
+    "latitude": -37.81244678,
+    "location": {
+      "lon": 144.967282791,
+      "lat": -37.81244678
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 58,
+    "property_id": "103621",
+    "base_property_id": "103621",
+    "building_address": "174-192 Exhibition Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 150,
+    "longitude": 144.970645342,
+    "latitude": -37.81121462,
+    "location": {
+      "lon": 144.970645342,
+      "lat": -37.81121462
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 64,
+    "property_id": "108102",
+    "base_property_id": "108102",
+    "building_address": "200-222 Queen Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 427,
+    "longitude": 144.960469712,
+    "latitude": -37.81352285,
+    "location": {
+      "lon": 144.960469712,
+      "lat": -37.81352285
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 67,
+    "property_id": "105679",
+    "base_property_id": "105679",
+    "building_address": "131-137 Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 56,
+    "longitude": 144.968530007,
+    "latitude": -37.81098009,
+    "location": {
+      "lon": 144.968530007,
+      "lat": -37.81098009
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 72,
+    "property_id": "110708",
+    "base_property_id": "110707",
+    "building_address": "535 Little Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 800,
+    "longitude": 144.956016924,
+    "latitude": -37.8134766,
+    "location": {
+      "lon": 144.956016924,
+      "lat": -37.8134766
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 73,
+    "property_id": "559301",
+    "base_property_id": "559301",
+    "building_address": "458-468 Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 294,
+    "longitude": 144.958352884,
+    "latitude": -37.8130525,
+    "location": {
+      "lon": 144.958352884,
+      "lat": -37.8130525
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 76,
+    "property_id": "589841",
+    "base_property_id": "105749",
+    "building_address": "QV Retail & Parking 221 Little Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 1150,
+    "longitude": 144.965703374,
+    "latitude": -37.810658,
+    "location": {
+      "lon": 144.965703374,
+      "lat": -37.810658
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 78,
+    "property_id": "603923",
+    "base_property_id": "580091",
+    "building_address": "The Urban Workshop 32-54 Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 148,
+    "longitude": 144.970732451,
+    "latitude": -37.8091842,
+    "location": {
+      "lon": 144.970732451,
+      "lat": -37.8091842
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 82,
+    "property_id": "105460",
+    "base_property_id": "105460",
+    "building_address": "479-495 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 208,
+    "longitude": 144.95495139,
+    "latitude": -37.81275166,
+    "location": {
+      "lon": 144.95495139,
+      "lat": -37.81275166
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 83,
+    "property_id": "106036",
+    "base_property_id": "106036",
+    "building_address": "364-378 Little Lonsdale Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 107,
+    "longitude": 144.958430331,
+    "latitude": -37.81200376,
+    "location": {
+      "lon": 144.958430331,
+      "lat": -37.81200376
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 83,
+    "property_id": "110757",
+    "base_property_id": "110142",
+    "building_address": "Carpark Rear 280-318 William Street, MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 152,
+    "longitude": 144.957360919,
+    "latitude": -37.81209045,
+    "location": {
+      "lon": 144.957360919,
+      "lat": -37.81209045
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 93,
+    "property_id": "105477",
+    "base_property_id": "105477",
+    "building_address": "378-392 La Trobe Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 262,
+    "longitude": 144.958052866,
+    "latitude": -37.81075363,
+    "location": {
+      "lon": 144.958052866,
+      "lat": -37.81075363
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 101,
+    "property_id": "105326",
+    "base_property_id": "105326",
+    "building_address": "383-405 King Street WEST MELBOURNE VIC 3003",
+    "clue_small_area": "West Melbourne (Residential)",
+    "parking_type": "Commercial",
+    "parking_spaces": 54,
+    "longitude": 144.952921936,
+    "latitude": -37.81111495,
+    "location": {
+      "lon": 144.952921936,
+      "lat": -37.81111495
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 104,
+    "property_id": "108088",
+    "base_property_id": "108088",
+    "building_address": "382-406 Queen Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 548,
+    "longitude": 144.9586046,
+    "latitude": -37.80943603,
+    "location": {
+      "lon": 144.9586046,
+      "lat": -37.80943603
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 114,
+    "property_id": "109493",
+    "base_property_id": "109493",
+    "building_address": "131-151 Therry Street MELBOURNE VIC 3000",
+    "clue_small_area": "Melbourne (CBD)",
+    "parking_type": "Commercial",
+    "parking_spaces": 507,
+    "longitude": 144.958461316,
+    "latitude": -37.80788769,
+    "location": {
+      "lon": 144.958461316,
+      "lat": -37.80788769
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 207,
+    "property_id": "109553",
+    "base_property_id": "109553",
+    "building_address": "6-30 Tyne Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 215,
+    "longitude": 144.966690652,
+    "latitude": -37.79767459,
+    "location": {
+      "lon": 144.966690652,
+      "lat": -37.79767459
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 217,
+    "property_id": "106193",
+    "base_property_id": "106193",
+    "building_address": "368-386 Lygon Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 154,
+    "longitude": 144.968178866,
+    "latitude": -37.79803089,
+    "location": {
+      "lon": 144.968178866,
+      "lat": -37.79803089
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 241,
+    "property_id": "573377",
+    "base_property_id": "573377",
+    "building_address": "Carpark Melbourne University 220 Berkeley Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 1136,
+    "longitude": 144.960401851,
+    "latitude": -37.8004334,
+    "location": {
+      "lon": 144.960401851,
+      "lat": -37.8004334
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 250,
+    "property_id": "623345",
+    "base_property_id": "108266",
+    "building_address": "Melbourne Museum 11 Nicholson Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 848,
+    "longitude": 144.971635508,
+    "latitude": -37.80401887,
+    "location": {
+      "lon": 144.971635508,
+      "lat": -37.80401887
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 265,
+    "property_id": "109845",
+    "base_property_id": "109845",
+    "building_address": "RMIT Building 91 110-120 Victoria Street CARLTON VIC 3053",
+    "clue_small_area": "Carlton",
+    "parking_type": "Commercial",
+    "parking_spaces": 200,
+    "longitude": 144.963679903,
+    "latitude": -37.80631205,
+    "location": {
+      "lon": 144.963679903,
+      "lat": -37.80631205
+    }
+  },
+  {
+    "census_year": "2024",
+    "block_id": 375,
+    "property_id": "103810",
+    "base_property_id": "103810",
+    "building_address": "RMIT Village 5-17 Flemington Road NORTH MELBOURNE VIC 3051",
+    "clue_small_area": "North Melbourne",
+    "parking_type": "Commercial",
+    "parking_spaces": 200,
+    "longitude": 144.955871244,
+    "latitude": -37.80140031,
+    "location": {
+      "lon": 144.955871244,
+      "lat": -37.80140031
+    }
+  }
+]

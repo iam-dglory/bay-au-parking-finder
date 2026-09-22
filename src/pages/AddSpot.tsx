@@ -3,6 +3,7 @@ import { MapView } from '../components/MapView'
 import { ReportSpotForm, type ReportSpotFormValue } from '../components/ReportSpotForm'
 import { supabase } from '../lib/supabaseClient'
 import { detectCountry } from '../lib/geocoding'
+import { uploadSignPhoto } from '../lib/photos'
 
 export function AddSpot({ center, onDone }: { center: { lat: number; lng: number }; onDone: () => void }) {
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null)
@@ -26,11 +27,21 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
     }
     setSubmitting(true)
     setError(null)
+
+    let photoUrl: string
+    try {
+      photoUrl = await uploadSignPhoto(value.photo)
+    } catch {
+      setError('Could not upload the photo. Check your connection and try again.')
+      setSubmitting(false)
+      return
+    }
+
     const { data: userData } = await supabase.auth.getUser()
     const userId = userData.user?.id
     const { data: spot, error: spotError } = await supabase
       .from('parking_spots')
-      .insert({ lat: picked.lat, lng: picked.lng, address_text: value.addressText, country, created_by: userId })
+      .insert({ lat: picked.lat, lng: picked.lng, address_text: value.addressText, country, photo_url: photoUrl, created_by: userId })
       .select('id')
       .single()
 
@@ -40,18 +51,20 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
       return
     }
 
-    const { error: ruleError } = await supabase.from('parking_rules').insert({
-      spot_id: spot.id,
-      sign_type: value.signType,
-      max_stay_minutes: value.maxStayMinutes,
-      days_active: value.daysActive,
-      time_from: value.timeFrom,
-      time_to: value.timeTo,
-      price_per_hour: value.pricePerHour,
-      currency: value.currency,
-      notes: value.notes || null,
-      created_by: userId,
-    })
+    const { error: ruleError } = await supabase.from('parking_rules').insert(
+      value.rules.map((rule) => ({
+        spot_id: spot.id,
+        sign_type: rule.signType,
+        max_stay_minutes: rule.maxStayMinutes,
+        days_active: rule.daysActive,
+        time_from: rule.timeFrom,
+        time_to: rule.timeTo,
+        price_per_hour: rule.pricePerHour,
+        currency: rule.currency,
+        notes: rule.notes,
+        created_by: userId,
+      })),
+    )
 
     setSubmitting(false)
     if (ruleError) {
@@ -71,7 +84,7 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
         <MapView center={center} spots={[]} pickMode pickedLocation={picked} onPickLocation={handlePick} />
       </div>
       <p className="bg-indigo-50 px-4 py-2 text-center text-xs text-indigo-700">
-        {!picked ? 'Tap the map to mark exactly where the sign is' : detecting ? 'Pin placed — detecting your country…' : 'Pin placed — fill in the sign details below'}
+        {!picked ? 'Tap the map to mark exactly where the sign is' : detecting ? 'Pin placed. Detecting your country...' : 'Pin placed. Fill in the sign details below.'}
       </p>
       {error && <p className="bg-rose-50 px-4 py-2 text-center text-xs text-rose-700">{error}</p>}
       <div className="flex-1 overflow-y-auto">

@@ -1,25 +1,40 @@
 import { describe, it, expect } from 'vitest'
-import { getOccupancyInfo, formatOccupancyAge } from './occupancy'
+import { getOccupancyInfo, formatOccupancyAge, formatCorroboration } from './occupancy'
 
 const now = new Date('2026-09-18T12:00:00Z')
 
-function pingMinutesAgo(minutes: number, status: 'occupied' | 'free' = 'occupied') {
-  return { status, created_at: new Date(now.getTime() - minutes * 60_000).toISOString() }
+function pingMinutesAgo(minutes: number, status: 'occupied' | 'free' = 'occupied', corroboratingCount = 1, photoUrl: string | null = null) {
+  return {
+    status,
+    created_at: new Date(now.getTime() - minutes * 60_000).toISOString(),
+    corroborating_count: corroboratingCount,
+    photo_url: photoUrl,
+  }
 }
 
 describe('getOccupancyInfo', () => {
   it('returns unknown when there is no ping at all', () => {
-    expect(getOccupancyInfo(null, now)).toEqual({ status: 'unknown', ageMinutes: null })
+    expect(getOccupancyInfo(null, now)).toEqual({ status: 'unknown', ageMinutes: null, corroboratingCount: 0, photoUrl: null })
   })
 
   it('surfaces a fresh occupied ping with its age', () => {
     const info = getOccupancyInfo(pingMinutesAgo(4, 'occupied'), now)
-    expect(info).toEqual({ status: 'occupied', ageMinutes: 4 })
+    expect(info).toEqual({ status: 'occupied', ageMinutes: 4, corroboratingCount: 1, photoUrl: null })
   })
 
   it('surfaces a fresh free ping with its age', () => {
     const info = getOccupancyInfo(pingMinutesAgo(10, 'free'), now)
-    expect(info).toEqual({ status: 'free', ageMinutes: 10 })
+    expect(info).toEqual({ status: 'free', ageMinutes: 10, corroboratingCount: 1, photoUrl: null })
+  })
+
+  it('carries through a photo attached as proof of occupancy', () => {
+    const info = getOccupancyInfo(pingMinutesAgo(1, 'occupied', 1, 'https://example.com/proof.jpg'), now)
+    expect(info.photoUrl).toBe('https://example.com/proof.jpg')
+  })
+
+  it('carries through how many people corroborate the latest report', () => {
+    const info = getOccupancyInfo(pingMinutesAgo(2, 'occupied', 3), now)
+    expect(info.corroboratingCount).toBe(3)
   })
 
   it('treats a ping older than the freshness window as unknown, not stale-true', () => {
@@ -44,5 +59,16 @@ describe('formatOccupancyAge', () => {
 
   it('uses plural for multiple minutes', () => {
     expect(formatOccupancyAge(15)).toBe('15 min ago')
+  })
+})
+
+describe('formatCorroboration', () => {
+  it('is silent for a single, uncorroborated report', () => {
+    expect(formatCorroboration(1)).toBeNull()
+    expect(formatCorroboration(0)).toBeNull()
+  })
+
+  it('surfaces agreement once more than one person reports the same thing', () => {
+    expect(formatCorroboration(3)).toBe('3 people agree')
   })
 })
