@@ -131,7 +131,7 @@ export function SpotDetailSheet({
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusBadge status={spot.status} />
-          {sensor ? (
+          {sensor && (
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
                 sensor.possiblyStuck
@@ -145,30 +145,31 @@ export function SpotDetailSheet({
               Live sensor: {sensor.status === 'occupied' ? 'Occupied' : 'Free'} · confirmed {formatMinutesAgo(sensor.confirmedAgoMinutes)}
               {sensor.possiblyStuck ? ' · sensor offline, may be outdated' : ''}
             </span>
-          ) : (
-            <>
-              {occupancy.status === 'occupied' &&
-                (confirmed ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
-                    <Car className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                    <Car className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
-                  </span>
-                ))}
-              {occupancy.status === 'free' &&
-                (confirmed ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                    <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed free · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                    <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
-                  </span>
-                ))}
-            </>
           )}
+          {/* Shown independently of the sensor badge above -- a sensor can be
+              misassigned to the wrong bay or simply wrong, and a driver's own
+              recent report is worth seeing even when a sensor also exists,
+              not silently swallowed by it. */}
+          {occupancy.status === 'occupied' &&
+            (confirmed ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
+                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+              </span>
+            ))}
+          {occupancy.status === 'free' &&
+            (confirmed ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed free · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+              </span>
+            ))}
         </div>
 
         {occupancy.photoUrl && (

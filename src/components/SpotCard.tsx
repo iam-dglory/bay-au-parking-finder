@@ -33,7 +33,7 @@ export function SpotCard({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <StatusBadge status={spot.status} />
-        {sensor ? (
+        {sensor && (
           <span
             className={`inline-flex items-center gap-1 text-xs ${
               sensor.possiblyStuck ? 'text-amber-600' : sensor.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'
@@ -43,17 +43,17 @@ export function SpotCard({
             Live sensor: {sensor.status === 'occupied' ? 'Occupied' : 'Free'} · confirmed {formatMinutesAgo(sensor.confirmedAgoMinutes)}
             {sensor.possiblyStuck ? ' (offline)' : ''}
           </span>
-        ) : (
-          occupancy.status !== 'unknown' && (
-            <span
-              className={`inline-flex items-center gap-1 text-xs ${
-                !confirmed ? 'text-amber-600' : occupancy.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'
-              }`}
-            >
-              {occupancy.status === 'occupied' ? <Car className="h-3.5 w-3.5" strokeWidth={2} /> : <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} />}
-              {confirmed ? 'Confirmed' : 'Unconfirmed'} · {formatOccupancyAge(occupancy.ageMinutes!)}
-            </span>
-          )
+        )}
+        {/* Independent of the sensor badge -- see SpotDetailSheet for why. */}
+        {occupancy.status !== 'unknown' && (
+          <span
+            className={`inline-flex items-center gap-1 text-xs ${
+              !confirmed ? 'text-amber-600' : occupancy.status === 'occupied' ? 'text-rose-600' : 'text-emerald-600'
+            }`}
+          >
+            {occupancy.status === 'occupied' ? <Car className="h-3.5 w-3.5" strokeWidth={2} /> : <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} />}
+            {confirmed ? 'Confirmed' : 'Unconfirmed'} · {formatOccupancyAge(occupancy.ageMinutes!)}
+          </span>
         )}
       </div>
     </button>
