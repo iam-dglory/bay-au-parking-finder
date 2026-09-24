@@ -93,16 +93,15 @@ export default function App() {
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
 
   if (!authReady) {
-    return <div className="flex h-full items-center justify-center text-sm text-slate-400">Loading…</div>
+    return <div className="flex h-full items-center justify-center bg-[#f6f8fc] text-sm text-slate-500"><div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-blue-600" /> Loading Bay…</div></div>
   }
 
   if (locationStatus === 'detecting') {
     return (
       <>
-        <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-          <MapPin className="h-9 w-9 animate-pulse text-slate-900" strokeWidth={1.75} />
-          <p className="text-sm font-medium text-slate-700">Finding you…</p>
-          <p className="text-xs text-slate-400">Allow location access for the fastest results</p>
+        <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#f6f8fc] text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 shadow-xl shadow-blue-600/25"><MapPin className="h-7 w-7 animate-pulse text-white" strokeWidth={1.8} /></div>
+          <div><p className="text-base font-semibold text-slate-900">Finding your parking area</p><p className="mt-1 text-sm text-slate-500">Allow location access for the fastest results</p></div>
         </div>
         {feedbackOverlay}
       </>
@@ -137,7 +136,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-slate-50">
+    <div className="flex h-full flex-col bg-[#f6f8fc]">
       <div className="min-h-0 flex-1">
         {tab === 'home' && (
           <Home
@@ -153,10 +152,10 @@ export default function App() {
         {tab === 'guide' && <Guide location={location} />}
       </div>
 
-      <nav className="flex shrink-0 border-t border-slate-200 bg-white">
+      <nav className="mx-3 mb-3 flex shrink-0 rounded-3xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(30,64,175,0.10)] backdrop-blur sm:mx-5 sm:mb-5">
         <button
           onClick={() => setTab('home')}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'home' ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <MapPin className="h-5 w-5" strokeWidth={1.75} />
           Find parking
@@ -166,21 +165,21 @@ export default function App() {
             setAddKey((k) => k + 1)
             setTab('addSign')
           }}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'addSign' ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <Plus className="h-5 w-5" strokeWidth={1.75} />
           Add a sign
         </button>
         <button
           onClick={() => setTab('mine')}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'mine' ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <ClipboardList className="h-5 w-5" strokeWidth={1.75} />
           My activity
         </button>
         <button
           onClick={() => setTab('guide')}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${tab === 'guide' ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'guide' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <BookOpen className="h-5 w-5" strokeWidth={1.75} />
           Guide

@@ -75,7 +75,7 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-slate-50">
+    <div className="h-full overflow-y-auto bg-[#f6f8fc]">
       <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Your Bay history</p>
         <h1 className="mt-1 text-xl font-semibold tracking-tight">My activity</h1>

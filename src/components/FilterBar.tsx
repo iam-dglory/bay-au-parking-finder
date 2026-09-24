@@ -1,3 +1,4 @@
+import { BadgeDollarSign, CarFront, Clock3, Filter, HardHat, Accessibility, Tag } from 'lucide-react'
 import type { SignType } from '../types'
 import { SIGN_TYPE_LABELS } from '../types'
 
@@ -43,14 +44,14 @@ export function FilterBar({
   onShowCarParksChange: (v: boolean) => void
 }) {
   return (
-    <div className="border-b border-slate-100">
-      <div className="flex items-center gap-2 overflow-x-auto px-4 py-2">
+    <div className="border-b border-slate-200/80 bg-white px-3 py-2">
+      <div className="flex items-center gap-2 overflow-x-auto py-1">
         {RADIUS_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onRadiusChange(opt.value)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition ${
-              radiusM === opt.value ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`shrink-0 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+              radiusM === opt.value ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/15' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50'
             }`}
           >
             {opt.label}
@@ -58,32 +59,32 @@ export function FilterBar({
         ))}
         <button
           onClick={() => onFreeOnlyChange(!freeOnly)}
-          className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition ${
-            freeOnly ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+            freeOnly ? 'border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/15' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:bg-emerald-50'
           }`}
         >
-          No fee
+          <BadgeDollarSign className="h-4 w-4" strokeWidth={2} /> No fee
         </button>
         <button
           onClick={() => onShowCarParksChange(!showCarParks)}
-          className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition ${
-            showCarParks ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+            showCarParks ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/15' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50'
           }`}
         >
-          Car parks
+          <CarFront className="h-4 w-4" strokeWidth={2} /> Car parks
         </button>
       </div>
-      <div className="flex items-center gap-2 overflow-x-auto px-4 pb-2">
-        <span className="shrink-0 text-xs font-medium text-slate-400">Zone:</span>
+      <div className="flex items-center gap-2 overflow-x-auto py-1">
+        <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400"><Filter className="h-3.5 w-3.5" /> Zone</span>
         {CATEGORY_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onCategoryChange(opt.value)}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition ${
-              category === opt.value ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+              category === opt.value ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50'
             }`}
           >
-            {opt.label}
+            <span>{opt.value === 'PAID_METER' ? <Tag className="h-3.5 w-3.5" /> : opt.value === 'TIME_LIMITED' ? <Clock3 className="h-3.5 w-3.5" /> : opt.value === 'LOADING_ZONE' ? <HardHat className="h-3.5 w-3.5" /> : opt.value === 'ACCESSIBLE_PERMIT' ? <Accessibility className="h-3.5 w-3.5" /> : null}</span>{opt.label}
           </button>
         ))}
       </div>

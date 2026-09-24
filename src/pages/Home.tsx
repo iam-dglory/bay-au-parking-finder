@@ -103,36 +103,36 @@ export function Home({
 
   if (!expanded) {
     return (
-      <div className="flex h-full flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 text-white">
-        <div className="flex items-center gap-2 px-5 py-4">
-          <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl ring-2 ring-white/10" />
-          <span className="text-base font-semibold tracking-tight text-white">Bay</span>
+      <div className="flex h-full flex-col bg-[#f6f8fc] text-slate-900">
+        <div className="flex items-center gap-2 border-b border-slate-100 bg-white px-5 py-4">
+          <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl shadow-sm" />
+          <span className="text-lg font-bold tracking-tight text-slate-900">Bay</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pb-10 text-center">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-indigo-100"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Parking intelligence, in one place</div>
-            <p className="text-2xl font-semibold tracking-tight text-white">Hi, Test User{testerNumber ? ` ${testerNumber}` : ''}</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">Your testing and feedback help make parking information more trustworthy.</p>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Parking intelligence, in one place</div>
+            <p className="text-2xl font-semibold tracking-tight text-slate-950">Hi, Test User{testerNumber ? ` ${testerNumber}` : ''}</p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">Your testing and feedback help make parking information more trustworthy.</p>
           </div>
 
-          <div className="h-52 w-full max-w-sm overflow-hidden rounded-3xl border border-white/15 bg-white/10 p-1 shadow-2xl shadow-black/25">
+          <div className="h-52 w-full max-w-sm overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200/80">
             <MapView center={center} myLocation={myLocation} spots={[]} glowMe />
           </div>
 
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">You're near</p>
-            <p className="mt-1 text-base font-semibold text-white">{locationLabel}</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-blue-600">You're near</p>
+            <p className="mt-1 text-base font-semibold text-slate-900">{locationLabel}</p>
           </div>
 
           <button
             onClick={() => setExpanded(true)}
-            className="flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-white py-3.5 font-semibold text-slate-950 shadow-xl shadow-black/20 transition hover:bg-indigo-50"
+            className="flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 font-semibold text-white shadow-xl shadow-blue-600/20 transition hover:bg-blue-700"
           >
             <LocateFixed className="h-4 w-4" strokeWidth={2} />
             Find parking near me
           </button>
-          <button onClick={onChangeLocation} className="flex items-center gap-1.5 text-sm font-medium text-indigo-100 hover:text-white">
+          <button onClick={onChangeLocation} className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-blue-700">
             <Pencil className="h-3.5 w-3.5 text-slate-400" strokeWidth={2} />
             Change location
           </button>
@@ -143,13 +143,13 @@ export function Home({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
+      <div className="border-b border-slate-200/80 bg-white/95 px-4 py-4 shadow-sm backdrop-blur">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button onClick={() => setExpanded(false)} aria-label="Back to home">
               <img src={LOGO_URL} alt="Bay" className="h-8 w-8 rounded-xl" />
             </button>
-            <span className="text-base font-semibold tracking-tight text-slate-900">Bay</span>
+            <span className="text-lg font-bold tracking-tight text-slate-900">Bay</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -159,7 +159,7 @@ export function Home({
             >
               <Search className="h-4 w-4" strokeWidth={2} />
             </button>
-            <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-0.5 text-sm">
+            <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-0.5 text-sm font-semibold">
               <button onClick={() => setView('map')} className={`px-3 py-1.5 ${view === 'map' ? 'rounded-lg bg-slate-900 text-white shadow-sm' : 'text-slate-600'}`}>
                 Map
               </button>
@@ -227,7 +227,7 @@ export function Home({
           <span>{loading ? 'Loading all nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
           <button onClick={refresh} disabled={loading} className="underline">Refresh</button>
         </div>
-        <div className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Reading the map:</span> green vacant · red occupied · amber uncertain · grey unknown. Vacancy does not mean parking is permitted.</div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-600"><span className="font-semibold text-slate-800">Reading the map</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Vacant</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-rose-500" /> Occupied</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-amber-400" /> Uncertain</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Unknown</span><span className="text-slate-400">Vacancy does not mean parking is permitted.</span></div>
       </div>
 
       <FilterBar
@@ -250,7 +250,7 @@ export function Home({
         </div>
       )}
 
-      <div className="min-h-0 flex-1">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-t-3xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
         {view === 'map' ? (
           <MapView
             center={effectiveCenter}

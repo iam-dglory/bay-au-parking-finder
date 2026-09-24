@@ -18,11 +18,11 @@ export function SpotCard({
   return (
     <button
       onClick={onClick}
-      className="w-full rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:border-slate-300 hover:shadow-md"
+      className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/50"
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-medium text-slate-900">{spot.address_text}</p>
+          <p className="font-semibold text-slate-900">{spot.address_text}</p>
           <p className="text-sm text-slate-500">
             {[spot.suburb, spot.state].filter(Boolean).join(', ') || spot.country || ''} · {formatDistance(spot.distance_m)}
           </p>

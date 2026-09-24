@@ -146,14 +146,14 @@ export function ReportSpotForm({
   const canSave = addressText.trim() && (savedRules.length > 0 || signType) && photo
 
   return (
-    <div className="space-y-5 p-4">
+    <div className="mx-auto max-w-2xl space-y-6 p-4 sm:p-6">
       <div>
         <label className="text-sm font-medium text-slate-700">Street address</label>
         <input
           value={addressText}
           onChange={(e) => setAddressText(e.target.value)}
           placeholder="e.g. 483 George St"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
       </div>
 
@@ -164,7 +164,7 @@ export function ReportSpotForm({
           value={country ?? ''}
           onChange={(e) => onCountryChange(e.target.value)}
           placeholder="Detecting from map pin…"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
         <datalist id="known-countries">
           {KNOWN_COUNTRIES.map((c) => (
@@ -196,7 +196,7 @@ export function ReportSpotForm({
           <button
             onClick={handleCapturePhoto}
             disabled={capturingPhoto}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-4 text-sm font-medium text-slate-600 hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-blue-200 bg-blue-50/50 py-5 text-sm font-semibold text-blue-700 hover:border-blue-400 hover:bg-blue-50 disabled:opacity-50"
           >
             <CameraIcon className="h-4 w-4" strokeWidth={2} /> {capturingPhoto ? 'Opening camera…' : 'Take a photo of the sign'}
           </button>
@@ -240,7 +240,7 @@ export function ReportSpotForm({
                 setHasMaxStay(false)
               }}
               className={`rounded-xl border p-3 text-left text-sm transition ${
-                signType === opt.type ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 hover:border-slate-300'
+                signType === opt.type ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/15' : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50'
               }`}
             >
               <p className="font-medium">{opt.label}</p>
@@ -370,7 +370,7 @@ export function ReportSpotForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
       </div>
 
