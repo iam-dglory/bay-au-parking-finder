@@ -1,0 +1,217 @@
+<title>Bay Privacy Policy</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-faint: #94a3b8;
+    --accent: #4f46e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1120;
+      --surface: #131b2e;
+      --border: #263145;
+      --text: #f1f5f9;
+      --text-muted: #b6c2d9;
+      --text-faint: #64748b;
+      --accent: #818cf8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1120;
+    --surface: #131b2e;
+    --border: #263145;
+    --text: #f1f5f9;
+    --text-muted: #b6c2d9;
+    --text-faint: #64748b;
+    --accent: #818cf8;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+    padding: 0 16px;
+    padding-block: 48px;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(32px, 5vw, 44px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 8px;
+  }
+
+  .updated {
+    color: var(--text-faint);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 40px 0 12px;
+  }
+
+  p, li {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    max-width: 65ch;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin: 12px 0;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  li b, p b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .card p {
+    margin: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  th {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--accent);
+  }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+<main>
+  <span class="eyebrow">Bay</span>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: 19 September 2026</p>
+
+  <p>Bay ("we", "us") helps people find parking — free public spots, and rules reported by the community — in Australia and worldwide. This page explains what information Bay collects, why, and how you can contact us about it.</p>
+
+  <h2>What Bay does <i>not</i> collect</h2>
+  <div class="card">
+    <p>Bay does not ask for your name, email address, or phone number. There is no account sign-up. Bay uses anonymous authentication: your device is given a random, anonymous identifier so your reports and activity are linked to that identifier only — never to your real identity.</p>
+  </div>
+
+  <h2>Information we collect</h2>
+  <table>
+    <tr><th>Data</th><th>Why we collect it</th></tr>
+    <tr><td><b>Location</b> (GPS, or the city/suburb you search for)</td><td>To show parking spots and rules near you. Location is used on your device to query nearby results and is not stored against your identity beyond what's needed to serve that request.</td></tr>
+    <tr><td><b>Parking signs and spots you report</b> (address, pin location, sign rules, notes, and a photo of the sign)</td><td>To build the shared, public map of parking availability that every user relies on. A photo is required for every report and is reviewed before the report is shown to anyone else, to keep the map accurate and free of spam. The photo is publicly visible once approved, the same as the rest of the report.</td></tr>
+    <tr><td><b>Occupancy reports</b> ("mark occupied/free") and your device location at the moment you submit one</td><td>To show other nearby users a live, time-limited signal about a spot — these expire automatically (occupancy reports become "unknown" after 30 minutes). Your location at submission time is checked against the spot's location to confirm you're actually near it, but is not stored — only the fact that the check passed.</td></tr>
+    <tr><td><b>Anonymous device identifier</b></td><td>To let you see your own reports and history ("My activity"), and to attribute contributions without collecting personal information.</td></tr>
+  </table>
+
+  <h2>Who we share it with</h2>
+  <p>Bay is built on a small number of infrastructure providers who process data on our behalf, strictly to run the app:</p>
+  <ul>
+    <li><b>Supabase</b> — hosts our database and anonymous authentication.</li>
+    <li><b>OpenStreetMap / Nominatim</b> — provides map tiles and location search. Search queries you type (e.g. a city or suburb name) are sent to this service to find matching places.</li>
+  </ul>
+  <p>We do not sell your information, and we do not share it with advertisers.</p>
+
+  <h2>Data you contribute publicly</h2>
+  <p>Parking signs (once approved), their photos, and occupancy signals are shared with everyone using Bay — that's how a crowdsourced parking directory works. Please don't include personal information (yours or anyone else's, including number plates or faces) in a sign photo, note, or description you submit.</p>
+
+  <h2>Your choices</h2>
+  <ul>
+    <li>Location access is optional for finding parking — you can search for a city manually instead of sharing your device's location. It is required to submit an occupancy report, since that's how we confirm you're near the spot.</li>
+    <li>Camera access is required to report a new parking sign, since a photo is mandatory for every report.</li>
+    <li>Because Bay doesn't collect identifying information, there's no traditional account to delete. If you'd like a specific report removed, contact us below with the address or approximate location and we'll remove it.</li>
+  </ul>
+
+  <h2>How reports are reviewed</h2>
+  <p>A new parking sign report isn't shown to other users right away. It's checked against its photo first, to confirm it shows a real, current sign matching what was reported. Until that check is done, only you can see it (marked "Pending review" in My Activity); if it's rejected, we'll leave it visible to you as rejected rather than silently discard it.</p>
+
+  <h2>Children's privacy</h2>
+  <p>Bay is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, we'll update the "last updated" date above. Continued use of Bay after a change means you accept the updated policy.</p>
+
+  <h2>Data sources and attribution</h2>
+  <p>Some parking sign data on Bay was not reported by users but sourced from official council open data, to give the map real coverage from day one. This data is credited here as required by its licence:</p>
+  <ul>
+    <li><b>Brisbane City Council</b> — "Parking – Sign locations", licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, sourced from <a href="https://data.brisbane.qld.gov.au/explore/dataset/parking-sign-locations/" target="_blank" rel="noreferrer">data.brisbane.qld.gov.au</a>.</li>
+    <li><b>City of Melbourne</b> — "Sign plates located in each Parking zone", "Pay Stay parking restrictions", and related street-segment and bay-location datasets, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY</a>, sourced from <a href="https://data.melbourne.vic.gov.au/" target="_blank" rel="noreferrer">data.melbourne.vic.gov.au</a>.</li>
+    <li><b>City of Sydney</b> — "Mobility parking" and "Free 15 minute parking", licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, sourced from <a href="https://data.cityofsydney.nsw.gov.au/" target="_blank" rel="noreferrer">data.cityofsydney.nsw.gov.au</a>.</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy or a data removal request can be sent to <a href="mailto:gopikaaravindoffl@gmail.com">gopikaaravindoffl@gmail.com</a>.</p>
+
+  <footer>Bay — parking, found.</footer>
+</main>
