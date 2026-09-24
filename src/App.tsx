@@ -43,7 +43,7 @@ export default function App() {
    * label, then fills in the real street address a moment later once
    * reverse-geocoding finishes -- rather than making the whole app wait on
    * two sequential network calls before showing anything. */
-  function useGpsThenRefineLabel(onResolved: (loc: Location) => void) {
+  function resolveGpsThenRefineLabel(onResolved: (loc: Location) => void) {
     return getBrowserLocation().then((pos) => {
       const lat = pos.coords.latitude
       const lng = pos.coords.longitude
@@ -74,7 +74,7 @@ export default function App() {
       }
     }, LOCATION_DETECT_TIMEOUT_MS)
 
-    useGpsThenRefineLabel((resolved) => {
+    resolveGpsThenRefineLabel((resolved) => {
       if (settled) return
       settled = true
       clearTimeout(timeout)
@@ -120,7 +120,7 @@ export default function App() {
             setLocationStatus('resolved')
           }}
           onUseGps={() =>
-            useGpsThenRefineLabel((resolved) => {
+            resolveGpsThenRefineLabel((resolved) => {
               setLocation(resolved)
               setLocationStatus('resolved')
             })

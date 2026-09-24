@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+vi.mock('./supabaseClient', () => ({ supabase: {} }))
 import { getOccupancyInfo, formatOccupancyAge, formatCorroboration } from './occupancy'
 
 const now = new Date('2026-09-18T12:00:00Z')

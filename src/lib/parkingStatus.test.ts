@@ -110,9 +110,9 @@ describe('evaluateSpotStatus', () => {
     expect(status.status).toBe('restricted')
   })
 
-  it('falls back to free/unknown when there are no rules', () => {
+  it('keeps missing rules unknown rather than free', () => {
     const status = evaluateSpotStatus([], LAT, LNG, dateAt(10, 0))
-    expect(status.status).toBe('free')
+    expect(status.status).toBe('unknown')
   })
 
   it('treats informally-tolerated parking (e.g. India) as free but distinctly labelled', () => {

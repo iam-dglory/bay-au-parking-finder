@@ -51,24 +51,14 @@ function formatTime(date: Date, timeZone: string | undefined): string {
 /** Whether `local` falls inside the rule's active window, handling windows
  * that wrap past midnight (e.g. clearway 10pm-6am). */
 function isInWindow(rule: ParkingRule, local: LocalNow): boolean {
-  if (!rule.days_active.includes(local.day)) {
-    // A wrap-past-midnight window can still be "active" today if it started
-    // yesterday and yesterday is a listed day.
-    const from = toMinutes(rule.time_from)
-    const to = toMinutes(rule.time_to)
-    if (from > to) {
-      const yesterday = (local.day + 6) % 7
-      if (rule.days_active.includes(yesterday) && local.minutes < to) return true
-    }
-    return false
-  }
-  if (!rule.time_from || !rule.time_to) return true
+  const today = rule.days_active.includes(local.day)
+  if (!rule.time_from || !rule.time_to) return today
   const from = toMinutes(rule.time_from)
   const to = toMinutes(rule.time_to)
-  if (from === to) return true // 00:00-23:59 style "all day" window
-  if (from < to) return local.minutes >= from && local.minutes < to
-  // wraps past midnight
-  return local.minutes >= from || local.minutes < to
+  if (from === to || (from === 0 && to === 1439)) return today
+  if (from < to) return today && local.minutes >= from && local.minutes < to
+  return (today && local.minutes >= from) ||
+    (rule.days_active.includes((local.day + 6) % 7) && local.minutes < to)
 }
 
 /** Minutes from now (at the spot's local time) until the rule's window next starts. */
@@ -91,10 +81,11 @@ function minutesUntilWindowEnd(rule: ParkingRule, local: LocalNow): number {
     // window started today and crosses midnight — it ends tomorrow
     return 1440 + to - local.minutes
   }
+  if (!rule.time_from || !rule.time_to || from === to || (from === 0 && to === 1439)) return 1440 - local.minutes
   return to - local.minutes
 }
 
-const RESTRICTIVENESS: Record<SpotStatus['status'], number> = { restricted: 0, paid: 1, free: 2 }
+const RESTRICTIVENESS: Record<SpotStatus['status'], number> = { unknown: -1, restricted: 0, paid: 1, free: 2 }
 
 function evaluateRule(rule: ParkingRule, local: LocalNow, now: Date, timeZone: string | undefined): SpotStatus {
   const inWindow = isInWindow(rule, local)
@@ -112,7 +103,8 @@ function evaluateRule(rule: ParkingRule, local: LocalNow, now: Date, timeZone: s
     }
   }
 
-  const changesAt = new Date(now.getTime() + minutesUntilWindowEnd(rule, local) * 60_000)
+  const duration = minutesUntilWindowEnd(rule, local)
+  const changesAt = duration > 0 ? new Date(now.getTime() + duration * 60_000) : null
 
   switch (rule.sign_type) {
     case 'PAID_METER': {
@@ -207,11 +199,12 @@ export function evaluateSpotStatus(rules: ParkingRule[], lat: number, lng: numbe
   const timeZone = timeZoneAt(lat, lng)
   const local = localNow(now, timeZone)
 
-  if (rules.length === 0) {
+  const unverified = rules.some((r) => r.match_method === 'segment' || r.match_method === 'unverified' || (!r.match_method && /^(Melway sign:|Pay Stay)/i.test(r.notes ?? '')))
+  if (rules.length === 0 || unverified) {
     return {
-      status: 'free',
-      label: 'Unknown restrictions',
-      detail: 'No sign data recorded for this spot yet',
+      status: 'unknown',
+      label: unverified ? 'Rules need verification' : 'Unknown restrictions',
+      detail: unverified ? 'These imported rules were linked to a street segment, not verified for this bay. Check the sign and its arrows.' : 'No sign data recorded for this spot yet',
       price_per_hour: null,
       changesAt: null,
       ruleApplied: null,

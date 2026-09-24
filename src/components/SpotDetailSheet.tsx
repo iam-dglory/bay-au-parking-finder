@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Car, CircleCheck, Navigation, TriangleAlert, Clock3, Info, Camera as CameraIcon, Radio } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
+import { AvailabilityBadge } from './AvailabilityBadge'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
 import { formatMoney } from '../lib/money'
@@ -131,6 +132,7 @@ export function SpotDetailSheet({
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusBadge status={spot.status} />
+          <AvailabilityBadge spot={spot} />
           {sensor && (
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -142,8 +144,8 @@ export function SpotDetailSheet({
               }`}
             >
               <Radio className="h-3.5 w-3.5" strokeWidth={2} />
-              Live sensor: {sensor.status === 'occupied' ? 'Occupied' : 'Free'} · confirmed {formatMinutesAgo(sensor.confirmedAgoMinutes)}
-              {sensor.possiblyStuck ? ' · sensor offline, may be outdated' : ''}
+              Sensor report: {sensor.status === 'occupied' ? 'Occupied' : 'Vacant'} · last heartbeat {formatMinutesAgo(sensor.confirmedAgoMinutes)}
+              {sensor.possiblyStuck ? ' · outdated; do not rely on it' : ''}
             </span>
           )}
           {/* Shown independently of the sensor badge above -- a sensor can be
@@ -153,7 +155,7 @@ export function SpotDetailSheet({
           {occupancy.status === 'occupied' &&
             (confirmed ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
-                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Reports occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
@@ -163,7 +165,7 @@ export function SpotDetailSheet({
           {occupancy.status === 'free' &&
             (confirmed ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Confirmed free · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
+                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Reports vacant · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
@@ -184,14 +186,14 @@ export function SpotDetailSheet({
             disabled={pinging}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
           >
-            <Car className="h-3.5 w-3.5" strokeWidth={2} /> Mark occupied
+            <Car className="h-3.5 w-3.5" strokeWidth={2} /> Report occupied
           </button>
           <button
             onClick={() => handlePing('free')}
             disabled={pinging}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
           >
-            <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Mark free
+            <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Report vacant
           </button>
         </div>
 
@@ -224,7 +226,7 @@ export function SpotDetailSheet({
         </p>
 
         <div className="mt-4 space-y-2">
-          <h3 className="text-sm font-semibold text-slate-700">Signed rules</h3>
+          <h3 className="text-sm font-semibold text-slate-700">{spot.status.status === 'unknown' ? 'Unverified imported rules' : 'Recorded rules'}</h3>
           {spot.rules.length === 0 && <p className="text-sm text-slate-500">No rules recorded yet.</p>}
           {spot.rules.map((rule) => (
             <div key={rule.id} className="rounded-lg border border-slate-200 p-2.5 text-sm">

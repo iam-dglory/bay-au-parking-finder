@@ -8,15 +8,17 @@ import type { CarPark } from '../types'
 export function useNearbyCarParks(center: { lat: number; lng: number } | null, radiusM: number, enabled: boolean) {
   const [carParks, setCarParks] = useState<CarPark[]>([])
 
+  const lat = center?.lat
+  const lng = center?.lng
   const refresh = useCallback(async () => {
-    if (!center || !enabled) {
+    if (lat == null || lng == null || !enabled) {
       setCarParks([])
       return
     }
-    const { data, error } = await supabase.rpc('nearby_car_parks', { p_lat: center.lat, p_lng: center.lng, p_radius_m: radiusM })
+    const { data, error } = await supabase.rpc('nearby_car_parks', { p_lat: lat, p_lng: lng, p_radius_m: radiusM })
     if (error) return
     setCarParks((data ?? []) as CarPark[])
-  }, [center?.lat, center?.lng, radiusM, enabled])
+  }, [lat, lng, radiusM, enabled])
 
   useEffect(() => {
     refresh()

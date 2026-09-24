@@ -3,18 +3,9 @@ import { MapContainer, TileLayer, Marker, Circle, Popup, useMap, useMapEvents } 
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
-import { getStatusColors } from '../lib/statusColors'
-import { getOccupancyInfo, getSensorOccupancyInfo, OCCUPANCY_CORROBORATION_THRESHOLD } from '../lib/occupancy'
+import { availability } from '../lib/availability'
+import { MapOrientation } from './MapOrientation'
 
-/** A closer zoom for a tighter search radius, and a wider zoom for a bigger
- * one, so the map already fits the area being searched without the user
- * having to manually zoom in or out to see what's there. */
-export function zoomForRadius(radiusM: number): number {
-  if (radiusM <= 500) return 16
-  if (radiusM <= 1000) return 15
-  if (radiusM <= 2000) return 14
-  return 13
-}
 
 function pinIcon(color: string, occupancyRing?: string) {
   const ring = occupancyRing ? `box-shadow:0 0 0 3px ${occupancyRing}, 0 1px 4px rgba(0,0,0,0.4);` : 'box-shadow:0 1px 4px rgba(0,0,0,0.4);'
@@ -64,9 +55,10 @@ function pickIcon() {
 
 function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap()
+  const [lat, lng] = center
   useEffect(() => {
-    map.setView(center, zoom)
-  }, [center[0], center[1], zoom])
+    map.setView([lat, lng], zoom)
+  }, [lat, lng, zoom, map])
   return null
 }
 
@@ -77,22 +69,6 @@ function ClickCatcher({ onPick }: { onPick: (lat: number, lng: number) => void }
     },
   })
   return null
-}
-
-/** A ring colour around a pin when there's a live occupancy signal, so you can
- * tell a spot has been reported occupied/free without opening it. A single,
- * unconfirmed report gets a soft amber ring; once corroborated it gets a
- * solid colour matching the report. A confirmed "free" report isn't ringed
- * separately, since the pin is already green for a legally-free spot. */
-function occupancyRingFor(spot: ParkingSpot): string | undefined {
-  const sensor = getSensorOccupancyInfo(spot.sensor_status)
-  if (sensor) return sensor.possiblyStuck ? '#f59e0b' : sensor.status === 'occupied' ? '#f43f5e' : '#3b82f6'
-  const occupancy = getOccupancyInfo(spot.latest_ping)
-  if (occupancy.status === 'unknown') return undefined
-  const confirmed = occupancy.corroboratingCount >= OCCUPANCY_CORROBORATION_THRESHOLD
-  if (occupancy.status === 'occupied') return confirmed ? '#f43f5e' : '#f59e0b'
-  if (occupancy.status === 'free' && confirmed) return '#10b981'
-  return undefined
 }
 
 export function MapView({
@@ -133,7 +109,8 @@ export function MapView({
 }) {
   const mePosition = myLocation ?? center
   return (
-    <MapContainer center={[center.lat, center.lng]} zoom={zoom} className="h-full w-full" zoomControl={false}>
+    <MapContainer center={[center.lat, center.lng]} zoom={zoom} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
+      <MapOrientation />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -152,7 +129,7 @@ export function MapView({
           <Marker
             key={spot.id}
             position={[spot.lat, spot.lng]}
-            icon={pinIcon(getStatusColors(spot.status).hex, occupancyRingFor(spot))}
+            icon={pinIcon(availability(spot).color)}
             eventHandlers={{ click: () => onSelectSpot?.(spot) }}
           />
         ))}

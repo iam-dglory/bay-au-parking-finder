@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MapPin, Pencil, Search, Loader2, X, LocateFixed } from 'lucide-react'
-import { MapView, zoomForRadius } from '../components/MapView'
+import { MapView } from '../components/MapView'
+import { zoomForRadius } from '../lib/mapZoom'
 import { SpotCard } from '../components/SpotCard'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
 import { FilterBar } from '../components/FilterBar'
@@ -8,6 +9,7 @@ import { useNearbyParking } from '../lib/useNearbyParking'
 import { useNearbyCarParks } from '../lib/useNearbyCarParks'
 import { rankSpots } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
+import { useClock } from '../lib/useClock'
 import { LOGO_URL } from '../lib/assets'
 import type { ParkingSpot, SpotStatus, SignType } from '../types'
 
@@ -47,15 +49,16 @@ export function Home({
 
   const effectiveCenter = destination ?? center
 
-  const { spots, loading, error, truncated, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
+  const now = useClock()
+  const { spots, loading, error, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
   const { carParks } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks)
 
   const ranked = useMemo(() => {
-    let all = rankSpots(spots)
+    let all = rankSpots(spots, now)
     if (freeOnly) all = all.filter((s) => s.status.status === 'free')
     if (category !== 'all') all = all.filter((s) => s.rules.some((r) => r.sign_type === category))
     return all
-  }, [spots, freeOnly, category])
+  }, [spots, freeOnly, category, now])
 
   const selected = selectedSpot ? ranked.find((s) => s.id === selectedSpot.id) ?? selectedSpot : null
 
@@ -219,11 +222,11 @@ export function Home({
           </button>
         )}
         <p className="text-xs text-slate-500">{ranked.length} spots found</p>
-        {truncated && (
-          <p className="mt-1 text-xs text-amber-600">
-            This area has more spots than shown. Try a smaller radius to see everything nearby.
-          </p>
-        )}
+        <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+          <span>{loading ? 'Loading all nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
+          <button onClick={refresh} disabled={loading} className="underline">Refresh</button>
+        </div>
+        <p className="mt-1 text-xs text-slate-600">Pins show occupancy reports: green vacant · red occupied · amber uncertain · grey unknown. Vacancy does not mean parking is permitted.</p>
       </div>
 
       <FilterBar

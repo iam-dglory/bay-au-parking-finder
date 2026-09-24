@@ -1,0 +1,135 @@
+[
+  {
+    "path": "datasets/brisbane-city-council/parking-sign-locations.json",
+    "source_url": "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/parking-sign-locations/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 44194321,
+    "sha256": "ec46fd371ca16fa5509d293ef4e9e6edeea6a05df41f20adab08226a7b68484a"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/off-street-car-parks-2024-commercial.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/off-street-car-parks-with-capacity-and-type/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 62367,
+    "sha256": "004340bafcb76fa194675c455c7ee74171e7473baeca1514081f6c3182d4e798"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/off-street-car-parks-full-census.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/off-street-car-parks-with-capacity-and-type/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 53590457,
+    "sha256": "ca225d3b48ae76d0665a547c5f37e1353c02aa62ef5a692645b8777afd1f6b7d"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/on-street-car-park-bay-restrictions.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/on-street-car-park-bay-restrictions/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 5744661,
+    "sha256": "207fd971c8947cffe9edb6e3df9788bb328dc9b071d94e83b4c16048254f33aa"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/on-street-car-parking-meters-with-location.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/on-street-car-parking-meters-with-location/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 529751,
+    "sha256": "a680125da1bb2d151da37c68931667a44a9538b0828a0d7b492bb9b083a11a39"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/on-street-parking-bay-sensors.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/on-street-parking-bay-sensors/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 1508057,
+    "sha256": "fa48c0b7bf3000daf04fa40e502db8f07fa4730974c2bf2f96bcfa3f81675ad0"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/on-street-parking-bays.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/on-street-parking-bays/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 7700722,
+    "sha256": "fef8987c3cb6f37bb9776ffeb99570e55ad5a08477bd6c2c7b788f2acaac60c0"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/parking-zones-linked-to-street-segments.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/parking-zones-linked-to-street-segments/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 126228,
+    "sha256": "acb87ca5419be19e17e8e8c157892cfc4ab4fc7908c8b20906bc0c265b016e76"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/pay-stay-parking-restrictions.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/pay-stay-parking-restrictions/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 1154514,
+    "sha256": "dbe5ff75ff70374396924a3d9a1b3b157e32ac26bc0af90d997b1db83eecc19a"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/pay-stay-zones-linked-to-street-segments.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/pay-stay-zones-linked-to-street-segments/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 151036,
+    "sha256": "96e1dc610d994d20c70fc28a103b5406b99f9c39f914be44cef250b2aae34643"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/sign-plates-located-in-each-parking-zone.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/sign-plates-located-in-each-parking-zone/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 296016,
+    "sha256": "e66e3d942785c6c837a5ddbd8a8a5819beb98fde9de03ed188c2af0b0116a94c"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/sign-plates-located-in-each-pay-stay-zone.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/sign-plates-located-in-each-pay-stay-zone/exports/json",
+    "fetched_at": null,
+    "provenance_note": "Existing snapshot; source reconstructed from dataset documentation. Exact fetch time not recorded.",
+    "bytes": 301314,
+    "sha256": "14d283527396696af3307d1bad48c658bc6a0c4dbb71c49822c0a1b825c23bbb"
+  },
+  {
+    "path": "datasets/research-2026-09-24/melbourne-parking-catalog.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets?where=search(title,%22parking%22)&limit=100",
+    "fetched_at": null,
+    "provenance_note": "Exact original fetch time not recorded; see datasets/README.md. Catalog fetched 2026-09-24.",
+    "bytes": 106980,
+    "sha256": "c011d9adaf45289fb7d42b3f01eff14ff150355cde84ebabe5e5e4812e9e0632"
+  },
+  {
+    "path": "datasets/research-2026-09-24/melbourne-sign-catalog.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets?where=search(title,%22sign%22)&limit=100",
+    "fetched_at": null,
+    "provenance_note": "Exact original fetch time not recorded; see datasets/README.md. Catalog fetched 2026-09-24.",
+    "bytes": 10667,
+    "sha256": "3847d21ee5bf342f821e3ea51b5f047420f49b50ca8ba252566cbd47912e8048"
+  },
+  {
+    "path": "datasets/research-2026-09-24/on-street-parking-bay-sensors.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/on-street-parking-bay-sensors/exports/json",
+    "fetched_at": "2026-09-24T03:08:45.451533+00:00",
+    "bytes": 1507577,
+    "sha256": "25347742369f0a0ac18e1b34068efe9b1feb70beb634c2cbab1d4d4cfaedf1a2"
+  },
+  {
+    "path": "datasets/research-2026-09-24/sign-plates-located-in-each-pay-stay-zone.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/sign-plates-located-in-each-pay-stay-zone/exports/json",
+    "fetched_at": "2026-09-24T03:08:46.905984+00:00",
+    "bytes": 301314,
+    "sha256": "14d283527396696af3307d1bad48c658bc6a0c4dbb71c49822c0a1b825c23bbb"
+  },
+  {
+    "path": "datasets/research-2026-09-24/sign-plates-located-in-each-parking-zone.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/sign-plates-located-in-each-parking-zone/exports/json",
+    "fetched_at": "2026-09-24T03:08:47.936319+00:00",
+    "bytes": 296016,
+    "sha256": "e66e3d942785c6c837a5ddbd8a8a5819beb98fde9de03ed188c2af0b0116a94c"
+  }
+]

@@ -61,7 +61,7 @@ export interface SensorOccupancyInfo {
   possiblyStuck: boolean
 }
 
-const SENSOR_HEARTBEAT_STALE_HOURS = 4
+const SENSOR_HEARTBEAT_STALE_HOURS = 1 / 3
 
 /** A council-installed in-ground sensor's reading, where this bay has one.
  * Unlike a crowdsourced ping, a sensor reading doesn't go stale just because
@@ -76,7 +76,7 @@ export function getSensorOccupancyInfo(sensorStatus: SensorStatus | null, now: D
     status,
     confirmedAgoMinutes: Math.max(0, Math.round(heartbeatAgeMinutes)),
     unchangedSince: sensorStatus.status_timestamp,
-    possiblyStuck: heartbeatAgeMinutes / 60 > SENSOR_HEARTBEAT_STALE_HOURS,
+    possiblyStuck: !Number.isFinite(heartbeatAgeMinutes) || heartbeatAgeMinutes < 0 || heartbeatAgeMinutes / 60 > SENSOR_HEARTBEAT_STALE_HOURS,
   }
 }
 

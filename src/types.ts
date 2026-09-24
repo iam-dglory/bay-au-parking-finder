@@ -19,6 +19,7 @@ export interface ParkingRule {
   price_per_hour: number | null
   currency: string | null
   notes: string | null
+  match_method?: 'reported' | 'segment' | 'bay_id' | 'sign_coordinate' | 'field_verified' | 'unverified'
 }
 
 export interface SpotStatusPing {
@@ -45,6 +46,8 @@ export interface SensorStatus {
    * working" -- status_timestamp alone can't tell a long-parked car apart
    * from a sensor that's stopped reporting. */
   last_confirmed_at: string
+  synced_at?: string
+  match_method?: 'kerbside_id' | 'coordinate' | 'unknown'
 }
 
 export interface ParkingSpot {
@@ -69,7 +72,7 @@ export interface ParkingSpot {
   sensor_status: SensorStatus | null
 }
 
-export type UsabilityStatus = 'free' | 'paid' | 'restricted'
+export type UsabilityStatus = 'free' | 'paid' | 'restricted' | 'unknown'
 
 export interface SpotStatus {
   status: UsabilityStatus

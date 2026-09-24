@@ -62,7 +62,7 @@ export function FilterBar({
             freeOnly ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
-          Free only
+          No fee
         </button>
         <button
           onClick={() => onShowCarParksChange(!showCarParks)}
