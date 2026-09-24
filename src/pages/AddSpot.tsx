@@ -75,20 +75,20 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
   }
 
   return (
-    <div className="flex h-full flex-col bg-[#f6f8fc]">
+    <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc]">
       <div className="border-b border-slate-200/80 bg-white px-5 py-4 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Community map</p>
         <h1 className="mt-1 text-xl font-bold tracking-tight text-slate-900">Add a sign</h1>
         <p className="mt-1 text-sm text-slate-500">Drop a pin where the sign actually is</p>
       </div>
-      <div className="h-64 shrink-0 border-b border-slate-200 bg-white p-2">
+      <div className="h-48 shrink-0 border-b border-slate-200 bg-white p-2">
         <div className="h-full overflow-hidden rounded-2xl"><MapView center={center} spots={[]} pickMode pickedLocation={picked} onPickLocation={handlePick} /></div>
       </div>
       <p className="mx-4 mt-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 text-center text-xs font-medium text-blue-700">
         {!picked ? 'Tap the map to mark exactly where the sign is' : detecting ? 'Pin placed. Detecting your country...' : 'Pin placed. Fill in the sign details below.'}
       </p>
       {error && <p className="mx-4 mt-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-center text-xs text-rose-700">{error}</p>}
-      <div className="flex-1 overflow-y-auto">
+      <div className="shrink-0">
         <ReportSpotForm country={country} onCountryChange={setCountry} onSubmit={handleSubmit} submitting={submitting} />
       </div>
     </div>

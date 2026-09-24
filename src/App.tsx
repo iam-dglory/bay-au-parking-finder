@@ -9,7 +9,6 @@ import { LocationPicker } from './components/LocationPicker'
 import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
-import { getTesterNumber } from './lib/tester'
 
 type Tab = 'home' | 'addSign' | 'mine' | 'guide'
 type Location = { lat: number; lng: number; label: string }
@@ -19,7 +18,6 @@ const LOCATION_DETECT_TIMEOUT_MS = 7000
 
 export default function App() {
   const [authReady, setAuthReady] = useState(false)
-  const [testerNumber, setTesterNumber] = useState<number | null>(null)
   const [location, setLocation] = useState<Location | null>(null)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [trackLive, setTrackLive] = useState(false)
@@ -34,10 +32,6 @@ export default function App() {
       .finally(() => setAuthReady(true))
   }, [])
 
-  useEffect(() => {
-    if (!authReady) return
-    getTesterNumber().then(setTesterNumber)
-  }, [authReady])
 
   /** Shows the dashboard the moment GPS resolves, with a plain fallback
    * label, then fills in the real street address a moment later once
@@ -143,7 +137,6 @@ export default function App() {
             center={location}
             myLocation={liveLocation ?? undefined}
             locationLabel={location.label}
-            testerNumber={testerNumber}
             onChangeLocation={() => setLocationStatus('manual')}
           />
         )}
@@ -152,10 +145,10 @@ export default function App() {
         {tab === 'guide' && <Guide location={location} />}
       </div>
 
-      <nav className="mx-3 mb-3 flex shrink-0 rounded-3xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(30,64,175,0.10)] backdrop-blur sm:mx-5 sm:mb-5">
+      <nav className="mx-2 mb-1 flex shrink-0 rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(30,64,175,0.10)] backdrop-blur sm:mx-5 sm:mb-3">
         <button
           onClick={() => setTab('home')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <MapPin className="h-5 w-5" strokeWidth={1.75} />
           Find parking
@@ -165,21 +158,21 @@ export default function App() {
             setAddKey((k) => k + 1)
             setTab('addSign')
           }}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <Plus className="h-5 w-5" strokeWidth={1.75} />
           Add a sign
         </button>
         <button
           onClick={() => setTab('mine')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <ClipboardList className="h-5 w-5" strokeWidth={1.75} />
           My activity
         </button>
         <button
           onClick={() => setTab('guide')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[11px] font-semibold transition ${tab === 'guide' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'guide' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <BookOpen className="h-5 w-5" strokeWidth={1.75} />
           Guide

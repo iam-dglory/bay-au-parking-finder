@@ -1,12 +1,12 @@
 # Datasets
 
-Every dataset whose actual data we pulled during this project — not just ones we ended up using. Fetched **2026-09-22** — these are point-in-time exports, not live mirrors. The app itself re-syncs the live sensor feed on a schedule (see `../scripts/`); everything else here was a one-off fetch, so re-run the fetch if you want a fresher copy.
+Archived dataset exports and catalog responses, including sources not used in the app. Fetch dates are recorded in `manifest.json` where known; older snapshots have an unknown exact fetch time. These are point-in-time exports, not live mirrors. The app itself re-syncs the live sensor feed on a schedule (see `../scripts/`); everything else here was a one-off fetch, so re-run the fetch if you want a fresher copy.
 
-All datasets are published under their respective councils' open data licences (Creative Commons Attribution, unless noted) — attribute the source council if you republish.
+Source licence terms must be checked per dataset before reuse; retain council attribution. Archiving a source does not verify its accuracy or grant additional reuse rights.
 
 ## `melbourne-city-of-melbourne/`
 
-Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) — confirmed by exhaustive search (Sep 2026) to be the *only* Greater Melbourne council publishing bay-level parking data; neighbouring councils (Yarra, Port Phillip, Stonnington, Boroondara, etc.) publish nothing comparable (see "Investigated, no data" below).
+Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) . This is the primary source audited here; the archive is not an exhaustive survey of every Greater Melbourne council. See the coverage audit for known expansion sources and gaps.
 
 ### Used in the app
 
@@ -43,8 +43,17 @@ These were found via catalog search (`discover.data.vic.gov.au`, `data.gov.au`) 
 - **City of Yarra** (Richmond, Fitzroy, Collingwood): `yarra-permit-parking-zones` (zone *boundaries*, not individual bays)
 - **City of Casey** (outer south-east Melbourne, ~40km away): `city-of-casey-parking-restriction-zones`, `car-parks-locations-in-city-of-casey`
 - **City of Ballarat**, **City of Greater Geelong** (both well outside metro Melbourne): each publish several parking datasets (meters, permit zones, real-time availability for Geelong) — worth a proper look if/when expanding beyond Melbourne metro
-- **Brisbane City Council**: `parking-regulated-permit-parking-areas`, `brisbane-parking-meters` (meter locations) — not pulled since `parking-sign-locations.json` already covers restriction rules
+- **Brisbane City Council**: `parking-regulated-permit-parking-areas` and `brisbane-parking-meters` are now archived (24 September 2026); useful for context, not live vacancy.
 
 ## Coverage reality check
 
 If you're deciding where to expand next: bay-level open data like this is rare. Before adding a new city, search that city/state's open data portal for "parking" the way this was done for Melbourne (full-text search across *all* organisations, not just the city's own council) — most councils simply don't publish it, and there's no substitute for checking rather than assuming.
+
+## 2026-09-24 coverage audit additions
+
+The 2026-09-24 catalog review found two parking-related snapshots that were previously only represented in the catalog search results. They are now archived and hashed in `manifest.json`:
+
+- `sign-panels-non-parking.json` — 26,827 roadside sign panels. This primarily contains traffic, wayfinding and community signs. It is archived as road context, not assumed to be a source of parking rules.
+- `parking-restrictions-southeast-cbd-only-2014.json` — 2,188 historical restriction records. This is retained as reference data and is not treated as current policy.
+
+The catalog also contains historical sensor event exports (2011–2020), a weather feed, and support-service records. Those are not current parking permission or live occupancy data, so they remain documented rather than being mixed into Bay's production parking dataset.

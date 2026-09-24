@@ -20,7 +20,6 @@ export function Home({
   center,
   myLocation,
   locationLabel,
-  testerNumber,
   onChangeLocation,
 }: {
   center: { lat: number; lng: number }
@@ -28,7 +27,6 @@ export function Home({
    * `center` (where the current search is anchored) -- see MapView. */
   myLocation?: { lat: number; lng: number }
   locationLabel: string
-  testerNumber: number | null
   onChangeLocation: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
@@ -64,9 +62,9 @@ export function Home({
   const selected = selectedSpot ? ranked.find((s) => s.id === selectedSpot.id) ?? selectedSpot : null
   const occupancySummary = useMemo(() => {
     const summary = { vacant: 0, occupied: 0, uncertain: 0, unknown: 0 }
-    spots.forEach((spot) => { summary[availability(spot).state] += 1 })
+    ranked.forEach((spot) => { summary[availability(spot, now).state] += 1 })
     return summary
-  }, [spots, now])
+  }, [ranked, now])
 
   useEffect(() => {
     if (destDebounceRef.current) clearTimeout(destDebounceRef.current)
@@ -109,20 +107,20 @@ export function Home({
 
   if (!expanded) {
     return (
-      <div className="flex h-full flex-col bg-[#f6f8fc] text-slate-900">
+      <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc] text-slate-900">
         <div className="flex items-center gap-2 border-b border-slate-100 bg-white px-5 py-4">
           <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl shadow-sm" />
           <span className="text-lg font-bold tracking-tight text-slate-900">Bay</span>
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pb-10 text-center">
+        <div className="flex flex-1 flex-col items-center gap-5 px-6 py-7 text-center">
           <div>
             <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Parking intelligence, in one place</div>
-            <p className="text-2xl font-semibold tracking-tight text-slate-950">Hi, Test User{testerNumber ? ` ${testerNumber}` : ''}</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500">Your testing and feedback help make parking information more trustworthy.</p>
+            <p className="text-2xl font-semibold tracking-tight text-slate-950">Your next stop starts here.</p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">Explore nearby parking, check availability and understand the rules before you arrive.</p>
           </div>
 
-          <div className="h-52 w-full max-w-sm overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200/80">
+          <div className="h-44 shrink-0 w-full max-w-sm overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200/80">
             <MapView center={center} myLocation={myLocation} spots={[]} glowMe />
           </div>
 
@@ -148,8 +146,8 @@ export function Home({
   }
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-slate-200/80 bg-white/95 px-4 py-4 shadow-sm backdrop-blur">
+    <div className="flex h-full flex-col overflow-y-auto overscroll-y-contain">
+      <div className="shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button onClick={() => setExpanded(false)} aria-label="Back to home">
@@ -233,19 +231,18 @@ export function Home({
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-2 py-2"><p className="text-lg font-bold text-emerald-700">{occupancySummary.vacant}</p><p className="text-[11px] font-semibold text-emerald-700">Vacant now</p></div>
-          <div className="rounded-xl border border-rose-100 bg-rose-50 px-2 py-2"><p className="text-lg font-bold text-rose-700">{occupancySummary.occupied}</p><p className="text-[11px] font-semibold text-rose-700">Occupied</p></div>
-          <div className="rounded-xl border border-amber-100 bg-amber-50 px-2 py-2"><p className="text-lg font-bold text-amber-700">{occupancySummary.uncertain}</p><p className="text-[11px] font-semibold text-amber-700">Uncertain</p></div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-2"><p className="text-lg font-bold text-slate-600">{occupancySummary.unknown}</p><p className="text-[11px] font-semibold text-slate-600">Unknown</p></div>
-        </div>
-        <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-          <span>{loading ? 'Loading all nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
-          <button onClick={refresh} disabled={loading} className="underline">Refresh</button>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-600"><span className="font-semibold text-slate-800">Reading the map</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Vacant</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-rose-500" /> Occupied</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-amber-400" /> Uncertain</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Unknown</span><span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-sm bg-blue-600" /> Parking areas</span><span className="text-slate-400">Vacancy does not mean parking is permitted.</span></div>
+        <details className="mt-2 text-xs text-slate-600">
+          <summary className="cursor-pointer py-2 font-medium"> <span className="text-emerald-700">✓ {occupancySummary.vacant} vacant</span> · <span className="text-rose-700">× {occupancySummary.occupied} occupied</span> · Details</summary>
+          <div className="space-y-2 rounded-xl bg-slate-50 p-3">
+            <p><span className="text-amber-700">● {occupancySummary.uncertain} uncertain</span> · {occupancySummary.unknown} unknown · Blue P: parking areas</p>
+            <p>Vacancy does not mean parking is permitted. Open a spot to check its rules. Grey spots have no reliable current reading.</p>
+            <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
+          </div>
+        </details>
       </div>
 
+      <details className="shrink-0 border-b border-slate-200 bg-white">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-blue-700">Filters · {radiusM / 1000} km{freeOnly ? ' · No fee' : ''}{category !== 'all' ? ' · Zone selected' : ''}{showCarParks ? ' · Parking areas on' : ''}</summary>
       <FilterBar
         radiusM={radiusM}
         onRadiusChange={setRadiusM}
@@ -256,6 +253,7 @@ export function Home({
         showCarParks={showCarParks}
         onShowCarParksChange={setShowCarParks}
       />
+      </details>
 
       {error && (
         <div className="mx-4 mb-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-700">
@@ -266,7 +264,7 @@ export function Home({
         </div>
       )}
 
-      <div className="min-h-0 flex-1 overflow-hidden rounded-t-3xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
+      <div className="min-h-[340px] flex-1 shrink-0 overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
         {view === 'map' ? (
           <MapView
             center={effectiveCenter}

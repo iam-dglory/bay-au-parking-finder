@@ -54,6 +54,16 @@ function pickIcon() {
   })
 }
 
+function ResizeMap() {
+  const map = useMap()
+  useEffect(() => {
+    const observer = new ResizeObserver(() => map.invalidateSize({ pan: false }))
+    observer.observe(map.getContainer())
+    return () => observer.disconnect()
+  }, [map])
+  return null
+}
+
 function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap()
   const [lat, lng] = center
@@ -111,6 +121,7 @@ export function MapView({
   const mePosition = myLocation ?? center
   return (
     <MapContainer center={[center.lat, center.lng]} zoom={zoom} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
+      <ResizeMap />
       <MapOrientation />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

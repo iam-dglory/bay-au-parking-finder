@@ -131,5 +131,47 @@
     "fetched_at": "2026-09-24T03:08:47.936319+00:00",
     "bytes": 296016,
     "sha256": "e66e3d942785c6c837a5ddbd8a8a5819beb98fde9de03ed188c2af0b0116a94c"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/sign-panels-non-parking.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/sign-panels-non-parking/exports/json",
+    "fetched_at": "2026-09-24T05:15:09.930992+00:00",
+    "bytes": 8972910,
+    "sha256": "6c0b4c3be67f830f9ebc0dd4a4a690f846818a966775eae911b48cdee6d98ee1"
+  },
+  {
+    "path": "datasets/melbourne-city-of-melbourne/parking-restrictions-southeast-cbd-only-2014.json",
+    "source_url": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/parking-restrictions-southeast-cbd-only-2014/exports/json",
+    "fetched_at": "2026-09-24T05:15:38.850329+00:00",
+    "bytes": 2831538,
+    "sha256": "79c39ca04cee50d22ecb236a2fc3e1afbdcaee0d7a58aed3093a0726f174ba30"
+  },
+  {
+    "path": "datasets/brisbane-city-council/parking-meters-2026-09-24.json",
+    "source_url": "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-parking-meters/exports/json",
+    "fetched_at": "2026-09-24T08:07:33.179766+00:00",
+    "bytes": 724003,
+    "sha256": "fc873cd1010d4523138acc9132cfed22be0ee27e7b9683fdc3ccb0417f2aa360"
+  },
+  {
+    "path": "datasets/brisbane-city-council/permit-parking-areas-2026-09-24.json",
+    "source_url": "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/parking-regulated-permit-parking-areas/exports/json",
+    "fetched_at": "2026-09-24T08:07:34.519351+00:00",
+    "bytes": 179773,
+    "sha256": "9b042fea3b372ca1c9a006bae7dbf4dc4148ee278b61d791e80db5aef72344ab"
+  },
+  {
+    "path": "datasets/research-2026-09-24/cbd-parking-improvements.html",
+    "source_url": "https://participate.melbourne.vic.gov.au/central-city-parking-review/parking-improvements",
+    "fetched_at": "2026-09-24T08:10:48.118505+00:00",
+    "bytes": 226561,
+    "sha256": "f8a571869890bb2512fc32b2700decc94a03a1887698c61d947e78f934540592"
+  },
+  {
+    "path": "datasets/research-2026-09-24/southbank-parking-improvements.html",
+    "source_url": "https://participate.melbourne.vic.gov.au/southbank-parking-review/parking-improvements",
+    "fetched_at": "2026-09-24T08:10:50.456902+00:00",
+    "bytes": 239873,
+    "sha256": "6f7f193f7a805375dcfb998f721576e6a7c3d06dbe2a8eedd79e5256e90d2809"
   }
 ]

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bay — Find parking. Faster.</title>
+<title>Bay early access — Help make parking simpler</title>
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -60,22 +60,31 @@
   .done h3 { margin: 10px 0 4px; font-size: 16px; }
   .done p { color: #64748b; font-size: 13px; margin: 0; }
   #waitlistForm.hidden, .done.hidden { display: none; }
+
+body { background: radial-gradient(ellipse at top left,#dbeafe 0,transparent 48%),#f6f9ff; }
+header { background:transparent;color:#0b1b45;padding:30px 20px 10px; }
+header p { color:#2563eb;font-weight:700; }
+main {max-width:680px;padding-top:20px} .hero h1 {font-size:clamp(40px,8vw,62px);line-height:1.05;letter-spacing:-.055em;margin:15px 0 22px}
+.hero p {max-width:530px;margin:auto;color:#526782}.btn-primary,button.submit {background:#2563eb;box-shadow:0 8px 24px #2563eb25}
+.coverage,.disclaimer,.waitlist {border:1px solid #dbe5f5;background:white;border-radius:24px;box-shadow:0 16px 50px #194c9810;padding:24px}
+.disclaimer {color:#526782;margin-bottom:24px}.waitlist h2 {font-size:25px;letter-spacing:-.035em}.field input,.field select {min-height:48px;font-size:16px;border-color:#dbe5f5}.field input:focus {border-color:#2563eb;box-shadow:0 0 0 3px #dbeafe}.buttons {gap:10px} .btn {font-size:15px}.waitlist {scroll-margin-top:20px}
+@media(min-width:600px){.buttons {flex-direction:row}.btn{flex:1}}
 </style>
-</head>
+<meta name="description" content="Less circling. More getting there. Join Bay’s Melbourne early-access list and help improve parking information." /><meta property="og:title" content="Bay — Less circling. More getting there." /><meta property="og:description" content="Join the Melbourne parking pilot. Get early-access invitations and help shape Bay." /><meta property="og:image" content="https://iam-dglory.github.io/bay-au-parking-finder/logo/bay-logo.png" /></head>
 <body>
 <header>
   <img src="logo/bay-logo.png" alt="Bay" />
   <h1>BAY</h1>
-  <p>Find parking. Faster.</p>
+  <p>Melbourne early access</p>
 </header>
 <main>
   <div class="hero">
-    <p>Find available parking across the City of Melbourne.</p>
+    <h1>Less circling.<br><span style="color:#2563eb">More getting there.</span></h1><p>Help shape a simpler way to find parking in Melbourne. Join the early-access list for testing invitations.</p>
   </div>
 
   <div class="buttons">
-    <a class="btn btn-primary" href="./">TRY BAY</a>
-    <a class="btn btn-secondary" href="waitlist.html">JOIN EARLY ACCESS</a>
+    <a class="btn btn-primary" href="#signup">Get early access →</a>
+    <a class="btn btn-secondary" href="./">Explore the web pilot</a>
   </div>
 
   <div class="coverage">
@@ -83,28 +92,28 @@
   </div>
 
   <div class="disclaimer">
-    Bay is currently in pilot testing and uses real council / open-data parking information. Not every bay has live sensor data — where it does, you'll see a "Live sensor" badge. Your feedback helps us improve it.
+    Bay is currently in pilot testing and uses council open data and community reports. Not every bay has live sensor data — where it does, you'll see a sensor report. Coverage and sign matching are still being validated. Vacancy is not a guarantee of permission to park; always check the sign.
   </div>
 
-  <div class="waitlist">
-    <h2>BAY IS COMING TO ANDROID</h2>
-    <p class="sub">Join the early-access list and we'll let you know when Bay launches on Google Play.</p>
+  <div class="waitlist" id="signup">
+    <h2>Be part of Bay’s next chapter</h2>
+    <p class="sub">Get testing invitations and help us improve real-world parking information. Email is all you need.</p>
 
     <form id="waitlistForm">
       <div class="field">
-        <label>Name</label>
-        <input type="text" id="wlName" required />
+        <label for="wlName">Name <span class="optional">(optional)</span></label>
+        <input type="text" id="wlName" autocomplete="given-name" maxlength="100" />
       </div>
       <div class="field">
-        <label>Email</label>
-        <input type="email" id="wlEmail" required />
+        <label for="wlEmail">Email</label>
+        <input type="email" id="wlEmail" required autocomplete="email" maxlength="254" />
       </div>
       <div class="field">
-        <label>Suburb / area <span class="optional">(optional)</span></label>
+        <label for="wlSuburb">Suburb / area <span class="optional">(optional)</span></label>
         <input type="text" id="wlSuburb" placeholder="e.g. Carlton" />
       </div>
       <div class="field">
-        <label>How often do you drive into Melbourne? <span class="optional">(optional)</span></label>
+        <label for="wlFrequency">How often do you drive into Melbourne? <span class="optional">(optional)</span></label>
         <select id="wlFrequency">
           <option value="">Select one</option>
           <option>Daily</option>
@@ -114,14 +123,14 @@
           <option>Rarely</option>
         </select>
       </div>
-      <p id="wlError" class="error" style="display:none"></p>
-      <button type="submit" class="submit" id="wlSubmit">Join the waitlist</button>
+      <p class="sub" style="font-size:12px">By joining, you agree to receive Bay testing invitations and launch updates. We store your email in our private Supabase database. <a href="privacy-policy.html#waitlist">Privacy &amp; removal requests</a>.</p><p id="wlError" role="alert" class="error" style="display:none"></p>
+      <button type="submit" class="submit" id="wlSubmit">Join early access</button>
     </form>
 
-    <div class="done hidden" id="wlDone">
+    <div class="done hidden" id="wlDone" role="status" tabindex="-1">
       <div class="check">&#10003;</div>
       <h3>You're on the list.</h3>
-      <p>We'll email you the moment Bay is live on Google Play.</p>
+      <p>Your interest is registered. Look out for testing invitations as new groups open.</p>
     </div>
   </div>
 </main>
@@ -143,13 +152,13 @@
     const suburb = document.getElementById('wlSuburb').value.trim();
     const frequency = document.getElementById('wlFrequency').value;
 
-    if (!name || !email) {
-      errorEl.textContent = 'Please fill in your name and email.';
+    if (!email) {
+      errorEl.textContent = 'Please enter your email.';
       errorEl.style.display = 'block';
       return;
     }
 
-    const payload = { name, email };
+    const payload = { name: name || 'Early-access tester', email: email.toLowerCase() };
     if (suburb) payload.suburb = suburb;
     if (frequency) payload.drive_frequency = frequency;
 
@@ -170,6 +179,7 @@
       if (!res.ok) throw new Error(await res.text());
       form.classList.add('hidden');
       document.getElementById('wlDone').classList.remove('hidden');
+      document.getElementById('wlDone').focus();
     } catch (err) {
       errorEl.textContent = "Couldn't join right now. Please try again in a moment.";
       errorEl.style.display = 'block';

@@ -21,7 +21,7 @@ export const GUIDE_COUNTRIES = ['Australia', 'India', 'United States', 'United K
 
 export const COUNTRY_GUIDE_INTRO: Record<(typeof GUIDE_COUNTRIES)[number], string> = {
   Australia:
-    'A number like "2P" means free parking for 2 hours, shown with the days and hours it applies, e.g. "8:30AM-6PM MON-FRI". One pole can show more than one rule for different days, like "2P" on weekdays and "1P" on Saturday. Outside those hours, it is usually free.',
+    '“2P” means a two-hour time limit during the days and hours shown. It does not by itself tell you whether payment is required: check for “Meter”, “Ticket” or payment instructions. Read every plate and its arrows; different rules can apply at other times. Do not assume that parking is free or permitted outside one plate’s hours.',
   India: 'Street parking mostly has no official sign. It runs on local custom, paid attendants, or building reservations.',
   'United States': 'Signs show the time limit and hours directly, like "2 HR PARKING 8AM to 6PM".',
   'United Kingdom': 'Rules are shown with road paint. Yellow lines mean restricted parking. Blue Badge parking has its own rules.',
