@@ -13,11 +13,13 @@ function fresh(iso: string | undefined, now: Date, limit: number) {
 }
 /** Keep legal permission, price and physical vacancy separate. A stale,
  * approximate or contradictory signal must never advertise a vacant bay. */
-export function availability(spot: Pick<ParkingSpot, 'sensor_status' | 'latest_ping'>, now = new Date()): Availability {
+export function availability(spot: Pick<ParkingSpot, 'sensor_status' | 'latest_ping' | 'kerbside_id'>, now = new Date()): Availability {
   const sensor = spot.sensor_status
   const ping = spot.latest_ping
-  const sensorUsable = sensor?.match_method === 'kerbside_id' &&
-    fresh(sensor.last_confirmed_at, now, SENSOR_MAX_AGE_MINUTES) && fresh(sensor.synced_at, now, SENSOR_MAX_AGE_MINUTES)
+  const sensorMatchIsTrusted = sensor?.match_method === 'kerbside_id' || (sensor?.match_method == null && Boolean(spot.kerbside_id))
+  const sensorUsable = Boolean(sensor && sensorMatchIsTrusted &&
+    fresh(sensor.last_confirmed_at, now, SENSOR_MAX_AGE_MINUTES) &&
+    (sensor.synced_at == null || fresh(sensor.synced_at, now, SENSOR_MAX_AGE_MINUTES)))
   const pingUsable = ping && fresh(ping.created_at, now, REPORT_MAX_AGE_MINUTES)
   const sensorState = sensor?.status === 'present' ? 'occupied' : 'vacant'
   const pingState = ping?.status === 'occupied' ? 'occupied' : 'vacant'

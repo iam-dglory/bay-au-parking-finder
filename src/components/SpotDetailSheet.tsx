@@ -19,6 +19,7 @@ import {
 } from '../lib/occupancy'
 import { getBrowserLocation, LocationError } from '../lib/geolocation'
 import { formatMaxStay } from '../lib/formatDuration'
+import { formatChangesAt } from '../lib/parkingStatus'
 import { haversineMeters } from '../lib/distance'
 import { captureSignPhoto, uploadSignPhoto, type CapturedPhoto } from '../lib/photos'
 
@@ -178,7 +179,12 @@ export function SpotDetailSheet({
           <img src={occupancy.photoUrl} alt="Photo attached with this report" className="mt-2 h-28 w-full rounded-lg object-cover" />
         )}
 
-        <p className="mt-3 text-sm text-slate-600">{spot.status.detail}</p>
+        <div className={`mt-4 rounded-2xl border p-4 ${spot.status.status === 'free' ? 'border-emerald-200 bg-emerald-50' : spot.status.status === 'paid' ? 'border-blue-200 bg-blue-50' : spot.status.status === 'restricted' ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-slate-50'}`}>
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Right now</p>
+          <p className="mt-1 text-lg font-bold text-slate-900">{spot.status.label}</p>
+          <p className="mt-1 text-sm text-slate-600">{spot.status.detail}</p>
+          {formatChangesAt(spot.status) && <p className="mt-1 text-xs font-semibold text-slate-500">{formatChangesAt(spot.status)}</p>}
+        </div>
 
         <div className="mt-3 flex gap-2">
           <button
@@ -226,10 +232,10 @@ export function SpotDetailSheet({
         </p>
 
         <div className="mt-4 space-y-2">
-          <h3 className="text-sm font-semibold text-slate-700">{spot.status.status === 'unknown' ? 'Unverified imported rules' : 'Recorded rules'}</h3>
+          <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">{spot.status.status === 'unknown' ? 'Sign schedule to verify' : 'Sign schedule'}</h3><span className="text-xs text-slate-400">{spot.rules.length} period{spot.rules.length === 1 ? '' : 's'}</span></div>
           {spot.rules.length === 0 && <p className="text-sm text-slate-500">No rules recorded yet.</p>}
           {spot.rules.map((rule) => (
-            <div key={rule.id} className="rounded-lg border border-slate-200 p-2.5 text-sm">
+            <div key={rule.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
               <p className="font-medium text-slate-800">{SIGN_TYPE_LABELS[rule.sign_type]}</p>
               <p className="text-slate-500">
                 {formatDays(rule.days_active)}

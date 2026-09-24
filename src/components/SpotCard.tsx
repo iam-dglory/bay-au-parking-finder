@@ -1,6 +1,7 @@
 import { AvailabilityBadge } from './AvailabilityBadge'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { StatusBadge } from './StatusBadge'
+import { formatChangesAt } from '../lib/parkingStatus'
 
 
 function formatDistance(m: number) {
@@ -28,9 +29,17 @@ export function SpotCard({
           </p>
         </div>
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
         <StatusBadge status={spot.status} />
         <AvailabilityBadge spot={spot} />
+      </div>
+      <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Parking terms</span>
+          {formatChangesAt(spot.status) && <span className="text-[11px] font-semibold text-slate-500">{formatChangesAt(spot.status)}</span>}
+        </div>
+        <p className="mt-1 text-xs font-medium text-slate-700">{spot.status.detail}</p>
+        {spot.rules.length > 1 && <p className="mt-1 text-[11px] text-slate-500">{spot.rules.length} signed time periods · open to see the full schedule</p>}
       </div>
     </button>
   )

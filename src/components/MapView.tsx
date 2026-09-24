@@ -7,13 +7,14 @@ import { availability } from '../lib/availability'
 import { MapOrientation } from './MapOrientation'
 
 
-function pinIcon(color: string, occupancyRing?: string) {
-  const ring = occupancyRing ? `box-shadow:0 0 0 3px ${occupancyRing}, 0 1px 4px rgba(0,0,0,0.4);` : 'box-shadow:0 1px 4px rgba(0,0,0,0.4);'
+function pinIcon(color: string, state: string) {
+  const mark = state === 'vacant' ? '✓' : state === 'occupied' ? '×' : '?'
+  const ring = state === 'uncertain' ? 'box-shadow:0 0 0 3px rgba(245,158,11,.35), 0 2px 8px rgba(15,23,42,.24);' : 'box-shadow:0 2px 8px rgba(15,23,42,.24);'
   return L.divIcon({
     className: '',
-    html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;${ring}"></div>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    html: `<div title="${state}" style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;${ring}display:flex;align-items:center;justify-content:center;color:white;font:bold 17px/1 system-ui,sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.22)">${mark}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
   })
 }
 
@@ -38,9 +39,9 @@ function meIcon(glow?: boolean) {
 function carParkIcon() {
   return L.divIcon({
     className: '',
-    html: `<div style="width:26px;height:26px;border-radius:6px;background:#4f46e5;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;font-family:sans-serif;">P</div>`,
-    iconSize: [26, 26],
-    iconAnchor: [13, 13],
+    html: `<div title="Parking area" style="width:30px;height:30px;border-radius:9px;background:#2563eb;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;font-family:sans-serif;">P</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
   })
 }
 
@@ -129,7 +130,7 @@ export function MapView({
           <Marker
             key={spot.id}
             position={[spot.lat, spot.lng]}
-            icon={pinIcon(availability(spot).color)}
+            icon={pinIcon(availability(spot).color, availability(spot).state)}
             eventHandlers={{ click: () => onSelectSpot?.(spot) }}
           />
         ))}
