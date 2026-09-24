@@ -30,7 +30,13 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
       setUpdatedAt(new Date())
       if (recordSearch) logSearchEvent({ lat, lng }, radiusM, rows.length)
     } catch (err) {
-      if (request === sequence.current) setError(err instanceof Error ? err.message : (err as { message?: string })?.message ?? 'Could not refresh parking')
+      if (request === sequence.current) {
+        console.error('Bay parking data request failed', err)
+        const message = err instanceof TypeError || String((err as { message?: string })?.message ?? err).toLowerCase().includes('fetch')
+          ? 'Parking data is temporarily unavailable. Check your connection and try again.'
+          : (err instanceof Error ? err.message : (err as { message?: string })?.message ?? 'Could not refresh parking')
+        setError(message)
+      }
     } finally {
       if (request === sequence.current) setLoading(false)
     }

@@ -8,7 +8,7 @@ import { LOGO_URL } from '../lib/assets'
 
 const ALL_COUNTRIES = Country.getAllCountries()
 const DEFAULT_COUNTRY = 'AU'
-const DEFAULT_STATE = 'NSW'
+const DEFAULT_STATE = 'VIC'
 const SEARCH_DEBOUNCE_MS = 400
 
 export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng: number, label: string) => void; onUseGps: () => Promise<void> }) {
@@ -87,27 +87,28 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-white text-center">
-      <div className="flex shrink-0 flex-col items-center gap-2 bg-slate-900 px-6 py-9">
+    <div className="flex h-full flex-col overflow-y-auto bg-slate-50 text-center">
+      <div className="flex shrink-0 flex-col items-center gap-3 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10">
         <div className="flex items-center gap-2">
           <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl" />
           <span className="text-2xl font-semibold tracking-tight text-white">Bay</span>
         </div>
-        <p className="text-sm text-slate-300">Find real parking, everywhere.</p>
+        <p className="text-sm text-slate-300">Find parking with clearer evidence.</p>
+        <div className="mt-2 flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium text-indigo-100"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Melbourne pilot coverage</div>
       </div>
 
-      <div className="flex flex-1 flex-col items-center px-6 py-8">
-      <div className="flex w-full max-w-sm flex-col gap-8 pt-4">
+      <div className="flex flex-1 flex-col items-center px-5 py-7">
+      <div className="flex w-full max-w-sm flex-col gap-6 pt-2">
         <div className="flex flex-col items-center gap-2">
           <h1 className="text-xl font-semibold text-slate-900">Where are you parking?</h1>
-          <p className="text-sm text-slate-500">Search any city or suburb, worldwide.</p>
+          <p className="text-sm text-slate-500">Start with your current location or choose a city.</p>
         </div>
 
         <div>
           <button
             onClick={handleUseGps}
             disabled={locating}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 font-medium text-white transition hover:bg-slate-800 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 py-3.5 font-medium text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60"
           >
             {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2} />}
             {locating ? 'Locating…' : 'Use my current location'}
@@ -126,7 +127,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
-        <div className="space-y-3 text-left">
+        <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm">
           <div className="flex gap-2">
             <div className="flex-1">
               <label className="text-xs font-medium text-slate-500">Country</label>
@@ -134,7 +135,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
                 <select
                   value={countryCode}
                   onChange={(e) => handleCountryChange(e.target.value)}
-                  className="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                 >
                   {ALL_COUNTRIES.map((c) => (
                     <option key={c.isoCode} value={c.isoCode}>
@@ -153,7 +154,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
                   <select
                     value={stateCode}
                     onChange={(e) => setStateCode(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
+                    className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                   >
                     {states.map((s) => (
                       <option key={s.isoCode} value={s.isoCode}>
@@ -183,7 +184,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
                 }}
                 onFocus={() => setShowSuggestions(true)}
                 placeholder="Search for a city or suburb"
-                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             {showSuggestions && citySearch.trim() && (

@@ -75,19 +75,20 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="border-b border-slate-200 px-4 py-3">
-        <h1 className="text-base font-semibold text-slate-900">My activity</h1>
-        <p className="text-xs text-slate-500">Where you've parked and what you've reported</p>
+    <div className="h-full overflow-y-auto bg-slate-50">
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Your Bay history</p>
+        <h1 className="mt-1 text-xl font-semibold tracking-tight">My activity</h1>
+        <p className="mt-1 text-sm text-slate-300">Where you've parked and what you've reported</p>
       </div>
 
-      <section className="p-4">
+      <section className="m-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="mb-2 text-sm font-semibold text-slate-700">Parking history</h2>
         <p className="mb-2 -mt-1 text-xs text-slate-400">Places you've gotten directions to</p>
         {visits.length === 0 && <p className="text-sm text-slate-400">Nowhere yet. Get directions to a spot and it'll show up here.</p>}
         <div className="space-y-1.5">
           {visits.map((v) => (
-            <div key={v.id} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <div key={v.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
               <div>
                 <p className="font-medium text-slate-800">{v.address_text}</p>
                 {v.country && <p className="text-xs text-slate-400">{v.country}</p>}
@@ -98,7 +99,7 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
         </div>
       </section>
 
-      <section className="border-t border-slate-100 p-4">
+      <section className="mx-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="mb-2 text-sm font-semibold text-slate-700">Signs I've reported</h2>
         {signs.length === 0 && <p className="text-sm text-slate-400">No signs reported yet.</p>}
         <div className="space-y-2">
@@ -117,7 +118,7 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
         </div>
       </section>
 
-      <section className="border-t border-slate-100 p-4">
+      <section className="mx-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <button
           onClick={onOpenFeedback}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-600 hover:border-slate-400 hover:bg-slate-50"

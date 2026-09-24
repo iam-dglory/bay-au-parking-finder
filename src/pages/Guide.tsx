@@ -37,10 +37,11 @@ export function Guide({ location }: { location: { lat: number; lng: number } | n
   const intro = country === 'Other' ? GUIDE_GENERIC_INTRO : COUNTRY_GUIDE_INTRO[country]
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="border-b border-slate-200 px-4 py-3">
-        <h1 className="text-base font-semibold text-slate-900">Parking sign guide</h1>
-        <p className="text-xs text-slate-500">Your country: {country}</p>
+    <div className="h-full overflow-y-auto bg-slate-50">
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Bay guide</p>
+        <h1 className="mt-1 text-xl font-semibold tracking-tight">Understand the sign before you park</h1>
+        <p className="mt-1 text-sm text-slate-300">Rules shown for {country}. Always confirm the physical sign.</p>
       </div>
 
       <div className="flex gap-1.5 overflow-x-auto px-4 pt-4 pb-1">
@@ -49,7 +50,7 @@ export function Guide({ location }: { location: { lat: number; lng: number } | n
             key={c}
             onClick={() => setCountry(c as GuideCountry)}
             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium ${
-              country === c ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+              country === c ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 ring-1 ring-slate-200'
             }`}
           >
             {c}
@@ -58,7 +59,7 @@ export function Guide({ location }: { location: { lat: number; lng: number } | n
       </div>
 
       <div className="p-4">
-        <p className="text-sm leading-relaxed text-slate-600">{intro}</p>
+        <p className="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4 text-sm leading-relaxed text-slate-700">{intro}</p>
 
         <div className="mt-4 flex gap-4 text-xs font-medium">
           <span className="flex items-center gap-1.5 text-emerald-700">
@@ -74,7 +75,7 @@ export function Guide({ location }: { location: { lat: number; lng: number } | n
             const usable = SIGN_AVAILABILITY[s.type] === 'usable'
             const Icon = SIGN_TYPE_ICON[s.type]
             return (
-              <div key={s.type} className="rounded-xl border border-slate-200 p-3">
+              <div key={s.type} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div
                   className={`mb-2 flex h-9 w-9 items-center justify-center rounded-full ${
                     usable ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
