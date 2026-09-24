@@ -71,7 +71,7 @@ export function FilterBar({
             showCarParks ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/15' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50'
           }`}
         >
-          <CarFront className="h-4 w-4" strokeWidth={2} /> Car parks
+          <CarFront className="h-4 w-4" strokeWidth={2} /> Parking areas
         </button>
       </div>
       <div className="flex items-center gap-2 overflow-x-auto py-1">
