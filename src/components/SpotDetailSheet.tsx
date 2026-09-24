@@ -62,6 +62,7 @@ export function SpotDetailSheet({
   const confirmed = occupancy.corroboratingCount >= OCCUPANCY_CORROBORATION_THRESHOLD
   const corroboration = formatCorroboration(occupancy.corroboratingCount)
   const sensor = getSensorOccupancyInfo(spot.sensor_status)
+  const canReport = !sensor || sensor.possiblyStuck
 
   async function handleAttachPhoto() {
     setCapturingPhoto(true)
@@ -90,7 +91,7 @@ export function SpotDetailSheet({
       } else if (err instanceof Error) {
         setPingError(err.message)
       } else {
-        setPingError('Something went wrong. Try again.')
+        setPingError('The reading could not be saved. Please try again.')
       }
     } finally {
       setPinging(false)
@@ -122,8 +123,8 @@ export function SpotDetailSheet({
           <p className="mt-3 flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
             <Clock3 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
             {spot.moderation_status === 'pending'
-              ? "Pending review. Only you can see this until it's approved."
-              : "Not approved. This sign isn't shown publicly. Check the photo matches a real, current sign."}
+              ? "Awaiting review. This sign is currently visible only to you."
+              : "This sign is currently hidden from the public map while its photo is reviewed."}
           </p>
         )}
 
@@ -145,32 +146,29 @@ export function SpotDetailSheet({
               }`}
             >
               <Radio className="h-3.5 w-3.5" strokeWidth={2} />
-              Sensor report: {sensor.status === 'occupied' ? 'Occupied' : 'Vacant'} · last heartbeat {formatMinutesAgo(sensor.confirmedAgoMinutes)}
-              {sensor.possiblyStuck ? ' · outdated; do not rely on it' : ''}
+              Sensor reading: {sensor.status === 'occupied' ? 'Occupied' : 'Vacant'} · sensor checked in {formatMinutesAgo(sensor.confirmedAgoMinutes)}
+              {sensor.possiblyStuck ? ' · connection needs refresh' : ''}
             </span>
           )}
-          {/* Shown independently of the sensor badge above -- a sensor can be
-              misassigned to the wrong bay or simply wrong, and a driver's own
-              recent report is worth seeing even when a sensor also exists,
-              not silently swallowed by it. */}
-          {occupancy.status === 'occupied' &&
+          {/* Local readings are displayed only where there is no usable sensor. */}
+          {canReport && occupancy.status === 'occupied' &&
             (confirmed ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
                 <Car className="h-3.5 w-3.5" strokeWidth={2} /> Reports occupied · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+                <Car className="h-3.5 w-3.5" strokeWidth={2} /> Local reading · {formatOccupancyAge(occupancy.ageMinutes!)}
               </span>
             ))}
-          {occupancy.status === 'free' &&
+          {canReport && occupancy.status === 'free' &&
             (confirmed ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
                 <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Reports vacant · {formatOccupancyAge(occupancy.ageMinutes!)} · {corroboration}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Unconfirmed report · {formatOccupancyAge(occupancy.ageMinutes!)}
+                <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Local reading · {formatOccupancyAge(occupancy.ageMinutes!)}
               </span>
             ))}
         </div>
@@ -186,7 +184,7 @@ export function SpotDetailSheet({
           {formatChangesAt(spot.status) && <p className="mt-1 text-xs font-semibold text-slate-500">{formatChangesAt(spot.status)}</p>}
         </div>
 
-        <div className="mt-3 flex gap-2">
+        {canReport && <div className="mt-3 flex gap-2">
           <button
             onClick={() => handlePing('occupied')}
             disabled={pinging}
@@ -201,7 +199,7 @@ export function SpotDetailSheet({
           >
             <CircleCheck className="h-3.5 w-3.5" strokeWidth={2} /> Report vacant
           </button>
-        </div>
+        </div>}
 
         {attachedPhoto ? (
           <div className="mt-2 flex items-center gap-2 rounded-lg border border-slate-200 p-2">
@@ -228,11 +226,11 @@ export function SpotDetailSheet({
           </p>
         )}
         <p className="mt-1.5 text-xs text-slate-400">
-          You need to be near this spot to report on it. A report stays unconfirmed until someone else agrees.
+          {canReport ? 'No current sensor reading is available. A nearby driver can add a supplementary local reading.' : 'A council sensor reading is available, so local reporting is paused for this spot.'}
         </p>
 
         <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">{spot.status.status === 'unknown' ? 'Sign schedule to verify' : 'Sign schedule'}</h3><span className="text-xs text-slate-400">{spot.rules.length} period{spot.rules.length === 1 ? '' : 's'}</span></div>
+          <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">Parking schedule</h3><span className="text-xs text-slate-400">{spot.rules.length} period{spot.rules.length === 1 ? '' : 's'}</span></div>
           {spot.rules.length === 0 && <p className="text-sm text-slate-500">No rules recorded yet.</p>}
           {spot.rules.map((rule) => (
             <div key={rule.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
@@ -250,7 +248,7 @@ export function SpotDetailSheet({
 
         <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-          Community-sourced. Always confirm with the physical sign before parking.
+          Sensor readings are prioritised when available. Local readings are supplementary. Always follow the physical sign before parking.
         </p>
 
         <a

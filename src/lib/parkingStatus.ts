@@ -175,7 +175,7 @@ function evaluateRule(rule: ParkingRule, local: LocalNow, now: Date, timeZone: s
       return {
         status: 'free',
         label: 'Informally okay',
-        detail: rule.notes ?? 'No official rule. Reported as commonly tolerated here, not guaranteed.',
+        detail: rule.notes ?? 'Reported local practice. Follow the physical sign.',
         price_per_hour: null,
         changesAt: null,
         ruleApplied: rule,
@@ -199,12 +199,12 @@ export function evaluateSpotStatus(rules: ParkingRule[], lat: number, lng: numbe
   const timeZone = timeZoneAt(lat, lng)
   const local = localNow(now, timeZone)
 
-  const unverified = rules.some((r) => r.match_method === 'segment' || r.match_method === 'unverified' || (!r.match_method && /^(Melway sign:|Pay Stay)/i.test(r.notes ?? '')))
-  if (rules.length === 0 || unverified) {
+  const segmentSchedule = rules.some((r) => r.match_method === 'segment' || r.match_method === 'unverified' || (!r.match_method && /^(Melway sign:|Pay Stay)/i.test(r.notes ?? '')))
+  if (rules.length === 0 || segmentSchedule) {
     return {
       status: 'unknown',
-      label: unverified ? 'Rules need verification' : 'Unknown restrictions',
-      detail: unverified ? 'These imported rules were linked to a street segment, not verified for this bay. Check the sign and its arrows.' : 'No sign data recorded for this spot yet',
+      label: segmentSchedule ? 'Schedule: check sign' : 'Schedule not recorded',
+      detail: segmentSchedule ? 'A nearby schedule is available. The physical sign and its arrows control this bay.' : 'No parking schedule is recorded for this spot.',
       price_per_hour: null,
       changesAt: null,
       ruleApplied: null,

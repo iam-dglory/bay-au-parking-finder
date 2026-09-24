@@ -8,11 +8,11 @@ import { MapOrientation } from './MapOrientation'
 
 
 function pinIcon(color: string, state: string) {
-  const mark = state === 'vacant' ? '✓' : state === 'occupied' ? '×' : '?'
-  const ring = state === 'uncertain' ? 'box-shadow:0 0 0 3px rgba(245,158,11,.35), 0 2px 8px rgba(15,23,42,.24);' : 'box-shadow:0 2px 8px rgba(15,23,42,.24);'
+  const mark = state === 'vacant' ? '✓' : state === 'occupied' ? '×' : ''
+  const ring = state === 'uncertain' || state === 'unknown' ? 'box-shadow:0 0 0 3px rgba(100,116,139,.18), 0 2px 8px rgba(15,23,42,.24);' : 'box-shadow:0 2px 8px rgba(15,23,42,.24);'
   return L.divIcon({
     className: '',
-    html: `<div title="${state}" style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;${ring}display:flex;align-items:center;justify-content:center;color:white;font:bold 17px/1 system-ui,sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.22)">${mark}</div>`,
+    html: `<div title="${state === 'unknown' || state === 'uncertain' ? 'No current reading' : state}" style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;${ring}display:flex;align-items:center;justify-content:center;color:white;font:bold 17px/1 system-ui,sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.22)">${mark || '<span style="width:8px;height:8px;border-radius:50%;background:white;opacity:.9"></span>'}</div>`,
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
