@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bay early access — Help make parking simpler</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  header {
+    background: #0f172a;
+    color: white;
+    padding: 48px 20px 40px;
+    text-align: center;
+  }
+  header img { width: 56px; height: 56px; display: block; margin: 0 auto 12px; }
+  header h1 { margin: 0; font-size: 28px; letter-spacing: 0.02em; }
+  header p { margin: 6px 0 0; color: #94a3b8; font-size: 15px; }
+  main { max-width: 480px; margin: 0 auto; padding: 28px 20px 60px; }
+  .hero { text-align: center; margin-bottom: 24px; }
+  .hero p { font-size: 17px; color: #334155; line-height: 1.5; margin: 0; }
+  .buttons { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+  .btn { display: block; text-align: center; padding: 15px; border-radius: 12px; font-weight: 600; font-size: 16px; text-decoration: none; }
+  .btn-primary { background: #0f172a; color: white; }
+  .btn-secondary { background: white; color: #0f172a; border: 1.5px solid #cbd5e1; }
+  .coverage {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+    font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 12px;
+  }
+  .coverage strong { color: #0f172a; }
+  .disclaimer {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px;
+    font-size: 13px; color: #92400e; line-height: 1.6; margin-bottom: 32px;
+  }
+  .waitlist { border-top: 1px solid #e2e8f0; padding-top: 32px; }
+  .waitlist h2 { font-size: 18px; margin: 0 0 4px; }
+  .waitlist p.sub { color: #64748b; font-size: 14px; margin: 0 0 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .field .optional { font-weight: 400; color: #94a3b8; }
+  .field input, .field select {
+    width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px;
+    font-size: 14px; font-family: inherit; background: white;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: #64748b; }
+  button.submit {
+    width: 100%; background: #0f172a; color: white; border: none; border-radius: 12px;
+    padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px;
+  }
+  button.submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .error { color: #e11d48; font-size: 13px; margin-top: 8px; }
+  .done { text-align: center; padding: 20px; }
+  .done .check { font-size: 40px; color: #10b981; }
+  .done h3 { margin: 10px 0 4px; font-size: 16px; }
+  .done p { color: #64748b; font-size: 13px; margin: 0; }
+  #waitlistForm.hidden, .done.hidden { display: none; }
+
+body { background: radial-gradient(ellipse at top left,#dbeafe 0,transparent 48%),#f6f9ff; }
+header { background:transparent;color:#0b1b45;padding:30px 20px 10px; }
+header p { color:#2563eb;font-weight:700; }
+main {max-width:680px;padding-top:20px} .hero h1 {font-size:clamp(40px,8vw,62px);line-height:1.05;letter-spacing:-.055em;margin:15px 0 22px}
+.hero p {max-width:530px;margin:auto;color:#526782}.btn-primary,button.submit {background:#2563eb;box-shadow:0 8px 24px #2563eb25}
+.coverage,.disclaimer,.waitlist {border:1px solid #dbe5f5;background:white;border-radius:24px;box-shadow:0 16px 50px #194c9810;padding:24px}
+.disclaimer {color:#526782;margin-bottom:24px}.waitlist h2 {font-size:25px;letter-spacing:-.035em}.field input,.field select {min-height:48px;font-size:16px;border-color:#dbe5f5}.field input:focus {border-color:#2563eb;box-shadow:0 0 0 3px #dbeafe}.buttons {gap:10px} .btn {font-size:15px}.waitlist {scroll-margin-top:20px}
+@media(min-width:600px){.buttons {flex-direction:row}.btn{flex:1}}
+</style>
+<meta name="description" content="Less circling. More getting there. Join Bay’s Melbourne early-access list and help improve parking information." /><meta property="og:title" content="Bay — Less circling. More getting there." /><meta property="og:description" content="Join the Melbourne parking pilot. Get early-access invitations and help shape Bay." /><meta property="og:image" content="https://iam-dglory.github.io/bay-au-parking-finder/logo/bay-logo.png" /></head>
+<body>
+<header>
+  <img src="logo/bay-logo.png" alt="Bay" />
+  <h1>BAY</h1>
+  <p>Melbourne early access</p>
+</header>
+<main>
+  <div class="hero">
+    <h1>Less circling.<br><span style="color:#2563eb">More getting there.</span></h1><p>Help shape a simpler way to find parking in Melbourne. Join the early-access list for testing invitations.</p>
+  </div>
+
+  <div class="buttons">
+    <a class="btn btn-primary" href="#signup">Get early access →</a>
+    <a class="btn btn-secondary" href="./">Explore the web pilot</a>
+  </div>
+
+  <div class="coverage">
+    <strong>Currently available</strong> across the City of Melbourne area, including CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville and East Melbourne.
+  </div>
+
+  <div class="disclaimer">
+    Bay is currently in pilot testing and uses council open data and community reports. Not every bay has live sensor data — where it does, you'll see a sensor report. Coverage and sign matching are still being validated. Vacancy is not a guarantee of permission to park; always check the sign.
+  </div>
+
+  <div class="waitlist" id="signup">
+    <h2>Be part of Bay’s next chapter</h2>
+    <p class="sub">Get testing invitations and help us improve real-world parking information. Email is all you need.</p>
+
+    <form id="waitlistForm">
+      <div class="field">
+        <label for="wlName">Name <span class="optional">(optional)</span></label>
+        <input type="text" id="wlName" autocomplete="given-name" maxlength="100" />
+      </div>
+      <div class="field">
+        <label for="wlEmail">Email</label>
+        <input type="email" id="wlEmail" required autocomplete="email" maxlength="254" />
+      </div>
+      <div class="field">
+        <label for="wlSuburb">Suburb / area <span class="optional">(optional)</span></label>
+        <input type="text" id="wlSuburb" placeholder="e.g. Carlton" />
+      </div>
+      <div class="field">
+        <label for="wlFrequency">How often do you drive into Melbourne? <span class="optional">(optional)</span></label>
+        <select id="wlFrequency">
+          <option value="">Select one</option>
+          <option>Daily</option>
+          <option>A few times a week</option>
+          <option>Weekly</option>
+          <option>A few times a month</option>
+          <option>Rarely</option>
+        </select>
+      </div>
+      <p class="sub" style="font-size:12px">By joining, you agree to receive Bay testing invitations and launch updates. We store your email in our private Supabase database. <a href="privacy-policy.html#waitlist">Privacy &amp; removal requests</a>.</p><p id="wlError" role="alert" class="error" style="display:none"></p>
+      <button type="submit" class="submit" id="wlSubmit">Join early access</button>
+    </form>
+
+    <div class="done hidden" id="wlDone" role="status" tabindex="-1">
+      <div class="check">&#10003;</div>
+      <h3>You're on the list.</h3>
+      <p>Your interest is registered. Look out for testing invitations as new groups open.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://ezwiagssiuvmhayvsmbk.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah';
+
+  const form = document.getElementById('waitlistForm');
+  const errorEl = document.getElementById('wlError');
+  const submitBtn = document.getElementById('wlSubmit');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+
+    const name = document.getElementById('wlName').value.trim();
+    const email = document.getElementById('wlEmail').value.trim();
+    const suburb = document.getElementById('wlSuburb').value.trim();
+    const frequency = document.getElementById('wlFrequency').value;
+
+    if (!email) {
+      errorEl.textContent = 'Please enter your email.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const payload = { name: name || 'Early-access tester', email: email.toLowerCase() };
+    if (suburb) payload.suburb = suburb;
+    if (frequency) payload.drive_frequency = frequency;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Joining…';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist_signups`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      form.classList.add('hidden');
+      document.getElementById('wlDone').classList.remove('hidden');
+      document.getElementById('wlDone').focus();
+    } catch (err) {
+      errorEl.textContent = "Couldn't join right now. Please try again in a moment.";
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the waitlist';
+    }
+  });
+</script>
+</body>
+</html>
