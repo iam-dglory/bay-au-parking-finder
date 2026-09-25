@@ -232,9 +232,9 @@ export function Home({
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
         <details className="mt-2 text-xs text-slate-600">
-          <summary className="cursor-pointer py-2 font-medium"> <span className="text-emerald-700">✓ {occupancySummary.vacant} vacant</span> · <span className="text-rose-700">× {occupancySummary.occupied} occupied</span> · Details</summary>
+          <summary className="cursor-pointer py-2 font-medium"><span className="text-emerald-700">{occupancySummary.vacant} vacant</span> · <span className="text-rose-700">{occupancySummary.occupied} occupied</span> · Details</summary>
           <div className="space-y-2 rounded-xl bg-slate-50 p-3">
-            <p><span className="text-slate-600">● {occupancySummary.uncertain + occupancySummary.unknown} no current reading</span> · Blue P: parking areas</p>
+            <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} no current reading</span> · Blue P: parking areas</p>
             <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>
             <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
           </div>
