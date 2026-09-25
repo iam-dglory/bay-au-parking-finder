@@ -203,8 +203,8 @@ export function evaluateSpotStatus(rules: ParkingRule[], lat: number, lng: numbe
   if (rules.length === 0 || segmentSchedule) {
     return {
       status: 'unknown',
-      label: segmentSchedule ? 'Schedule: check sign' : 'Schedule not recorded',
-      detail: segmentSchedule ? 'A nearby schedule is available. The physical sign and its arrows control this bay.' : 'No parking schedule is recorded for this spot.',
+      label: segmentSchedule ? 'Parking terms vary by sign' : 'Parking terms not recorded',
+      detail: segmentSchedule ? 'Read the sign at this bay for the current time and payment terms.' : 'Read the sign at this bay for the current parking terms.',
       price_per_hour: null,
       changesAt: null,
       ruleApplied: null,
@@ -228,7 +228,7 @@ export function evaluateSpotStatus(rules: ParkingRule[], lat: number, lng: numbe
 
 export function formatChangesAt(status: SpotStatus): string | null {
   if (!status.changesAt) return null
-  return `until ${formatTime(status.changesAt, status.timeZone)}`
+  return `changes at ${formatTime(status.changesAt, status.timeZone)}`
 }
 
 /** Best-option-first ranking: usable now > free-before-paid > cheaper > closer > longer remaining. */

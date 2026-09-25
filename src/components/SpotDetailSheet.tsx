@@ -42,6 +42,22 @@ function formatTimeStr(t: string | null) {
   return `${h12}${m ? ':' + String(m).padStart(2, '0') : ''}${period}`
 }
 
+function uniqueRules(rules: ParkingSpot['rules']) {
+  const seen = new Set<string>()
+  return rules.filter((rule) => {
+    const key = [rule.sign_type, rule.max_stay_minutes, rule.days_active.slice().sort().join(','), rule.time_from, rule.time_to, rule.price_per_hour, rule.currency].join('|')
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+function ruleWindow(rule: ParkingSpot['rules'][number]) {
+  const days = formatDays(rule.days_active)
+  const time = rule.time_from && rule.time_to ? `${formatTimeStr(rule.time_from)}–${formatTimeStr(rule.time_to)}` : 'all day'
+  return `${days} · ${time}`
+}
+
 export function SpotDetailSheet({
   spot,
   onClose,
@@ -119,6 +135,17 @@ export function SpotDetailSheet({
           </button>
         </div>
 
+        <a
+          href={directionsUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => logVisit(spot.id, spot.address_text, spot.country)}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-center font-medium text-white hover:bg-slate-800"
+        >
+          <Navigation className="h-4 w-4" strokeWidth={2} />
+          Get directions
+        </a>
+
         {spot.moderation_status !== 'approved' && (
           <p className="mt-3 flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
             <Clock3 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
@@ -178,7 +205,7 @@ export function SpotDetailSheet({
         )}
 
         <div className={`mt-4 rounded-2xl border p-4 ${spot.status.status === 'free' ? 'border-emerald-200 bg-emerald-50' : spot.status.status === 'paid' ? 'border-blue-200 bg-blue-50' : spot.status.status === 'restricted' ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-slate-50'}`}>
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Right now</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Can I park here now?</p>
           <p className="mt-1 text-lg font-bold text-slate-900">{spot.status.label}</p>
           <p className="mt-1 text-sm text-slate-600">{spot.status.detail}</p>
           {formatChangesAt(spot.status) && <p className="mt-1 text-xs font-semibold text-slate-500">{formatChangesAt(spot.status)}</p>}
@@ -230,18 +257,14 @@ export function SpotDetailSheet({
         </p>
 
         <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">Parking schedule</h3><span className="text-xs text-slate-400">{spot.rules.length} period{spot.rules.length === 1 ? '' : 's'}</span></div>
-          {spot.rules.length === 0 && <p className="text-sm text-slate-500">No rules recorded yet.</p>}
-          {spot.rules.map((rule) => (
+          <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">Parking times</h3><span className="text-xs text-slate-400">{uniqueRules(spot.rules).length} time{uniqueRules(spot.rules).length === 1 ? '' : 's'}</span></div>
+          {spot.rules.length === 0 && <p className="text-sm text-slate-500">The parking terms are not recorded. Read the sign at this bay.</p>}
+          {uniqueRules(spot.rules).map((rule) => (
             <div key={rule.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
               <p className="font-medium text-slate-800">{SIGN_TYPE_LABELS[rule.sign_type]}</p>
-              <p className="text-slate-500">
-                {formatDays(rule.days_active)}
-                {rule.time_from && rule.time_to ? ` · ${formatTimeStr(rule.time_from)}–${formatTimeStr(rule.time_to)}` : ''}
-              </p>
+              <p className="text-slate-500">{ruleWindow(rule)}</p>
               {rule.max_stay_minutes && <p className="text-slate-500">Max stay: {formatMaxStay(rule.max_stay_minutes)}</p>}
               {rule.price_per_hour != null && <p className="text-slate-500">{formatMoney(rule.currency ?? 'USD', rule.price_per_hour)}/hr</p>}
-              {rule.notes && <p className="mt-1 text-slate-400 italic">{rule.notes}</p>}
             </div>
           ))}
         </div>
@@ -251,16 +274,6 @@ export function SpotDetailSheet({
           Sensor readings are prioritised when available. Local readings are supplementary. Always follow the physical sign before parking.
         </p>
 
-        <a
-          href={directionsUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => logVisit(spot.id, spot.address_text, spot.country)}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-center font-medium text-white hover:bg-slate-800"
-        >
-          <Navigation className="h-4 w-4" strokeWidth={2} />
-          Get directions
-        </a>
       </div>
     </div>
   )
