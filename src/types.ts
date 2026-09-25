@@ -51,6 +51,7 @@ export interface SensorStatus {
 }
 
 export interface ParkingSpot {
+  catalog?: CarPark
   id: string
   address_text: string
   suburb: string | null
@@ -110,8 +111,24 @@ export interface CarPark {
   lat: number
   lng: number
   distance_m: number
-  capacity: number
-  census_year: number
+  capacity: number | null
+  census_year: number | null
+  kind?: 'bay' | 'area'
+  city?: string
+  country?: string
+  access?: string
+  fee?: string | null
+  opening_hours?: string | null
+  vehicle_types?: string
+  source_url?: string
+  source_name?: string
+  source_updated_at?: string
+  collected_at?: string
+  location_note?: string
+  occupancy?: 'not_provided' | 'operator_snapshot'
+  occupancy_snapshot?: { source_url: string; fetched_at: string; vehicles: Record<string,{capacity:number;occupied:number;available:number}> }
+  pricing_checked_at?: string
+  tariffs?: { vehicle: string; period: string; amount: number }[]
   hourly_rate_min?: number | null
   hourly_rate_max?: number | null
   currency?: string | null

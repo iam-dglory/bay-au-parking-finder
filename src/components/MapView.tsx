@@ -5,6 +5,7 @@ import L from 'leaflet'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import { availability } from '../lib/availability'
 import { MapOrientation } from './MapOrientation'
+import { ParkingAreaDetails } from './ParkingAreaDetails'
 
 
 function pinIcon(color: string, state: string) {
@@ -147,29 +148,17 @@ export function MapView({
           />
         ))}
       </MarkerClusterGroup>
+      <MarkerClusterGroup chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17}>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()}>
           <Popup>
-            <div style={{ fontSize: 13, lineHeight: 1.5, maxWidth: 220 }}>
-              <p style={{ fontWeight: 600, margin: 0 }}>{cp.address_text}</p>
-              <p style={{ margin: '4px 0 0', color: '#4f46e5', fontWeight: 600 }}>~{cp.capacity} spaces</p>
-              {cp.hourly_rate_min != null ? (
-                <p style={{ margin: '4px 0 0', color: '#0f766e', fontWeight: 600 }}>
-                  {cp.hourly_rate_max != null && cp.hourly_rate_max !== cp.hourly_rate_min
-                    ? `${cp.currency ?? 'AUD'} ${cp.hourly_rate_min.toFixed(2)}–${cp.hourly_rate_max.toFixed(2)}/hr`
-                    : `${cp.currency ?? 'AUD'} ${cp.hourly_rate_min.toFixed(2)}/hr`}
-                </p>
-              ) : (
-                <p style={{ margin: '4px 0 0', color: '#64748b' }}>Hourly price not published in the council census</p>
-              )}
-              <p style={{ margin: '4px 0 0', color: '#64748b' }}>
-                From City of Melbourne's {cp.census_year} car park census. No live availability -- this is total
-                capacity, not spots free right now.
-              </p>
+            <div style={{ maxWidth: 280, maxHeight: '50vh', overflowY:'auto' }}>
+              <ParkingAreaDetails area={cp} />
             </div>
           </Popup>
         </Marker>
       ))}
+      </MarkerClusterGroup>
       {pickMode && <ClickCatcher onPick={(lat, lng) => onPickLocation?.(lat, lng)} />}
       {pickedLocation && <Marker position={[pickedLocation.lat, pickedLocation.lng]} icon={pickIcon()} />}
     </MapContainer>

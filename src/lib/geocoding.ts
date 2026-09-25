@@ -57,11 +57,23 @@ function normalize(s: string): string {
  * Victorian suburb would still surface Victorian results. */
 export async function searchCities(query: string, countryCode: string, stateName?: string): Promise<CitySearchResult[]> {
   if (!query.trim()) return []
+  const supportedIndia: CitySearchResult[] = [
+    { name: 'Chennai', stateName: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
+    { name: 'Bengaluru', stateName: 'Karnataka', lat: 12.9716, lng: 77.5946 },
+    { name: 'Hyderabad', stateName: 'Telangana', lat: 17.385, lng: 78.4867 },
+  ]
+  const typed = normalize(query)
+  const local = countryCode === 'IN' ? supportedIndia.filter(city => {
+    const aliases = city.name === 'Bengaluru' ? ['bengaluru','bangalore'] : [normalize(city.name)]
+    const nameMatch = aliases.some(name => name.includes(typed) || typed.includes(name))
+    const stateMatch = !stateName || normalize(city.stateName ?? '') === normalize(stateName)
+    return nameMatch && stateMatch
+  }) : []
   try {
     const q = stateName ? `${query}, ${stateName}` : query
     const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&countrycodes=${countryCode.toLowerCase()}&addressdetails=1&limit=10`
     const res = await fetch(url, { headers: { Accept: 'application/json' } })
-    if (!res.ok) return []
+    if (!res.ok) return local
     const data = await res.json()
     const results: CitySearchResult[] = (data ?? [])
       .filter((r: any) => r.lat && r.lon)
@@ -76,7 +88,6 @@ export async function searchCities(query: string, countryCode: string, stateName
     // an unrelated place that matches the state strongly (e.g. the capital)
     // when nothing actually matches the typed name — so also require the
     // result's own name to resemble what was actually typed.
-    const typed = normalize(query)
     const nameMatches = (r: CitySearchResult) => {
       const n = normalize(r.name)
       return n.includes(typed) || typed.includes(n)
@@ -85,9 +96,12 @@ export async function searchCities(query: string, countryCode: string, stateName
     const wanted = stateName ? normalize(stateName) : null
     const stateMatches = (r: CitySearchResult) => !wanted || (!!r.stateName && (normalize(r.stateName).includes(wanted) || wanted.includes(normalize(r.stateName))))
 
-    return results.filter((r) => nameMatches(r) && stateMatches(r)).slice(0, 8)
+    const remote = results.filter((r) => nameMatches(r) && stateMatches(r))
+    const unique = new Map<string,CitySearchResult>()
+    for (const row of [...local,...remote]) unique.set(`${normalize(row.name)}|${normalize(row.stateName ?? '')}`,row)
+    return [...unique.values()].slice(0, 8)
   } catch {
-    return []
+    return local
   }
 }
 

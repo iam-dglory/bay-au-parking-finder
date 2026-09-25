@@ -14,6 +14,8 @@ dist-ghpages
 *.local
 .env
 .env.local
+private/
+__pycache__/
 
 # Editor directories and files
 .vscode/*

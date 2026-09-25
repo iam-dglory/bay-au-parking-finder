@@ -173,5 +173,96 @@
     "fetched_at": "2026-09-24T08:10:50.456902+00:00",
     "bytes": 239873,
     "sha256": "6f7f193f7a805375dcfb998f721576e6a7c3d06dbe2a8eedd79e5256e90d2809"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-osm.json",
+    "source_url": "https://overpass.private.coffee/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A90%5D%3Bnwr%5Bamenity~%22%5E%28parking%7Cparking_space%7Cmotorcycle_parking%29%24%22%5D%2812.75%2C79.95%2C13.3%2C80.35%29%3Bout+meta+center+geom%3B",
+    "fetched_at": "2026-09-25T02:46:47.474508+00:00",
+    "bytes": 315557,
+    "sha256": "a74605671f609a96461d407d986fe70866ca64533d1f02d8fef1e69069f68d0b"
+  },
+  {
+    "path": "datasets/india/2026-09-25/bengaluru-osm.json",
+    "source_url": "https://overpass.private.coffee/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A90%5D%3Bnwr%5Bamenity~%22%5E%28parking%7Cparking_space%7Cmotorcycle_parking%29%24%22%5D%2812.75%2C77.35%2C13.2%2C77.85%29%3Bout+meta+center+geom%3B",
+    "fetched_at": "2026-09-25T02:49:39.500590+00:00",
+    "bytes": 1341111,
+    "sha256": "8412a650d158b4c91d011f0c22b9d4cb546f66cd0abb477b841eb97f2e4b0491"
+  },
+  {
+    "path": "datasets/india/2026-09-25/hyderabad-osm.json",
+    "source_url": "https://overpass.private.coffee/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A90%5D%3Bnwr%5Bamenity~%22%5E%28parking%7Cparking_space%7Cmotorcycle_parking%29%24%22%5D%2817.15%2C78.2%2C17.65%2C78.7%29%3Bout+meta+center+geom%3B",
+    "fetched_at": "2026-09-25T02:49:51.990381+00:00",
+    "bytes": 302314,
+    "sha256": "bbc10f821825e8179b74f0f48c6d6189d370ab8f1611d64adbbcea6a82f3b287"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-metro-tariff.pdf",
+    "source_url": "https://chennaimetrorail.org/wp-content/uploads/2025/03/Approved-Parking-Tariff-Feb-2025-updated.pdf",
+    "fetched_at": "2026-09-25T02:50:19.697618+00:00",
+    "bytes": 422766,
+    "sha256": "1fb359d944a9cdea4ee8881c97b18fa9e581ac4de9df2092d321abcdd54a5e1b"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-metro-facilities.pdf",
+    "source_url": "https://chennaimetrorail.org/wp-content/uploads/2025/05/Parking-Facilities-Availabilities-19-05-2025.pdf",
+    "fetched_at": "2026-09-25T02:50:23.689758+00:00",
+    "bytes": 494585,
+    "sha256": "d98aef42338b2a8b52fe31572197941aad12409f1528e0b65edbb339b4b581e3"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-availability.html",
+    "source_url": "https://commuters-data.chennaimetrorail.org/parkingavailability",
+    "fetched_at": "2026-09-25T02:50:26.130129+00:00",
+    "bytes": 29197,
+    "sha256": "2dff1021813d0812ae449878fe5c89af3f77d7ee41827ed2d761224391c98d87"
+  },
+  {
+    "path": "datasets/india/2026-09-25/bengaluru-metro-parking.html",
+    "source_url": "https://english.bmrc.co.in/parking/",
+    "fetched_at": "2026-09-25T02:53:41.484096+00:00",
+    "bytes": 35040,
+    "sha256": "2581a891065b2eb4f7f30ecb721820e628057d3d569f629762b0bb8996bf54da"
+  },
+  {
+    "path": "datasets/india/2026-09-25/hyderabad-airport-prices.html",
+    "source_url": "https://www.hyderabad.aero/rgia/airport-facilities/parking-information",
+    "fetched_at": "2026-09-25T02:53:44.058604+00:00",
+    "bytes": 174812,
+    "sha256": "4e31033159c4d89bb98f6988f6ff9d3e2e5ad046d454739ab2831fadcc1a80f4"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-availability-client.js",
+    "source_url": "https://commuters-data.chennaimetrorail.org/main-es2015.87c16b74d13dc5f26702.js",
+    "fetched_at": "2026-09-25T02:53:46.326238+00:00",
+    "bytes": 3263010,
+    "sha256": "44f903d0c7141a47f07b5b697532191eecd1e6396e9ad681394e3db9eaac782d"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-availability-view.js",
+    "source_url": "https://commuters-data.chennaimetrorail.org/4-es2015.11002c2c4fc8fac059ff.js",
+    "fetched_at": "2026-09-25T03:00:50.801489+00:00",
+    "bytes": 26471,
+    "sha256": "c3bb58d47894098ad50b7cc169bbeef9116f27251f8023566d3d1e8a9ecd526f"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-availability-common.js",
+    "source_url": "https://commuters-data.chennaimetrorail.org/common-es2015.fb26ebd24934e3a670ac.js",
+    "fetched_at": "2026-09-25T03:00:51.684553+00:00",
+    "bytes": 11188,
+    "sha256": "b1cc99513350d96abb87080db16562bde3e0ba0f9a01163af07cdee912518f1d"
+  },
+  {
+    "path": "datasets/india/2026-09-25/hyderabad-police-parking.html",
+    "source_url": "https://echallan.tspolice.gov.in/htp/parking.html",
+    "fetched_at": "2026-09-25T03:01:20.077475+00:00",
+    "bytes": 96649,
+    "sha256": "35426fd6c09fa921d8f1d1fee0282cf786afe33c64746122ab78fa759404139e"
+  },
+  {
+    "path": "datasets/india/2026-09-25/chennai-parking-availability.json",
+    "source_url": "https://commuters-dataapi.chennaimetrorail.org/api/ParkingArea/getParkingAreaAvailability",
+    "fetched_at": "2026-09-25T03:02:16.572144+00:00",
+    "bytes": 45025,
+    "sha256": "7fcb43e034d3e30572481efc25efa123a874cea6f4c0cd55838cc1a953fb15b5"
   }
 ]

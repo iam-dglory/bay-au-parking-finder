@@ -3,6 +3,7 @@ import { supabase } from './supabaseClient'
 import { logSearchEvent } from './searchEvents'
 import { loadNearbyPages } from './nearbyPages'
 import type { ParkingSpot } from '../types'
+import { catalogSpot, indiaNearby } from './indiaParking'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
@@ -18,14 +19,18 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setLoading(true)
     setError(null)
     try {
-      const rows = await loadNearbyPages<ParkingSpot>(async (offset) => {
+      const [remote, local] = await Promise.allSettled([loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })
           .order('distance_m').order('id').range(offset, offset + 999)
         if (rpcError) throw rpcError
         return { rows: (data ?? []) as ParkingSpot[], total: count }
-      }, () => sequence.current !== request)
+      }, () => sequence.current !== request), indiaNearby(lat,lng,radiusM)])
+      if (remote.status === 'rejected' && local.status === 'rejected') throw remote.reason
+      const rows = [...(remote.status === 'fulfilled' ? remote.value : []), ...(local.status === 'fulfilled' ? local.value.filter(row=>row.kind==='bay').map(catalogSpot) : [])]
       if (request !== sequence.current) return
+      if (remote.status === 'rejected') setError('Community and sensor data could not refresh. Saved map locations remain available.')
+      if (local.status === 'rejected') setError('India map locations could not load. Please refresh.')
       setSpots(rows)
       setUpdatedAt(new Date())
       if (recordSearch) logSearchEvent({ lat, lng }, radiusM, rows.length)
@@ -48,6 +53,8 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     const timer = setInterval(() => { if (!document.hidden) void refresh() }, 60000)
     const onVisible = () => { if (!document.hidden) void refresh() }
     document.addEventListener('visibilitychange', onVisible)
+    // The latest request must be invalidated on teardown; reading the ref here is intentional.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     return () => { sequence.current++; clearInterval(timer); document.removeEventListener('visibilitychange', onVisible) }
   }, [refresh])
   return { spots, loading, error, updatedAt, refresh: () => refresh(false) }

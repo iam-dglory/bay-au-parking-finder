@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Car, CircleCheck, Navigation, TriangleAlert, Clock3, Info, Camera as CameraIcon, Radio } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { AvailabilityBadge } from './AvailabilityBadge'
+import { ParkingAreaDetails } from './ParkingAreaDetails'
 import { StatusBadge } from './StatusBadge'
 import { SIGN_TYPE_LABELS } from '../types'
 import { formatMoney } from '../lib/money'
@@ -82,6 +83,7 @@ export function SpotDetailSheet({
   const [capturingPhoto, setCapturingPhoto] = useState(false)
 
   if (!spot) return null
+  if (spot.catalog) return <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}><div role="dialog" aria-label="Parking bay details" className="max-h-[80dvh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5" onClick={e=>e.stopPropagation()}><button onClick={onClose} className="mb-3 rounded-full bg-slate-100 px-4 py-2 text-sm">Done</button><ParkingAreaDetails area={spot.catalog} /></div></div>
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`
   const occupancy = getOccupancyInfo(spot.latest_ping)
   const confirmed = occupancy.corroboratingCount >= OCCUPANCY_CORROBORATION_THRESHOLD
@@ -237,7 +239,7 @@ export function SpotDetailSheet({
           </button>
         </div>}
 
-        {attachedPhoto ? (
+        {canReport && (attachedPhoto ? (
           <div className="mt-2 flex items-center gap-2 rounded-lg border border-slate-200 p-2">
             <img src={attachedPhoto.previewUrl} alt="Photo to attach" className="h-10 w-10 rounded object-cover" />
             <p className="flex-1 text-xs text-slate-500">Photo ready. It'll be added to your next report.</p>
@@ -254,7 +256,7 @@ export function SpotDetailSheet({
             <CameraIcon className="h-3.5 w-3.5" strokeWidth={2} />
             {capturingPhoto ? 'Opening camera...' : 'Add a photo as proof (optional)'}
           </button>
-        )}
+        ))}
 
         {pingError && (
           <p className="mt-2 flex items-start gap-1.5 text-xs text-rose-600">

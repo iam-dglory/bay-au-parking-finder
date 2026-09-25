@@ -1,0 +1,41 @@
+{
+  "Chennai": {
+    "raw_features": 413,
+    "imported": 381,
+    "bays": 128,
+    "areas": 253,
+    "priced_areas": 2,
+    "operator_occupancy_snapshots": 2,
+    "sensor_confirmed_bays": 0,
+    "excluded": {
+      "inside_private_area": 9,
+      "restricted": 23
+    }
+  },
+  "Bengaluru": {
+    "raw_features": 1845,
+    "imported": 1313,
+    "bays": 102,
+    "areas": 1211,
+    "priced_areas": 22,
+    "operator_occupancy_snapshots": 0,
+    "sensor_confirmed_bays": 0,
+    "excluded": {
+      "restricted": 463,
+      "inside_private_area": 69
+    }
+  },
+  "Hyderabad": {
+    "raw_features": 433,
+    "imported": 388,
+    "bays": 21,
+    "areas": 367,
+    "priced_areas": 2,
+    "operator_occupancy_snapshots": 0,
+    "sensor_confirmed_bays": 0,
+    "excluded": {
+      "restricted": 35,
+      "inside_private_area": 10
+    }
+  }
+}
