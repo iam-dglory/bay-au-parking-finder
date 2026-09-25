@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-09-25",
+  "policy": "research_only_until_imported",
+  "cities": [
+    {
+      "city": "Chennai",
+      "country": "India",
+      "parking_records": 0,
+      "live_sensor_records": 0,
+      "known_programme_capacity": "4,583 spaces described by Chennai Smart City; 12,047 ECS described in the city action plan",
+      "sources": ["https://cscl.co.in/parking-management", "https://cscl.co.in/node/147"],
+      "status": "source identified; machine-readable import and API agreement required"
+    },
+    {
+      "city": "Bengaluru",
+      "country": "India",
+      "parking_records": 0,
+      "live_sensor_records": 0,
+      "known_programme_capacity": "HSR Layout procurement scope describes approximately 627 car and 3,355 two-wheeler slots",
+      "sources": ["https://smartnet.niua.org/indiacyclechallenge/wp-content/uploads/2022/07/Bengaluru-Parking-_-CPS.pdf", "https://tenders.infralens.in/tender/bscc-2026-27-se0099-79685"],
+      "status": "programme and procurement sources identified; no verified public feed imported"
+    },
+    {
+      "city": "Hyderabad",
+      "country": "India",
+      "parking_records": 0,
+      "live_sensor_records": 0,
+      "known_programme_capacity": "Park Hyderabad describes 24 metro stations with approximately 4,000 two-wheeler and 250 four-wheeler bays",
+      "sources": ["https://hmrl.co.in/wp-content/uploads/2023/04/launching-of-smart-parking.pdf", "https://www.htp.gov.in/road_smart.html"],
+      "status": "official facility and zone sources identified; public API/import required"
+    }
+  ]
+}
