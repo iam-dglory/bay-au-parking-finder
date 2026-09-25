@@ -112,6 +112,11 @@ export interface CarPark {
   distance_m: number
   capacity: number
   census_year: number
+  hourly_rate_min?: number | null
+  hourly_rate_max?: number | null
+  currency?: string | null
+  pricing_notes?: string | null
+  pricing_source_url?: string | null
 }
 
 export interface SpotVisit {

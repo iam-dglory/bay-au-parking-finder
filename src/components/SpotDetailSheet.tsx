@@ -58,6 +58,15 @@ function ruleWindow(rule: ParkingSpot['rules'][number]) {
   return `${days} · ${time}`
 }
 
+function hasLongerStayThanWindow(rule: ParkingSpot['rules'][number]) {
+  if (!rule.max_stay_minutes || !rule.time_from || !rule.time_to) return false
+  const [fromH, fromM] = rule.time_from.split(':').map(Number)
+  const [toH, toM] = rule.time_to.split(':').map(Number)
+  let windowMinutes = toH * 60 + toM - (fromH * 60 + fromM)
+  if (windowMinutes <= 0) windowMinutes += 24 * 60
+  return rule.max_stay_minutes > windowMinutes
+}
+
 export function SpotDetailSheet({
   spot,
   onClose,
@@ -264,6 +273,7 @@ export function SpotDetailSheet({
               <p className="font-medium text-slate-800">{SIGN_TYPE_LABELS[rule.sign_type]}</p>
               <p className="text-slate-500">{ruleWindow(rule)}</p>
               {rule.max_stay_minutes && <p className="text-slate-500">Max stay: {formatMaxStay(rule.max_stay_minutes)}</p>}
+              {hasLongerStayThanWindow(rule) && <p className="mt-1 text-xs font-medium text-amber-700">This maximum stay is longer than the displayed time window. Confirm the sign before relying on it.</p>}
               {rule.price_per_hour != null && <p className="text-slate-500">{formatMoney(rule.currency ?? 'USD', rule.price_per_hour)}/hr</p>}
             </div>
           ))}
