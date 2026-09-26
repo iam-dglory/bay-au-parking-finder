@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-09-26",
+  "operator_source_url": "https://qvm.com.au/parking/",
+  "location_source": "datasets/melbourne/2026-09-26/melbourne-parking-and-street-zones-osm.json.gz",
+  "historical_census_source": "datasets/melbourne-city-of-melbourne/off-street-car-parks-2024-commercial.json",
+  "facilities": [
+    {
+      "name": "Queen Victoria Market Open Air Car Park",
+      "osm_id": "osm:way:7674137",
+      "census_property_id": "110685",
+      "census_address": "Queen Victoria Market Car Park Queen Victoria Market 391 Queen Street MELBOURNE VIC 3000",
+      "census_capacity_2024": 564,
+      "current_operator_capacity": null,
+      "mapped_spaces": 603
+    },
+    {
+      "name": "Queen Victoria Market Undercover Car Park",
+      "osm_id": "osm:node:11140069164",
+      "census_property_id": "109493",
+      "census_address": "131-151 Therry Street MELBOURNE VIC 3000",
+      "census_capacity_2024": 507,
+      "current_operator_capacity": 506
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { regionalNearby } from './regionalParking'
+import { regionalNearby, mergeParkingAreas } from './regionalParking'
 import { supabase } from './supabaseClient'
 import type { CarPark } from '../types'
 
@@ -27,7 +27,7 @@ export function useNearbyCarParks(center: { lat: number; lng: number } | null, r
     ])
     if(request!==sequence.current)return
     const rpcOk=remote.status==='fulfilled' && !remote.value.error
-    setCarParks([...(rpcOk ? (remote.value.data ?? []) as CarPark[] : []),...(local.status==='fulfilled' ? local.value.filter(r=>r.kind==='area') : [])].sort((a,b)=>a.distance_m-b.distance_m))
+    setCarParks(mergeParkingAreas(rpcOk ? (remote.value.data ?? []) as CarPark[] : [],local.status==='fulfilled' ? local.value : []))
     if(!rpcOk || local.status==='rejected')setError('Some parking area sources could not load. Refresh to try again.')
     setLoading(false)
   }, [lat, lng, radiusM, enabled])

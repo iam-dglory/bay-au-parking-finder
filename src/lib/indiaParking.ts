@@ -7,7 +7,7 @@ export function isIndiaSearch(lat: number, lng: number) {
   return lat >= 6 && lat <= 37 && lng >= 68 && lng <= 98
 }
 export function nearbyCatalog(records: CarPark[], lat: number, lng: number, radius: number) {
-  return records.map(row => ({ ...row, distance_m: haversineMeters({ lat, lng }, row) }))
+  return records.filter(row => !row.parent_area_id).map(row => ({ ...row, distance_m: haversineMeters({ lat, lng }, row) }))
     .filter(row => row.distance_m <= radius).sort((a,b) => a.distance_m-b.distance_m)
 }
 export async function indiaNearby(lat: number, lng: number, radius: number) {

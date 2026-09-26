@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Circle, Popup, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Circle, Polygon, Popup, useMap, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
@@ -155,6 +155,9 @@ export function MapView({
           />
         ))}
       </MarkerClusterGroup>
+      {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#2563eb', weight:2, fillOpacity:.12}}>
+        <Popup><div style={{maxWidth:280,maxHeight:'50vh',overflowY:'auto'}}><ParkingAreaDetails area={area} /></div></Popup>
+      </Polygon>)}
       <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17}>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()}>

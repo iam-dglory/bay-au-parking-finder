@@ -112,6 +112,15 @@ export interface CarPark {
   capacity: number | null
   census_year: number | null
   kind?: 'bay' | 'area'
+  /** Source spaces remain stored but display through their off-street facility. */
+  parent_area_id?: string
+  mapped_bay_count?: number
+  facility_type?: string
+  opening_hours_summary?: string
+  entrance_summary?: string
+  directions_query?: string
+  boundary?: [number, number][]
+  census_aliases?: string[]
   city?: string
   country?: string
   access?: string

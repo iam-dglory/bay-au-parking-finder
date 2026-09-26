@@ -45,3 +45,14 @@ export function mergeMappedBays(remote: ParkingSpot[], local: ParkingSpot[]): Pa
     return true
   })].sort((a,b)=>a.distance_m-b.distance_m)
 }
+
+/** Only explicit, reviewed census/operator aliases are replaced. A nearby car
+ * park is not evidence that two facilities are the same. Preserve the census
+ * fallback if its current operator record could not load. */
+export function mergeParkingAreas(census: CarPark[], local: CarPark[]): CarPark[] {
+  const areas=local.filter(row=>row.kind==='area' && !row.parent_area_id)
+  return [...census.filter(row=>!areas.some(area=>
+    row.census_year != null && row.census_year<=2024 &&
+    area.census_aliases?.includes(row.address_text) && haversineMeters(row,area)<=150
+  )),...areas].sort((a,b)=>a.distance_m-b.distance_m)
+}

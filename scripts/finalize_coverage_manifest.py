@@ -16,4 +16,6 @@ for path in sorted(paths):
   if key=='public/data/india-parking.json':r['source_paths']=[f'datasets/india/{DATE}']
   entries.append(r);indexed[key]=r
  r.update({'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+ if key.startswith('public/data/melbourne'):
+  r['source_paths']=[f'datasets/melbourne/{DATE}/melbourne-parking-and-street-zones-osm.json.gz',f'datasets/melbourne/{DATE}/secure-operator',f'datasets/melbourne/{DATE}/qv-melbourne-car-park-rates.html',f'datasets/melbourne/{DATE}/qvm-operator']
 p.write_text(json.dumps(entries,indent=2)+'\n');print('Tracked archive/derivative files:',len(entries))

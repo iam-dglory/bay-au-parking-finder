@@ -8,9 +8,15 @@ export function MapOrientation() {
   const map = useMap()
   const [following, setFollowing] = useState(false)
   const [message, setMessage] = useState('')
+  const [popupOpen, setPopupOpen] = useState(false)
   const active = useRef(false)
   const alive = useRef(true)
   useEffect(() => { alive.current = true; return () => { alive.current = false; active.current = false } }, [])
+  useEffect(() => {
+    const open=()=>setPopupOpen(true), close=()=>setPopupOpen(false)
+    map.on('popupopen',open); map.on('popupclose',close)
+    return()=>{map.off('popupopen',open);map.off('popupclose',close)}
+  }, [map])
   useEffect(() => {
     if (!following) return
     let gotReading = false
@@ -50,6 +56,7 @@ export function MapOrientation() {
     map.setBearing(delta == null ? 0 : map.getBearing() + delta)
     setMessage(delta == null ? 'North up' : 'Manual rotation')
   }
+  if (popupOpen) return null
   return <div className="absolute right-2 top-2 z-[500] max-w-[230px]" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
     <div className="flex gap-1 rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-xl shadow-slate-900/10 backdrop-blur">
       <button className="rounded-xl p-2 transition hover:bg-blue-50 hover:text-blue-700" aria-label="Rotate map left" onClick={() => rotate(-30)}><RotateCcw size={19} /></button>

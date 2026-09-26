@@ -6,6 +6,8 @@ import collections,gzip,json,math,re
 from pathlib import Path
 from bs4 import BeautifulSoup
 from build_india_catalog import point, inside, capacity, RESTRICTED, tariffs as old_tariffs, CMRL,BMRCL
+from group_parking_areas import group_parking_spaces
+from qvm_parking import qvm_tariffs
 ROOT=Path(__file__).resolve().parents[1];DATE='2026-09-26';TILE=.025
 
 def read(p):
@@ -43,6 +45,8 @@ def osm_catalog(city,display,country):
   extra=old_tariffs(e,city) if city=='hyderabad' else {}
   if extra.get('tariffs'):extra.update({'pricing_checked_at':DATE,'price_summary':'Private car: ₹150 · up to 30 minutes'})
   records.append({'id':f"osm:{e['type']}:{e['id']}",'kind':kind,'address_text':name,'city':display,'country':country,'suburb':t.get('addr:suburb'),'lat':p[0],'lng':p[1],'capacity':capacity(t.get('capacity')),'census_year':None,'access':t.get('access','not_listed'),'fee':t.get('fee'),'opening_hours':t.get('opening_hours'),'vehicle_types':'Two-wheelers' if t.get('amenity')=='motorcycle_parking' else 'Vehicle types not listed','source_url':f"https://www.openstreetmap.org/{e['type']}/{e['id']}",'source_name':'OpenStreetMap','source_updated_at':e.get('timestamp'),'collected_at':DATE,'location_note':('Road segment location; parking side and current sign must be checked' if street else 'Mapped point' if e['type']=='node' else 'Mapped area boundary; entrance may differ'),'occupancy':'not_provided','currency':'AUD' if country=='AU' else 'INR','mapped_zone':street,'source_terms':{k:v for k,v in t.items() if k.startswith(('parking:','charge','fee','maxstay','restriction'))},**extra})
+ matches=group_parking_spaces(records,es)
+ write(ROOT/f'datasets/{"melbourne" if city=="melbourne" else "india"}/{DATE}/{city}-parking-area-membership.json',matches)
  return records,{'raw_features':len(es),'excluded':dict(skipped)}
 
 # Explicit operator applicability from the visually checked CMRL tariff/facility PDFs.
@@ -175,7 +179,7 @@ def qv_tariffs(records):
    r.update({'tariffs':rows,'price_summary':f"Standard: A${rows[0]['amount']:g} · {rows[0]['period']}",'price_summary_conditions':'Night, weekend and Victorian public holiday rates differ. Open Prices for entry and exit conditions.','pricing_source_url':url,'pricing_checked_at':DATE,'pricing_notes':'Operator duration slabs, not uniform hourly prices. Shopping discounts require qualifying purchases and validation; they are not applied here. Clearance 2.1m. Rates may change.','operator_facility_id':'qv-melbourne'})
 
 def stats(records,base):
- return {**base,'imported':len(records),'bays':sum(r['kind']=='bay' for r in records),'areas':sum(r['kind']=='area' for r in records),'mapped_street_zones':sum(bool(r.get('mapped_zone')) for r in records),'priced_areas':sum(bool(r.get('tariffs')) for r in records),'operator_snapshots':sum(bool(r.get('occupancy_snapshot')) for r in records),'sensor_confirmed_bays':0}
+ return {**base,'imported':len(records),'bays':sum(r['kind']=='bay' for r in records),'areas':sum(r['kind']=='area' for r in records),'grouped_parking_spaces':sum(bool(r.get('parent_area_id')) for r in records),'displayed_bays':sum(r['kind']=='bay' and not r.get('parent_area_id') for r in records),'displayed_areas':sum(r['kind']=='area' and not r.get('parent_area_id') for r in records),'mapped_street_zones':sum(bool(r.get('mapped_zone')) for r in records),'priced_areas':sum(bool(r.get('tariffs')) for r in records),'operator_snapshots':sum(bool(r.get('occupancy_snapshot')) for r in records),'sensor_confirmed_bays':0}
 if __name__=='__main__':
  records=[];audits={}
  for city,display in [('chennai','Chennai'),('bengaluru','Bengaluru'),('hyderabad','Hyderabad')]:
@@ -186,7 +190,10 @@ if __name__=='__main__':
    bengaluru_tariffs(own);own+=bengaluru_station_parking(own)
   audits[display]=stats(own,base);records+=own
  write(ROOT/'public/data/india-parking.json',{'schema_version':2,'collected_at':DATE,'license':'OpenStreetMap © contributors, ODbL 1.0; operator facts attributed per record.','cities':audits,'records':records})
- melbourne,base=osm_catalog('melbourne','Melbourne','AU');qv_tariffs(melbourne);melbourne+=secure_records();audits['Greater Melbourne']=stats(melbourne,base)
+ melbourne,base=osm_catalog('melbourne','Melbourne','AU');qv_tariffs(melbourne)
+ raw=ROOT/f'datasets/melbourne/{DATE}'
+ qvm_tariffs(melbourne,read(raw/'melbourne-parking-and-street-zones-osm.json.gz')['elements'],raw/'qvm-operator',DATE)
+ melbourne+=secure_records();audits['Greater Melbourne']=stats(melbourne,base)
  tiles=collections.defaultdict(list)
  for r in melbourne:tiles[f"{math.floor(r['lat']/TILE)}_{math.floor(r['lng']/TILE)}"].append(r)
  directory=ROOT/'public/data/melbourne'
