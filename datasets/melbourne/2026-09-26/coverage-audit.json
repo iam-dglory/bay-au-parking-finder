@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-09-26T03:18:20.046570+00:00",
+  "source_bays": 29053,
+  "source_unique_kerbside_ids": 5053,
+  "source_sensor_rows": 6324,
+  "source_fresh_sensors_20m": 5345,
+  "source_missing_from_bay_inventory": 1499,
+  "source_fresh_sensors_5m": 5345,
+  "production_snapshot_at": "2026-09-26T03:23:47.057198+00:00",
+  "production_spots": 15184,
+  "production_with_kerbside_id": 4953,
+  "source_sensors_missing_from_production_ids": 1611,
+  "production_sensor_ids_at_displaced_coordinates_over_15m": 33,
+  "production_duplicate_council_ids": 19,
+  "production_sensor_rows": 5794,
+  "production_match_methods": {
+    "legacy": 5794
+  },
+  "production_fresh_trusted_sensors_20m": 0,
+  "production_mismatched_sensor_ids": 1062,
+  "production_fresh_exact_ids_20m": 4530
+}

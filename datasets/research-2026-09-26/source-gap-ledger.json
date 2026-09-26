@@ -1,0 +1,65 @@
+{
+  "checked_at": "2026-09-26",
+  "gaps": [
+    {
+      "region": "City of Melbourne",
+      "source": "Council sign-plate exports",
+      "issue": "Exports do not provide individual plate coordinates and a reusable plate identifier. Parent-zone proximity cannot prove bay applicability.",
+      "handling": "Archive both exports; retain schedule confidence guard; no guessed bay/sign association."
+    },
+    {
+      "region": "Yarra",
+      "source_url": "https://www.yarracity.vic.gov.au/parking-and-transport/parking-yarra/parking-sensors-yarra",
+      "issue": "Council confirms sensors; public map is a 2018 coverage PDF. No current reusable per-bay occupancy API confirmed. Raw HTML download failed; PDF archived.",
+      "handling": "Historical map only, no vacancy inference."
+    },
+    {
+      "region": "Stonnington",
+      "source_url": "https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors",
+      "issue": "Sensors confirmed, available parking mentioned in PayStay; no public reusable bay API exposed on council page.",
+      "handling": "Council page archived. Partnership/API access needed."
+    },
+    {
+      "region": "Maribyrnong",
+      "source_url": "https://www.maribyrnong.vic.gov.au/Community/A-Smart-City-for-Smart-Communities/Smart-City-Projects",
+      "issue": "Council links live parking dashboard, but linked scdataplatform.maribyrnong.vic.gov.au hostname did not resolve during audit.",
+      "handling": "Council page archived; no live readings imported."
+    },
+    {
+      "region": "Chennai",
+      "source": "Corporation 2022 ECS road list",
+      "issue": "Capacity and road names, no current bay geometry/sign rules or current numeric tariff per bay.",
+      "handling": "Historical archive, not a live occupancy source."
+    },
+    {
+      "region": "Bengaluru",
+      "source": "Airport public site",
+      "issue": "Published SPA did not expose a usable tariff response; CMS request failed.",
+      "handling": "Source inspection record retained; no guessed airport rates."
+    },
+    {
+      "region": "Hyderabad",
+      "source": "Traffic Police and Metro",
+      "issue": "Police named zones use map-search links, not bay coordinates/current tariffs. Metro smart-parking paper dates from 2018.",
+      "handling": "Archive documents; do not treat historical prices or deployed sensors as a current public feed."
+    },
+    {
+      "region": "All regions",
+      "source": "Operator/OSM facilities",
+      "issue": "Most mapped facilities do not expose current numeric tariffs; map records are partial and multiple entrances may represent one facility.",
+      "handling": "Show only exact matched published rates with conditions. No price copied from a nearby operator."
+    },
+    {
+      "region": "Casey / Port Phillip / Yarra",
+      "source": "Archived official neighbouring-council GeoJSON exports",
+      "issue": "Casey restriction lines, accessible permit points, parking machine points and permit zone polygons are not general parking bays with current vacancy. Casey car-parks source export was unavailable.",
+      "handling": "Archive geometry and catalog metadata; no false vacancy/sign assignment or arbitrary area-to-bay conversion."
+    },
+    {
+      "region": "Hyderabad",
+      "source_url": "https://www.ltmetro.com/wp-content/uploads/2025/01/30-09-2024-Press-Release-LTMRHL-Extends-Popular-Offers-to-Enhance-Passenger-Experience-177.pdf",
+      "issue": "2024 operator announcement confirmed in primary web research; raw PDF download failed. No numeric tariffs supplied.",
+      "handling": "Source URL and failure retained; no prices inferred."
+    }
+  ]
+}

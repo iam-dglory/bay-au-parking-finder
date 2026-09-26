@@ -11,7 +11,7 @@ const DEFAULT_COUNTRY = 'AU'
 const DEFAULT_STATE = 'VIC'
 const SEARCH_DEBOUNCE_MS = 400
 
-export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng: number, label: string) => void; onUseGps: () => Promise<void> }) {
+export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng: number, label: string, country?: string) => void; onUseGps: () => Promise<void> }) {
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY)
   const [stateCode, setStateCode] = useState(DEFAULT_STATE)
   const [citySearch, setCitySearch] = useState('')
@@ -27,18 +27,20 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   const selectedStateName = useMemo(() => states.find((s) => s.isoCode === stateCode)?.name, [states, stateCode])
 
   useEffect(() => {
+    let active = true
     if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!citySearch.trim()) {
       setResults([])
+      setSearching(false)
       return
     }
     setSearching(true)
     debounceRef.current = setTimeout(async () => {
       const found = await searchCities(citySearch, countryCode, selectedStateName)
-      setResults(found)
-      setSearching(false)
+      if (active) { setResults(found); setSearching(false) }
     }, SEARCH_DEBOUNCE_MS)
     return () => {
+      active = false
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
   }, [citySearch, countryCode, selectedStateName])
@@ -62,7 +64,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   function selectCity(city: CitySearchResult) {
     setCitySearch(city.name)
     setShowSuggestions(false)
-    onPick(city.lat, city.lng, city.stateName ? `${city.name}, ${city.stateName}` : city.name)
+    onPick(city.lat, city.lng, city.stateName ? `${city.name}, ${city.stateName}` : city.name, Country.getCountryByCode(countryCode)?.name)
   }
 
   async function handleUseGps() {

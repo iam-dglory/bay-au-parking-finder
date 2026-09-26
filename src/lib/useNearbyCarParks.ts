@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { indiaNearby } from './indiaParking'
+import { regionalNearby } from './regionalParking'
 import { supabase } from './supabaseClient'
 import type { CarPark } from '../types'
 
-/** Off-street car parks are a much smaller, separate dataset from on-street
- * bays (a few hundred citywide, not thousands), so no truncation/paging
- * concerns here the way useNearbyParking has. */
+/** Keep census/operator areas separate from individual bays. The regional
+ * layer fetches geographic tiles; Home pages the combined display. */
 export function useNearbyCarParks(center: { lat: number; lng: number } | null, radiusM: number, enabled: boolean) {
   const [carParks, setCarParks] = useState<CarPark[]>([])
   const [error,setError] = useState<string | null>(null)
@@ -24,7 +23,7 @@ export function useNearbyCarParks(center: { lat: number; lng: number } | null, r
     }
     setLoading(true)
     const [remote,local]=await Promise.allSettled([
-      supabase.rpc('nearby_car_parks',{p_lat:lat,p_lng:lng,p_radius_m:radiusM}),indiaNearby(lat,lng,radiusM),
+      supabase.rpc('nearby_car_parks',{p_lat:lat,p_lng:lng,p_radius_m:radiusM}).abortSignal(AbortSignal.timeout(15000)),regionalNearby(lat,lng,radiusM),
     ])
     if(request!==sequence.current)return
     const rpcOk=remote.status==='fulfilled' && !remote.value.error

@@ -9,7 +9,7 @@ import { ParkingAreaDetails } from './ParkingAreaDetails'
 
 
 function pinIcon(color: string, state: string) {
-  const label = state === 'unknown' || state === 'uncertain' ? 'No current reading' : state === 'vacant' ? 'Vacant' : 'Occupied'
+  const label = state === 'unknown' || state === 'uncertain' ? 'Availability on arrival' : state === 'vacant' ? 'Vacant' : 'Occupied'
   const ring = state === 'uncertain' || state === 'unknown' ? 'box-shadow:0 0 0 3px rgba(100,116,139,.18), 0 2px 8px rgba(15,23,42,.24);' : 'box-shadow:0 2px 8px rgba(15,23,42,.24);'
   return L.divIcon({
     className: '',
@@ -45,6 +45,13 @@ function carParkIcon() {
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
+}
+
+function clusterIcon(cluster: { getChildCount(): number }, areas = false) {
+  const count = cluster.getChildCount()
+  const label = `${count} ${areas ? 'parking areas' : 'mapped parking spots'} · zoom in for details`
+  // Cluster colour describes the layer, not its size or presumed vacancy.
+  return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:${areas ? '12px' : '50%'};background:${areas ? '#2563eb' : '#475569'};color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px/1.1 sans-serif">${areas ? '<span style="font-size:10px">P</span>' : ''}${count}</div>`})
 }
 
 function pickIcon() {
@@ -138,7 +145,7 @@ export function MapView({
         />
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
-      <MarkerClusterGroup chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false} disableClusteringAtZoom={18}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false} disableClusteringAtZoom={18}>
         {spots.map((spot) => (
           <Marker
             key={spot.id}
@@ -148,7 +155,7 @@ export function MapView({
           />
         ))}
       </MarkerClusterGroup>
-      <MarkerClusterGroup chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17}>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()}>
           <Popup>

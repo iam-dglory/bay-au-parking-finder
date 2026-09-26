@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<!--[if IE 9]> <html lang="en-AU" class="ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en-AU"  > <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+      <meta name="csrf_field_name" content="_csrf_token" />
+      <meta name="_csrf_token" content="IjA1NTNmODc0NjIxZWRiNWExNzZmYTJmM2JlODdhMTkxZjhmMmUwYTUi.arc5gw.CJYlIGNPfu23r3G8CpjYnHW8aO0" />
+
+      <meta name="generator" content="ckan 2.11.6" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-street Parking Bay Sensors - Dataset - DataVic</title>
+
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" />
+    
+    
+        <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MD2QX4G');</script>
+<!-- End Google Tag Manager -->
+    
+
+    
+  
+    
+  
+  
+      
+      
+      
+    
+  
+
+  
+
+    
+
+  
+
+    
+
+
+    
+    <link href="/webassets/base/51d427fe_main.css" rel="stylesheet"/>
+<link href="/webassets/ckanext-activity/8dd77216_activity.css" rel="stylesheet"/>
+<link href="/webassets/ckanext-scheming/728ec589_scheming_css.css" rel="stylesheet"/>
+<link href="/webassets/ckanext-search_autocomplete/6189a052-search_autocomplete.css" rel="stylesheet"/>
+<link href="/webassets/datavic_odp_theme/14c7750e_datavic_odp_theme.css" rel="stylesheet"/>
+<link href="/webassets/ckanext-auth/f9dbc039-auth.css" rel="stylesheet"/>
+    
+  
+
+  
+        <!-- Hotjar Tracking Code for http://www.data.vic.gov.au -->
+    <script>
+    (function (h, o, t, j, a, r) {
+      h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) }
+      h._hjSettings = {hjid: 139604, hjsv: 6}
+      a = o.getElementsByTagName('head')[0]
+      r = o.createElement('script'); r.async = 1
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+      a.appendChild(r)
+    })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=')
+    </script>
+  
+
+  
+        <script type="text/javascript">
+    var _monsido = _monsido || [];
+    _monsido.push(['_setDomainToken', '6btH_pcVmgd2xyzSEv6H3g']);
+    _monsido.push(['_withStatistics', 'false']);
+    </script>
+    <script src="//cdn.monsido.com/tool/javascripts/monsido.js"></script>
+  
+
+  
+  <meta property="og:title" content="On-street Parking Bay Sensors - DataVic">
+  <meta property="og:description" content="This dataset contains information from in-ground car parking bay sensors across the city with status indicating if a car is present or not present, the spatial coordinate of the sensor, and the...">
+
+
+  </head>
+
+  
+  <body data-site-root="https://discover.data.vic.gov.au/" data-locale-root="https://discover.data.vic.gov.au/" >
+
+    
+    
+        
+            
+                <!-- Google Tag Manager (noscript) -->
+                <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MD2QX4G"
+                                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+                <!-- End Google Tag Manager (noscript) -->
+            
+        
+    
+
+    
+  
+    <div class="visually-hidden-focusable"><a href="#content">Skip to main content</a></div>
+  
+
+
+  
+  <header>
+    
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <nav id="mobile-menu" class="rpl-site-header hidden" data-module="datavic-odp-header datavic-odp-breadcrumb">
+    <div class="rpl-site-header__inner">
+      <div class="rpl-site-header__top">
+        <div class="rpl-site-header__logo-container">
+          <button id="btn-mobile-menu-close" aria-expanded="true" class="rpl-site-header__btn rpl-site-header__btn--menu rpl-site-header__btn--menu-open">
+            <svg focusable="false" class="rpl-icon rpl-icon--close rpl-icon--color_white" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M15 0.3C14.6-0.1 14-0.1 13.6 0.3L7.6 6.2 1.7 0.3C1.3-0.1 0.7-0.1 0.3 0.3 -0.1 0.7-0.1 1.3 0.3 1.7L6.2 7.6 0.7 13.2C0.3 13.6 0.3 14.2 0.7 14.6 1 15 1.7 15 2.1 14.6L7.6 9.1 13.2 14.6C13.6 15 14.2 15 14.6 14.6 15 14.2 15 13.6 14.6 13.2L9.1 7.6 15 1.7C15.4 1.3 15.4 0.7 15 0.3Z" fill="inherit"/></svg>
+            <span>Close menu</span>
+          </button>
+        </div>
+        <div class="rpl-site-header__menu-container rpl-site-header__menu-container--vertical">
+          <div class="rpl-site-header__menu">
+            <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--open rpl-menu--root rpl-menu--vertical">
+              <div class="rpl-menu__inner">
+                <div class="rpl-menu__inner_root">
+                  <div class="rpl-menu__column">
+                    <div class="rpl-menu__header"><!----> <!----></div>
+                    <ul class="rpl-menu__items rpl-menu__items--root" data-module="datavic-dropdown" data-module-is-mobile="true">
+                      
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      <a href="#" class="rpl-link rpl-menu__item-link dropdown-toggle"><span>Data publishing</span></a>
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Data publishing</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/data-publishing" class="dropdown-item">
+                <span>Data publishing</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/data-publishing-victorian-public-service" class="dropdown-item">
+                <span>Data publishing for the Victorian Public Service (VPS)</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/open-data-publishing-victorian-public-sector" class="dropdown-item">
+                <span>Open data publishing for the Victorian public sector</span>
+              </a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="/dataset/" class="rpl-link rpl-menu__item-link">Search data</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Search data</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      <a href="#" class="rpl-link rpl-menu__item-link dropdown-toggle"><span>About DataVic</span></a>
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>About DataVic</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/about-datavic" class="dropdown-item">
+                <span>About DataVic</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/datavic-access-policy" class="dropdown-item">
+                <span>DataVic Access Policy</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/datavic-access-policy-guidelines" class="dropdown-item">
+                <span>DataVic Access Policy guidelines</span>
+              </a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="https://www.data.vic.gov.au/contact-us" class="rpl-link rpl-menu__item-link">Contact us</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Contact us</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="/user/login" class="rpl-link rpl-menu__item-link">Log in</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Log in</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+  
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rpl-site-header__btn-container"><!----> <!----></div>
+      </div> <!---->
+    </div>
+  </nav>
+
+  <nav id="main-menu" class="rpl-site-header">
+    <div class="rpl-site-header__inner">
+      <div class="rpl-site-header__top">
+        <div class="rpl-site-header__logo-container">
+          <button id="btn-mobile-menu-open" aria-expanded="false" class="rpl-site-header__btn rpl-site-header__btn--menu">
+            <svg focusable="false" class="rpl-icon rpl-icon--hamburger rpl-icon--color_white" width="18" height="14" viewBox="0 0 18 14" xmlns="http://www.w3.org/2000/svg"><style>.a{fill:inherit;}</style><path d="M0 1C0 0.4 0.4 0 1 0H9C9.6 0 10 0.4 10 1 10 1.6 9.6 2 9 2H1C0.4 2 0 1.6 0 1Z" class="a"/><path d="M0 5C0 4.4 0.4 4 1 4H17C17.6 4 18 4.4 18 5 18 5.6 17.6 6 17 6H1C0.4 6 0 5.6 0 5Z" class="a"/><path d="M0 9C0 8.4 0.4 8 1 8H13C13.6 8 14 8.4 14 9 14 9.6 13.6 10 13 10H1C0.4 10 0 9.6 0 9Z" class="a"/><path d="M0 13C0 12.4 0.4 12 1 12H17C17.6 12 18 12.4 18 13 18 13.6 17.6 14 17 14H1C0.4 14 0 13.6 0 13Z" class="a"/></svg>
+            <span>Menu</span>
+          </button>
+          
+          <div class="rpl-site-header__title rpl-site-header__logo-container--vic-logo-primary rpl-site-header__logo-container--vic-logo-primary--cobrand">
+            <a href="https://www.vic.gov.au/" class="rpl-link" target="_blank">
+              <img src="/images/vic-header-logo.png" alt="vic_logo">
+            </a>
+          </div>
+          
+          <div class="rpl-site-header__title cobrand">
+            <a href="https://www.data.vic.gov.au" class="rpl-link">
+              <img src="/images/data-vic-logo-x3.png" alt="Data.Vic logo">
+            </a>
+          </div>
+        </div>
+        
+        <div class="rpl-site-header__menu-container rpl-site-header__menu-container--horizontal">
+          <div class="rpl-site-header__menu">
+            <div data-vpos="0" data-visibledepth="0" class="rpl-menu rpl-menu--root rpl-menu--horizontal">
+              <div class="rpl-menu__inner">
+                <div class="rpl-menu__inner_root">
+                  <div class="rpl-menu__column">
+                    <div class="rpl-menu__header">
+                      
+                    </div>
+                    <ul class="rpl-menu__items rpl-menu__items--root" data-module="datavic-dropdown">
+                      
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      <a href="#" class="rpl-link  dropdown-toggle"><span>Data publishing</span></a>
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Data publishing</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/data-publishing" class="dropdown-item">
+                <span>Data publishing</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/data-publishing-victorian-public-service" class="dropdown-item">
+                <span>Data publishing for the Victorian Public Service (VPS)</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/open-data-publishing-victorian-public-sector" class="dropdown-item">
+                <span>Open data publishing for the Victorian public sector</span>
+              </a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="/dataset/" class="rpl-link rpl-menu__item-link">Search data</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Search data</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      <a href="#" class="rpl-link  dropdown-toggle"><span>About DataVic</span></a>
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>About DataVic</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/about-datavic" class="dropdown-item">
+                <span>About DataVic</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/datavic-access-policy" class="dropdown-item">
+                <span>DataVic Access Policy</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="https://www.data.vic.gov.au/datavic-access-policy-guidelines" class="dropdown-item">
+                <span>DataVic Access Policy guidelines</span>
+              </a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="https://www.data.vic.gov.au/contact-us" class="rpl-link rpl-menu__item-link">Contact us</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Contact us</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+    <li class="vic-dropdown-menu rpl-menu__item">
+      
+      
+    
+    <a href="/user/login" class="rpl-link rpl-menu__item-link">Log in</a>
+    
+  
+      
+      
+      <div class="dropdown" style="display: none;">
+        <div class="container">
+          <div class="dropdown-header">
+            <h3>Log in</h3>
+          </div>
+          <ul class="dropdown-items">
+            
+            <li><p>No child items was created yet</p></li>
+            
+          </ul>
+        </div>
+      </div>
+    </li>
+    
+  
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rpl-site-header__btn-container">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  
+  </header>
+
+  
+  <div id="breadcrumbs" class="rpl-breadcrumbs" role="breadcrumbs">
+      <nav aria-label="breadcrumbs">
+          <ul class="rpl-breadcrumbs__items">
+              <li class="rpl-breadcrumbs__item"><a href="https://www.data.vic.gov.au" class="rpl-link rpl-breadcrumbs__link">Home</a></li>
+              
+    
+        
+        
+            
+            <li><a href="/organization/">Organisations</a></li>
+            
+            
+            <li><a href="/organization/city-of-melbourne">City of Melbourne</a></li>
+        
+        <li class="active"><a href="/dataset/on-street-parking-bay-sensors">On-street Parking Bay Sensors</a></li>
+    
+
+
+          </ul>
+      </nav>
+  </div>
+  
+
+    <div id="main-content" role="main">
+      <div id="content" class="container">
+        
+          
+            <div class="flash-messages">
+              
+                
+              
+            </div>
+          
+
+          
+            <div class="toolbar">
+              
+              
+            </div>
+          
+
+          <div class="row  no-nav">
+            
+            
+
+            
+              
+              
+            
+
+            
+              
+              <div class="primary span12">
+                
+                  
+                  <article class="module">
+                    
+    <div class="module-content page-header">
+        
+        <ul class="nav nav-tabs">
+            
+  <li><a href="/dataset/on-street-parking-bay-sensors">Dataset</a></li>
+  
+
+  
+
+        </ul>
+    </div>
+
+                    <div class="module-content">
+                      
+                      
+  
+
+    
+        
+    
+    <h1>
+      
+        On-street Parking Bay Sensors
+        
+        
+      
+    </h1>
+    
+    <div class="notes embedded-content">
+      <p>This dataset contains information from in-ground car parking bay sensors across the city with status indicating if a car is present or not present, the spatial coordinate of the sensor, and the Kerbside id. <br><br>
+<b>Additional information:</b><br>
+Further information about City of Melbourne's parking sensors can be found <a href="https://www.melbourne.vic.gov.au/parking-and-transport/parking/Pages/parking-faqs.aspx#sensors">here</a>.<br>
+<br><br>
+<b>Outages</b><br>
+This dataset is updated through network relays and can be disrupted causing delays in data updates. Users of this data are encouraged to monitor the dataset's last updated timestamp (Lastupdated column) to check for delays in the data being updated. <br>
+<br>
+<b>Disclaimer</b><br>
+While all due care has been taken to ensure the data of this website is accurate, current and available please note: <br>
+·         there may be errors or omission in it<br>
+·         there may be occasions where the data is not available and/or the website will be unavailable. <br>
+<br>
+The City of Melbourne and its employees accept no responsibility for any loss, damage, claim, expense, cost or liability whatsoever (including in contract, tort including negligence, pursuant to statue and otherwise) arising in respect of or in connection with accessing, using or reliance upon the data in this website, or the unavailability of the data or the website.</p>
+    </div>
+  
+
+  
+    
+
+    
+        
+
+        
+            
+<section id="dataset-resources" class="resources">
+  
+      <h2>Data and Resources</h2>
+  
+
+  
+    
+      <ul class="resource-list">
+        
+          
+          
+            
+
+
+<li class="resource-item" data-id="eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="csv">CSV</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors CSV<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+        <li>
+          
+          
+          <a class="btn btn-primary btn-outline btn-api" href="/api/1/util/snippet/api_info.html?resource_id=eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae" data-module="datavic-odp-api-info"
+             data-module-template="/api/1/util/snippet/api_info.html?resource_id=eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae" data-loading-text="Loading...">
+            <i class="fa-solid fa-code"></i>
+            Data API
+          </a>
+        </li>
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/csv?delimiter=%2C" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-download"></i>
+              Download data
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+            
+
+
+<li class="resource-item" data-id="9a39f280-f305-58ca-988f-0cf72f5bd8c9">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="json">JSON</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors JSON<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/9a39f280-f305-58ca-988f-0cf72f5bd8c9">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/json" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-external-link"></i>
+              Go to Resource
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+            
+
+
+<li class="resource-item" data-id="4014744c-383a-5772-a7e2-98777fe61e0d">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="geojson">GeoJSON</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors GEOJSON<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/4014744c-383a-5772-a7e2-98777fe61e0d">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/geojson" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-external-link"></i>
+              Go to Resource
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+            
+
+
+<li class="resource-item" data-id="15dc238e-7c06-5eec-b15a-1188e11ebac8">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="kml">KML</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors KML<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/15dc238e-7c06-5eec-b15a-1188e11ebac8">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/kml" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-external-link"></i>
+              Go to Resource
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+            
+
+
+<li class="resource-item" data-id="5760d0d8-804a-53ac-8330-cb4a473d012c">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="shp">SHP</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors SHP<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/5760d0d8-804a-53ac-8330-cb4a473d012c">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/shp" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-external-link"></i>
+              Go to Resource
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+            
+
+
+<li class="resource-item" data-id="dd77a7b4-0654-56fa-a58a-b6bb2b43a2d7">
+    
+    <div class="resource-icon">
+        <span class="format-label" property="dc:format" data-format="xls">XLS</span>
+    </div>
+    <div class="resource-summary">
+        <p>
+            
+              On-street Parking Bay Sensors XLS<br/>
+            
+            
+        </p>
+    </div>
+    
+
+  
+  
+  
+
+  <ul class="list-unstyled buttons">
+    
+      
+      
+      <li>
+        <a class="btn btn-primary btn-outline" href="/dataset/on-street-parking-bay-sensors/resource/dd77a7b4-0654-56fa-a58a-b6bb2b43a2d7">
+          <i class="fa fa-info-circle"></i>
+          More information
+        </a>
+      </li>
+      
+        <li>
+          <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/xls" class="btn btn-primary" target="_blank">
+            
+              <i class="fa fa-external-link"></i>
+              Go to Resource
+            
+          </a>
+        </li>
+      
+    
+  </ul>
+
+
+</li>
+
+          
+        
+      </ul>
+    
+
+  
+</section>
+        
+
+        
+
+
+
+
+
+
+    <section class="datapreview resource-preview">
+        <div class="header-container">
+            <h3>Map preview</h3>
+            <a href="https://digitaltwin.vic.gov.au/public/?utm_source=DataVic&utm_medium=datarecordwebpage+&utm_campaign=DataVicDTVlink#https://discover.data.vic.gov.au/dtv_config/WyI0MDE0NzQ0Yy0zODNhLTU3NzItYTdlMi05ODc3N2ZlNjFlMGQiXQ%253D%253D/config.json" target="_blank" class="dtv-external-link">
+                See this dataset in the Digital Twin Victoria
+                <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14 1.53906V12.6016C14 13.3008 13.3008 14 12.4609 14H1.53906C0.699219 14 0 13.3008 0 12.4609V1.53906C0 0.699219 0.699219 0 1.53906 0H12.6016C13.3008 0 14 0.699219 14 1.53906ZM11.1992 1.96094H7.69922C7.14063 1.96094 6.71875 2.80078 7.28125 3.21875L8.26172 4.19922L2.10156 10.3594C1.96094 10.5 1.96094 10.7812 2.10156 10.9219L3.07812 11.8984C3.21875 12.0391 3.5 12.0391 3.64062 11.8984L9.80078 5.73828L10.7812 6.71875C11.1992 7.28125 12.0391 6.85937 12.0391 6.30078V2.80078C12.0391 2.37891 11.6211 1.96094 11.1992 1.96094Z"
+    fill="inherit" />
+</svg>
+            </a>
+        </div>
+        <div class="resource-view resource-view">
+            <iframe frameborder="0"
+                    src="https://map.digitaltwin.vic.gov.au/#https://discover.data.vic.gov.au/dtv_config/WyI0MDE0NzQ0Yy0zODNhLTU3NzItYTdlMi05ODc3N2ZlNjFlMGQiXQ%253D%253D/embedded/config.json&hideWelcomeMessage=1&hideWorkbench=1&zoomOnEnable=1"
+                    height="600px" width="100%"></iframe>
+        </div>
+    </section>
+
+    
+
+    
+        
+
+
+
+  <section class="datapreview resource-preview">
+    <div class="header-container">
+      <h3>Data preview - On-street Parking Bay Sensors CSV</h3>
+    </div>
+    <div class="resource-view">
+      
+
+
+  <div id="view-463f5c53-b1d1-43c3-ba71-390b7da438f2" class="resource-view" data-id="463f5c53-b1d1-43c3-ba71-390b7da438f2" data-title="Table" data-description="">
+  <div class="actions">
+    <a class="btn btn-default"
+       target="_blank"
+       href="https://discover.data.vic.gov.au/dataset/on-street-parking-bay-sensors/resource/eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae/view/463f5c53-b1d1-43c3-ba71-390b7da438f2">
+      <i class="fa fa-arrows-alt"></i>
+      Fullscreen
+    </a>
+    <a class="btn btn-default"
+       href="#embed-463f5c53-b1d1-43c3-ba71-390b7da438f2"
+       data-module="resource-view-embed"
+       data-module-id="463f5c53-b1d1-43c3-ba71-390b7da438f2"
+       data-module-url="https://discover.data.vic.gov.au/dataset/on-street-parking-bay-sensors/resource/eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae/view/463f5c53-b1d1-43c3-ba71-390b7da438f2">
+      <i class="fa fa-code"></i>
+      Embed
+    </a>
+  </div>
+  <p class="desc"></p>
+    <div class="m-top ckanext-datapreview">
+      
+        
+<div
+  class="resource-view-filters"
+  data-module="resource-view-filters"
+  data-module-resource-id="eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae"
+  data-module-fields="[&#34;_id&#34;, &#34;kerbsideid&#34;, &#34;lastupdated&#34;, &#34;location&#34;, &#34;status_description&#34;, &#34;status_timestamp&#34;, &#34;zone_number&#34;]"
+  >
+</div>
+      
+      
+        <div class="data-viewer-error js-hide">
+          <p class="text-danger">
+            <i class="fa fa-info-circle"></i>
+            This resource view is not available at the moment.
+          </p>
+          <p id="data-view-error" class="collapse"></p>
+          <p>
+            <a href="https://data.melbourne.vic.gov.au/api/v2/catalog/datasets/on-street-parking-bay-sensors/exports/csv?delimiter=%2C" class="btn btn-default btn-lg resource-url-analytics" target="_blank">
+              <i class="fa fa-lg fa-arrow-circle-o-down"></i>
+              Download resource
+            </a>
+          </p>
+        </div>
+        
+          
+          
+            
+          
+        
+        <iframe title="On-street Parking Bay Sensors CSV" src="https://discover.data.vic.gov.au/dataset/on-street-parking-bay-sensors/resource/eb40ac75-8976-5bdc-bbe8-434fa3a0b0ae/view/463f5c53-b1d1-43c3-ba71-390b7da438f2" frameborder="0" width="100%" data-module="data-viewer">
+          <p>Your browser does not support iframes.</p>
+        </iframe>
+      
+    </div>
+    <div id="embed-463f5c53-b1d1-43c3-ba71-390b7da438f2" class="modal fade resource-view-embed">
+      <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Embed resource view</h3>
+      </div>
+      <div class="modal-body">
+        <p class="embed-content">You can copy and paste the embed code into a CMS or blog software that supports raw HTML</p>
+        <div class="row">
+          <div class="col-md-6">
+            
+<div class="form-group control-full">
+<label class="form-label" for="width">Width</label>
+<div class="controls ">
+ 
+<input id="width" type="text" name="width" value="700" placeholder=""  class="form-control" />
+
+
+
+</div>
+</div>
+ 
+
+          </div>
+          <div class="col-md-6">
+            
+<div class="form-group control-full">
+<label class="form-label" for="height">Height</label>
+<div class="controls ">
+ 
+<input id="height" type="text" name="height" value="400" placeholder=""  class="form-control" />
+
+
+
+</div>
+</div>
+ 
+
+          </div>
+        </div>
+        
+
+
+<div class="form-group pre control-full">
+<label class="form-label" for="code">Code</label>
+<div class="controls ">
+
+<textarea id="code" name="code" cols="20" rows="3" placeholder=""  class="form-control"></textarea>
+
+
+
+</div>
+</div>
+
+
+      </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </section>
+
+    
+
+    
+  <section class="additional-info">
+  <h3>Additional Information</h3>
+
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">Field</th>
+        <th scope="col">Value</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      
+        
+
+        
+          
+          <tr>
+            <th scope="row" class="dataset-label">Published (Metadata Record)</th>
+            <td class="dataset-details" property="dct:issued">
+              07/03/2023
+            </td>
+          </tr>
+        
+
+        
+          <tr>
+            <th scope="row" class="dataset-label">Last updated</th>
+            <td class="dataset-details" property="dct:updated">
+              04/09/2026
+            </td>
+          </tr>
+        
+
+        
+          
+          <tr>
+            <th scope="row" class="dataset-label">Organisation</th>
+            <td class="dataset-details" property="dc:contributor">City of Melbourne</td>
+          </tr>
+        
+
+        
+        
+          <tr>
+            <th scope="row" class="dataset-label">Category</th>
+            <td class="dataset-details">
+              <ul>
+                
+                  <li>
+                      <a href="/dataset/?groups=local-government">Local government</a>
+                  </li>
+                
+              </ul>
+            </td>
+          </tr>
+        
+
+        
+          
+          
+            <tr>
+              <th scope="row" class="dataset-label">License - other</th>
+              <td class="dataset-details">CC BY</td>
+            </tr>
+          
+          
+            <tr>
+              <th scope="row" class="dataset-label">Custom license link</th>
+              <td class="dataset-details">https://creativecommons.org/licenses/by/4.0/legalcode</td>
+            </tr>
+          
+        
+
+        
+          <tr>
+            <th scope="row" class="dataset-label">Full metadata URL</th>
+            <td class="dataset-details">
+            
+              <a href="https://data.melbourne.vic.gov.au/explore/dataset/on-street-parking-bay-sensors/information/" target="_blank" rel="nofollow">https://data.melbourne.vic.gov.au/explore/dataset/on-street-parking-bay-sensors/information/</a>
+            
+            </td>
+          </tr>
+        
+
+        <tr>
+          <th scope="row" class="dataset-label">Update Frequency</th>
+          <td class="dataset-details">Unknown</td>
+        </tr>
+
+        
+          <tr>
+            <th scope="row" class="dataset-label">Point of contact</th>
+            <td class="dataset-details">
+              
+                <a href="https://data.melbourne.vic.gov.au/pages/contact_us_form/" target="_blank" rel="nofollow">https://data.melbourne.vic.gov.au/pages/contact_us_form/</a>
+              
+            </td>
+          </tr>
+        
+      
+    </tbody>
+  </table>
+</section>
+
+
+
+  <section class="data-publisher-notice">
+  <p>
+    Responsibility for legislative and policy compliance rests with the publisher.
+  </p>
+</section>
+
+                    </div>
+                  </article>
+                
+                
+              </div>
+            
+          </div>
+        
+      </div>
+    </div>
+  </div>
+
+    <footer>
+  <div class="rpl-site-footer">
+    <div class="rpl-site-footer__main">
+      <ul class="rpl-footer-nav">
+        <li class="rpl-footer-nav__menu-item rpl-footer-nav__menu-item--parent">
+          <h2 class="rpl-footer-nav__heading">
+            <a href="/dataset/" class="rpl-link rpl-menu__item-link">Data</a>
+          </h2>
+        </li>
+        <li class="rpl-footer-nav__menu-item rpl-footer-nav__menu-item--parent">
+          <h2 class="rpl-footer-nav__heading">
+            <a href="https://www.data.vic.gov.au/about-datavic" class="rpl-link rpl-menu__item-link">About DataVic</a>
+          </h2>
+        </li>
+        <li class="rpl-footer-nav__menu-item rpl-footer-nav__menu-item--parent">
+          <h2 class="rpl-footer-nav__heading">
+            <a href="https://www.data.vic.gov.au/contact-us" class="rpl-link rpl-menu__item-link">Contact us</a>
+          </h2>
+        </li>
+      </ul>
+      <div class="rpl-acknowledgement rpl-site-footer__acknowledgement">
+        <img class="rpl-acknowledgement__flag" src="/images/aboriginal-flag.png" alt="Aboriginal flag" />
+        <img class="rpl-acknowledgement__flag" src="/images/torres-strait-islander-flag.png" alt="Torres Strait Islander flag" />
+        <div class="rpl-acknowledgement__text">The Victorian Government acknowledges Aboriginal Traditional Owners of Country throughout Victoria and pays respect to their cultures and Elders past, present and emerging.</div>
+      </div>
+    </div>
+    <div class="rpl-site-footer__bottom">
+      <div class="rpl-site-footer__bottom-main">
+        <div class="rpl-links-and-copyright">
+          <ul class="rpl-links-and-copyright__links"><!-- 
+            --><li><a href="https://www.data.vic.gov.au/privacy-vicgovau">Privacy</a></li><!--
+            --><li><a href="https://www.data.vic.gov.au/disclaimer">Disclaimer</a></li><!--
+            --><li><a href="https://www.data.vic.gov.au/copyright">Copyright</a></li><!--
+            --><li><a href="https://www.data.vic.gov.au/accessibility">Accessibility</a></li><!--
+            --><li><a href="/sitemap">Sitemap</a></li><!--
+            --><li><a href="https://www.data.vic.gov.au/contact-us">Contact us</a></li><!--
+          --></ul>
+          <div class="rpl-links-and-copyright__copyright">© Copyright State Government of Victoria</div>
+        </div>
+      </div>
+      <div class="rpl-site-footer__logos">
+        <a href="https://vic.gov.au" target="_blank" class="rpl-link rpl-site-footer__logo">
+          <img src="/images/vic-footer-logo.svg" alt="Victoria Government Website">
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+
+  
+  
+    
+    
+  
+  
+  
+  
+    
+    
+    
+    
+        
+        
+        <div class="js-hide" data-module="google-analytics"
+             data-module-googleanalytics_resource_prefix="/downloads/">
+        </div>
+    
+
+    
+
+  
+
+
+    
+
+
+    
+
+  
+
+  
+
+
+    
+    
+    <link href="/webassets/vendor/f3b8236b_select2.css" rel="stylesheet"/>
+<link href="/webassets/vendor/53df638c_fontawesome.css" rel="stylesheet"/>
+    <script src="/webassets/vendor/240e5086_jquery.js" type="text/javascript"></script>
+<script src="/webassets/vendor/ea2ff36f_qs.js" type="text/javascript"></script>
+<script src="/webassets/base/8ed70deb_view-filters.js" type="text/javascript"></script>
+<script src="/webassets/vendor/71bc2bbc_vendor.js" type="text/javascript"></script>
+<script src="/webassets/vendor/6d1ad7e6_bootstrap.js" type="text/javascript"></script>
+<script src="/webassets/vendor/529a0eb7_htmx.js" type="text/javascript"></script>
+<script src="/webassets/base/ebc2f0b9_main.js" type="text/javascript"></script>
+<script src="/webassets/base/78ac888d_ckan.js" type="text/javascript"></script>
+<script src="/webassets/ckanext-googleanalytics/event_tracking.js?71ae8997" type="text/javascript"></script>
+<script src="/webassets/ckanext-search_autocomplete/3aae4f75-search_autocomplete.js" type="text/javascript"></script>
+<script src="/webassets/datavic_odp_theme/176a29a0_datavic_odp_theme.js" type="text/javascript"></script>
+<script src="/webassets/ckanext-auth/e85bdf83-auth.js" type="text/javascript"></script>
+<script src="/webassets/ckanext-alias/f3df63a9-alias.js" type="text/javascript"></script>
+<script src="/webassets/activity/0fdb5ee0_activity.js" type="text/javascript"></script>
+  </body>
+</html>

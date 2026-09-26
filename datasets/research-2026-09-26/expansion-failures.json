@@ -1,0 +1,7 @@
+[
+  {
+    "path": "datasets/melbourne/2026-09-26/qv-parking-rates.html",
+    "error": "HTTP/network download failed",
+    "source_url": "https://www.qv.com.au/parking.html"
+  }
+]

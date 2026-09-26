@@ -4,7 +4,7 @@
 export async function detectCountry(lat: number, lng: number): Promise<string | null> {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=3&addressdetails=1`
-    const res = await fetch(url, { headers: { Accept: 'application/json' } })
+    const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return null
     const data = await res.json()
     return data?.address?.country ?? null
@@ -20,7 +20,7 @@ export async function detectCountry(lat: number, lng: number): Promise<string | 
 export async function reverseGeocodeLabel(lat: number, lng: number): Promise<string | null> {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
-    const res = await fetch(url, { headers: { Accept: 'application/json' } })
+    const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return null
     const data = await res.json()
     const a = data?.address
@@ -57,22 +57,25 @@ function normalize(s: string): string {
  * Victorian suburb would still surface Victorian results. */
 export async function searchCities(query: string, countryCode: string, stateName?: string): Promise<CitySearchResult[]> {
   if (!query.trim()) return []
-  const supportedIndia: CitySearchResult[] = [
-    { name: 'Chennai', stateName: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
-    { name: 'Bengaluru', stateName: 'Karnataka', lat: 12.9716, lng: 77.5946 },
-    { name: 'Hyderabad', stateName: 'Telangana', lat: 17.385, lng: 78.4867 },
+  const supportedCities = [
+    { name: 'Melbourne', stateName: 'Victoria', country:'AU', lat: -37.8136, lng: 144.9631 },
+    { name: 'Chennai', stateName: 'Tamil Nadu', country:'IN', lat: 13.0827, lng: 80.2707 },
+    { name: 'Bengaluru', stateName: 'Karnataka', country:'IN', lat: 12.9716, lng: 77.5946 },
+    { name: 'Hyderabad', stateName: 'Telangana', country:'IN', lat: 17.385, lng: 78.4867 },
   ]
   const typed = normalize(query)
-  const local = countryCode === 'IN' ? supportedIndia.filter(city => {
+  const local = supportedCities.filter(city => {
     const aliases = city.name === 'Bengaluru' ? ['bengaluru','bangalore'] : [normalize(city.name)]
     const nameMatch = aliases.some(name => name.includes(typed) || typed.includes(name))
     const stateMatch = !stateName || normalize(city.stateName ?? '') === normalize(stateName)
-    return nameMatch && stateMatch
-  }) : []
+    return city.country === countryCode && nameMatch && stateMatch
+  })
+  // Pilot city centres are ready offline; a network lookup must not delay them.
+  if (local.length) return local
   try {
     const q = stateName ? `${query}, ${stateName}` : query
     const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&countrycodes=${countryCode.toLowerCase()}&addressdetails=1&limit=10`
-    const res = await fetch(url, { headers: { Accept: 'application/json' } })
+    const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return local
     const data = await res.json()
     const results: CitySearchResult[] = (data ?? [])
@@ -126,7 +129,7 @@ export async function searchPlaces(query: string, near?: { lat: number; lng: num
       params.set('viewbox', `${near.lng - delta},${near.lat + delta},${near.lng + delta},${near.lat - delta}`)
       params.set('bounded', '0')
     }
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, { headers: { Accept: 'application/json' } })
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return []
     const data = await res.json()
     return (data ?? [])

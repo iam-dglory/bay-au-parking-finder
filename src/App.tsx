@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MapPin, Plus, ClipboardList, BookOpen } from 'lucide-react'
 import { Home } from './pages/Home'
 import { AddSpot } from './pages/AddSpot'
@@ -11,12 +11,14 @@ import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
 
 type Tab = 'home' | 'addSign' | 'mine' | 'guide'
-type Location = { lat: number; lng: number; label: string }
+type Location = { lat: number; lng: number; label: string; country?: string }
 type LocationStatus = 'detecting' | 'resolved' | 'manual'
 
-const LOCATION_DETECT_TIMEOUT_MS = 7000
+const LOCATION_DETECT_TIMEOUT_MS = 6000
 
 export default function App() {
+  const gpsEpoch = useRef(0)
+  const needsRefinement = useRef(false)
   const [authReady, setAuthReady] = useState(false)
   const [location, setLocation] = useState<Location | null>(null)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
@@ -38,14 +40,17 @@ export default function App() {
    * reverse-geocoding finishes -- rather than making the whole app wait on
    * two sequential network calls before showing anything. */
   function resolveGpsThenRefineLabel(onResolved: (loc: Location) => void) {
+    const epoch = ++gpsEpoch.current
     return getBrowserLocation().then((pos) => {
+      if (epoch !== gpsEpoch.current) return
       const lat = pos.coords.latitude
       const lng = pos.coords.longitude
-      onResolved({ lat, lng, label: 'Current location' })
+      needsRefinement.current = (pos.coords.accuracy ?? Infinity) > 200
+      onResolved({ lat, lng, label: needsRefinement.current ? 'Approximate current location' : 'Current location' })
       setLiveLocation({ lat, lng })
       setTrackLive(true)
       reverseGeocodeLabel(lat, lng).then((label) => {
-        if (label) setLocation((prev) => (prev && prev.lat === lat && prev.lng === lng ? { ...prev, label } : prev))
+        if (label && epoch === gpsEpoch.current) setLocation((prev) => (prev && prev.lat === lat && prev.lng === lng ? { ...prev, label } : prev))
       })
     })
   }
@@ -56,14 +61,27 @@ export default function App() {
   // could be nowhere near the chosen city.
   useEffect(() => {
     if (!trackLive) return
-    return watchLocation((pos) => setLiveLocation({ lat: pos.latitude, lng: pos.longitude }))
+    return watchLocation((pos) => {
+      const point = { lat: pos.latitude, lng: pos.longitude }
+      setLiveLocation(point)
+      if (needsRefinement.current && (pos.accuracy ?? Infinity) <= 200) {
+        needsRefinement.current = false
+        setLocation({ ...point, label: 'Current location' })
+        const epoch = gpsEpoch.current
+        void reverseGeocodeLabel(point.lat, point.lng).then(label => {
+          if (label && epoch === gpsEpoch.current) setLocation(prev => prev && prev.lat === point.lat && prev.lng === point.lng ? {...prev, label} : prev)
+        })
+      }
+    })
   }, [trackLive])
 
   useEffect(() => {
     let settled = false
+    const startupEpoch = gpsEpoch.current + 1
     const timeout = setTimeout(() => {
-      if (!settled) {
+      if (!settled && gpsEpoch.current === startupEpoch) {
         settled = true
+        gpsEpoch.current++
         setLocationStatus('manual')
       }
     }, LOCATION_DETECT_TIMEOUT_MS)
@@ -75,20 +93,18 @@ export default function App() {
       setLocation(resolved)
       setLocationStatus('resolved')
     }).catch(() => {
-      if (settled) return
+      if (settled || gpsEpoch.current !== startupEpoch) return
       settled = true
       clearTimeout(timeout)
       setLocationStatus('manual')
     })
 
-    return () => clearTimeout(timeout)
+    // This ref is a cancellation token, not a DOM node.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    return () => { clearTimeout(timeout); gpsEpoch.current++ }
   }, [])
 
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
-
-  if (!authReady) {
-    return <div className="flex h-full items-center justify-center bg-[#f6f8fc] text-sm text-slate-500"><div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-blue-600" /> Loading Bay…</div></div>
-  }
 
   if (locationStatus === 'detecting') {
     return (
@@ -96,6 +112,7 @@ export default function App() {
         <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#f6f8fc] text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 shadow-xl shadow-blue-600/25"><MapPin className="h-7 w-7 animate-pulse text-white" strokeWidth={1.8} /></div>
           <div><p className="text-base font-semibold text-slate-900">Finding your parking area</p><p className="mt-1 text-sm text-slate-500">Allow location access for the fastest results</p></div>
+        <button className="mt-3 text-sm font-semibold text-blue-600" onClick={() => { gpsEpoch.current++; setLocationStatus('manual') }}>Choose an area instead</button>
         </div>
         {feedbackOverlay}
       </>
@@ -106,10 +123,12 @@ export default function App() {
     return (
       <>
         <LocationPicker
-          onPick={(lat, lng, label) => {
+          onPick={(lat, lng, label, country) => {
+            gpsEpoch.current++
+            needsRefinement.current = false
             setTrackLive(false)
             setLiveLocation(null)
-            setLocation({ lat, lng, label })
+            setLocation({ lat, lng, label, country })
             setLocationStatus('resolved')
           }}
           onUseGps={() =>
@@ -137,7 +156,7 @@ export default function App() {
             center={location}
             myLocation={liveLocation ?? undefined}
             locationLabel={location.label}
-            onChangeLocation={() => setLocationStatus('manual')}
+            onChangeLocation={() => { gpsEpoch.current++; setTrackLive(false); setLocationStatus('manual') }}
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}

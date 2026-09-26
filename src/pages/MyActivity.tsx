@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Clock3, CircleCheck, CircleX, MessageSquarePlus } from 'lucide-react'
+import { Clock3, CircleCheck, Image, MessageSquarePlus } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { SpotCard } from '../components/SpotCard'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
@@ -12,8 +12,8 @@ function formatWhen(iso: string) {
 
 const MODERATION_BADGE = {
   pending: { icon: Clock3, text: 'Pending review', className: 'bg-amber-100 text-amber-700' },
-  approved: { icon: CircleCheck, text: 'Live on the map', className: 'bg-emerald-100 text-emerald-700' },
-  rejected: { icon: CircleX, text: 'Not approved (check the photo matches the sign)', className: 'bg-rose-100 text-rose-700' },
+  approved: { icon: CircleCheck, text: 'Published on the map', className: 'bg-emerald-100 text-emerald-700' },
+  rejected: { icon: Image, text: 'Update the photo to match the sign', className: 'bg-amber-100 text-amber-700' },
 } as const
 
 export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; lng: number }; onOpenFeedback: () => void }) {
@@ -79,7 +79,7 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
       <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Your Bay history</p>
         <h1 className="mt-1 text-xl font-semibold tracking-tight">My activity</h1>
-        <p className="mt-1 text-sm text-slate-300">Where you've parked and what you've reported</p>
+        <p className="mt-1 text-sm text-slate-300">Your saved directions and contributed signs</p>
       </div>
 
       <section className="m-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

@@ -12,12 +12,12 @@ export function nearbyCatalog(records: CarPark[], lat: number, lng: number, radi
 }
 export async function indiaNearby(lat: number, lng: number, radius: number) {
   if (!isIndiaSearch(lat,lng)) return []
-  catalog ??= fetch(`${import.meta.env.BASE_URL}data/india-parking.json`).then(async response => {
+  catalog ??= fetch(`${import.meta.env.BASE_URL}data/india-parking.json`, { signal: AbortSignal.timeout(12000) }).then(async response => {
     if (!response.ok) throw new Error('India parking locations could not be loaded. Please refresh.')
     return response.json() as Promise<IndiaCatalog>
   }).catch(error => { catalog = undefined; throw error })
   return nearbyCatalog((await catalog).records,lat,lng,radius)
 }
 export function catalogSpot(row: CarPark): ParkingSpot {
-  return { ...row, country:'IN', state:null, created_by:'catalog', photo_url:null, moderation_status:'approved', kerbside_id:null, rules:[], latest_ping:null, sensor_status:null, catalog:row }
+  return { ...row, country:row.country ?? 'IN', state:null, created_by:'catalog', photo_url:null, moderation_status:'approved', kerbside_id:null, rules:[], latest_ping:null, sensor_status:null, catalog:row }
 }

@@ -9,7 +9,7 @@ import { SpotDetailSheet } from '../components/SpotDetailSheet'
 import { FilterBar } from '../components/FilterBar'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { useNearbyCarParks } from '../lib/useNearbyCarParks'
-import { rankSpots } from '../lib/parkingStatus'
+import { rankSpots, evaluateSpotStatus } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
@@ -33,10 +33,13 @@ export function Home({
 }) {
   const [expanded, setExpanded] = useState(false)
   const [radiusM, setRadiusM] = useState(1000)
+  const [vacantOnly, setVacantOnly] = useState(false)
   const [freeOnly, setFreeOnly] = useState(false)
   const [category, setCategory] = useState<SignType | 'all'>('all')
   const [showCarParks, setShowCarParks] = useState(true)
   const [view, setView] = useState<'map' | 'list'>('map')
+  const [areaLimit, setAreaLimit] = useState(20)
+  const [spotLimit, setSpotLimit] = useState(30)
   const [selectedSpot, setSelectedSpot] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
 
   const [destination, setDestination] = useState<{ lat: number; lng: number; label: string } | null>(null)
@@ -52,17 +55,26 @@ export function Home({
 
   const now = useClock()
   const { spots, loading, error, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
-  const { carParks, error: areaError, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks)
+  const { carParks, error: areaError, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks && !vacantOnly)
   const india = isIndiaSearch(effectiveCenter.lat,effectiveCenter.lng)
+
+  useEffect(() => {
+    setAreaLimit(20)
+    setSpotLimit(30)
+  }, [effectiveCenter.lat, effectiveCenter.lng, radiusM, freeOnly, vacantOnly, category])
 
   const ranked = useMemo(() => {
     let all = rankSpots(spots, now)
+    if (vacantOnly) all = all.filter(s => availability(s, now).state === 'vacant')
     if (freeOnly) all = all.filter((s) => s.status.status === 'free')
     if (category !== 'all') all = all.filter((s) => s.rules.some((r) => r.sign_type === category))
     return all
-  }, [spots, freeOnly, category, now])
+  }, [spots, freeOnly, vacantOnly, category, now])
 
-  const selected = selectedSpot ? ranked.find((s) => s.id === selectedSpot.id) ?? selectedSpot : null
+  // Filters must not freeze an open sheet on a formerly-vacant reading.
+  // Use the latest unfiltered row; a removed/displaced source row closes it.
+  const selectedRow = selectedSpot ? spots.find(s => s.id === selectedSpot.id) : undefined
+  const selected = selectedRow ? { ...selectedRow, status: evaluateSpotStatus(selectedRow.rules, selectedRow.lat, selectedRow.lng, now) } : null
   const occupancySummary = useMemo(() => {
     const summary = { vacant: 0, occupied: 0, uncertain: 0, unknown: 0 }
     ranked.forEach((spot) => { summary[availability(spot, now).state] += 1 })
@@ -70,18 +82,20 @@ export function Home({
   }, [ranked, now])
 
   useEffect(() => {
+    let active = true
     if (destDebounceRef.current) clearTimeout(destDebounceRef.current)
     if (!destQuery.trim()) {
       setDestResults([])
+      setDestSearching(false)
       return
     }
     setDestSearching(true)
     destDebounceRef.current = setTimeout(async () => {
       const found = await searchPlaces(destQuery, center)
-      setDestResults(found)
-      setDestSearching(false)
+      if (active) { setDestResults(found); setDestSearching(false) }
     }, DESTINATION_SEARCH_DEBOUNCE_MS)
     return () => {
+      active = false
       if (destDebounceRef.current) clearTimeout(destDebounceRef.current)
     }
   }, [destQuery, center])
@@ -230,14 +244,14 @@ export function Home({
           </button>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-slate-900">{ranked.length.toLocaleString()} parking spots</span>
+          <span className="text-sm font-semibold text-slate-900">{loading && !updatedAt ? 'Finding parking spots…' : `${ranked.length.toLocaleString()} parking spots`}</span>
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
         <details className="mt-2 text-xs text-slate-600">
-          <summary className="cursor-pointer py-2 font-medium">{india ? 'Mapped parking · availability on arrival' : <><span className="text-emerald-700">{occupancySummary.vacant} vacant</span> · <span className="text-rose-700">{occupancySummary.occupied} occupied</span></>} · Details</summary>
+          <summary className="cursor-pointer py-2 font-medium">{loading && !updatedAt ? 'Loading availability' : india || occupancySummary.vacant + occupancySummary.occupied === 0 ? 'Mapped parking · availability on arrival' : <><span className="text-emerald-700">{occupancySummary.vacant} vacant</span> · <span className="text-rose-700">{occupancySummary.occupied} occupied</span></>} · Details</summary>
           <div className="space-y-2 rounded-xl bg-slate-50 p-3">
-            <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} no current reading</span> · Blue P: parking areas</p>
+            <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} availability on arrival</span> · Blue P: parking areas · numbered groups: zoom in</p>
             <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>
             {india && <p>Chennai, Bengaluru and Hyderabad: mapped bays and areas from OpenStreetMap. Published operator prices appear where matched. Coverage is partial; live occupancy is not connected.</p>}
             <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
@@ -246,8 +260,10 @@ export function Home({
       </div>
 
       <details className="shrink-0 border-b border-slate-200 bg-white">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-blue-700">Filters · {radiusM / 1000} km{freeOnly ? ' · No fee' : ''}{category !== 'all' ? ' · Zone selected' : ''}{showCarParks ? ' · Parking areas on' : ''}</summary>
+        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-blue-700">Filters · {radiusM / 1000} km{vacantOnly ? ' · Vacant now' : ''}{freeOnly ? ' · No fee' : ''}{category !== 'all' ? ' · Zone selected' : ''}{showCarParks && !vacantOnly ? ' · Parking areas on' : ''}</summary>
       <FilterBar
+        vacantOnly={vacantOnly}
+        onVacantOnlyChange={setVacantOnly}
         radiusM={radiusM}
         onRadiusChange={setRadiusM}
         freeOnly={freeOnly}
@@ -283,12 +299,15 @@ export function Home({
         ) : (
           <div className="h-full space-y-2 overflow-y-auto p-4">
             {(loading || areasLoading) && <p className="text-center text-sm text-slate-400">Loading…</p>}
-            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">No mapped parking in this search. Try a wider radius in Filters.</p>}
-            {carParks.length>0 && <p className="text-xs font-semibold text-slate-500">Parking areas · spot filters apply to individual bays</p>}
-            {carParks.map(area=><article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-4"><ParkingAreaDetails area={area} compact /></article>)}
-            {ranked.map((spot) => (
+            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking in this search. Try a wider radius in Filters.'}</p>}
+            {carParks.length>0 && <p className="text-xs font-semibold text-slate-500">Parking areas · {Math.min(areaLimit,carParks.length)} of {carParks.length} · spot filters apply to individual bays</p>}
+            {carParks.slice(0,areaLimit).map(area=><article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-4"><ParkingAreaDetails area={area} compact /></article>)}
+            {carParks.length > areaLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setAreaLimit(n=>n+20)}>Show more parking areas</button>}
+            {ranked.length>0 && <p className="pt-3 text-xs font-semibold text-slate-500">Parking spots · {Math.min(spotLimit,ranked.length)} of {ranked.length}</p>}
+            {ranked.slice(0,spotLimit).map((spot) => (
               <SpotCard key={spot.id} spot={spot} onClick={() => setSelectedSpot(spot)} />
             ))}
+            {ranked.length > spotLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setSpotLimit(n=>n+30)}>Show more parking spots</button>}
           </div>
         )}
       </div>

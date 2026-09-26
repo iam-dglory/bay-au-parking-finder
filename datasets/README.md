@@ -4,7 +4,15 @@ Archived dataset exports and catalog responses, including sources not used in th
 
 Source licence terms must be checked per dataset before reuse; retain council attribution. Archiving a source does not verify its accuracy or grant additional reuse rights.
 
-## `melbourne-city-of-melbourne/`
+## 26 September 2026 release
+
+Current source audit, coverage limits and reproducible build: [coverage release](../docs/coverage-release-2026-09-26.md). Raw snapshots are in `melbourne/2026-09-26/` and `india/2026-09-26/`; source gaps are in `research-2026-09-26/source-gap-ledger.json`. Melbourne catalog tiles and the India catalog are versioned in `public/data/`.
+
+The web app now reads council occupancy directly and joins exact council kerbside IDs only. Both Lastupdated and retrieval must be within five minutes. Legacy proximity-based database sensor assignments are ignored. Archived snapshots never supply live colours.
+
+Neighbouring-council exports are also archived: Casey restriction geometry (4,345 segments), Port Phillip accessible parking (402 points) and parking machines (498 points), and Yarra permit zones (24 polygons). They are context datasets, not automatically attached signs, public general parking or live vacancy. Casey’s separate car-parks export failed; failure URLs are retained. The DataVic parking catalog is complete for its query (200 results); the Data.gov.au query snapshot contains its first 1,000 of 9,490 matches and is not an exhaustive national catalog.
+
+## `melbourne-city-of-melbourne/` — historical import notes
 
 Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) . This is the primary source audited here; the archive is not an exhaustive survey of every Greater Melbourne council. See the coverage audit for known expansion sources and gaps.
 
@@ -17,7 +25,7 @@ Everything here covers the **City of Melbourne LGA only** (CBD, Docklands, South
 | `pay-stay-zones-linked-to-street-segments.json` | [pay-stay-zones-linked-to-street-segments](https://data.melbourne.vic.gov.au/explore/dataset/pay-stay-zones-linked-to-street-segments/) | 935 | Joins Pay Stay zones to road segments → bay coordinates |
 | `sign-plates-located-in-each-parking-zone.json` | [sign-plates-located-in-each-parking-zone](https://data.melbourne.vic.gov.au/explore/dataset/sign-plates-located-in-each-parking-zone/) | 1,821 | Legacy zone signage (2P/LZ/PP-style codes) for the older, non-Pay-Stay zone system |
 | `parking-zones-linked-to-street-segments.json` | [parking-zones-linked-to-street-segments](https://data.melbourne.vic.gov.au/explore/dataset/parking-zones-linked-to-street-segments/) | 926 | Joins legacy zones to road segments → bay coordinates |
-| `on-street-parking-bay-sensors.json` | [on-street-parking-bay-sensors](https://data.melbourne.vic.gov.au/explore/dataset/on-street-parking-bay-sensors/) | 6,324 | **Live** in-ground sensor occupancy (verified genuinely live: ~85% of sensors report within the last hour). Matched to `parking_spots` by nearest coordinate (≤5m) — the two datasets use incompatible kerbside-id numbering. This snapshot is a point-in-time copy; the app re-fetches this URL on a schedule, see `../scripts/sync_melbourne_sensors.py` and the server-side `pg_cron` version in `../supabase/migrations/`. |
+| `on-street-parking-bay-sensors.json` | [on-street-parking-bay-sensors](https://data.melbourne.vic.gov.au/explore/dataset/on-street-parking-bay-sensors/) | 6,324 | Historical sensor snapshot. Earlier imports matched by proximity; the 26 September audit found unsafe assignments and the current web client bypasses them. Use exact IDs and current source freshness as described above; archive timestamps are not live readings. |
 | `off-street-car-parks-2024-commercial.json` | [off-street-car-parks-with-capacity-and-type](https://data.melbourne.vic.gov.au/explore/dataset/off-street-car-parks-with-capacity-and-type/) | 143 (filtered) | Public/commercial multi-storey car parks with total capacity (~59,600 spaces). Filtered from the full census below down to `census_year=2024, parking_type=Commercial`. No live availability is published for these, capacity only. |
 
 ### Fetched and investigated, not used

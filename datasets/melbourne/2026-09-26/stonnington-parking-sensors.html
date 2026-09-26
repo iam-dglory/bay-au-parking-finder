@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en-AU">
+<!--<![endif]-->
+<head>
+	<!-- Published by OpenCities, 1.38.0.0 -->
+
+    
+        
+    
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="theme-color" content="#005A8B"/>
+    <title>Parking sensors City of Stonnington</title>
+	<meta name="generator" content="OpenCities - https://granicus.com/product/opencities" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Using mobile-web-app-capable for now to enable full-screen experience on supported platforms -->
+    <!-- Note: This tag works mainly on Android Chrome. It does NOT enable full-screen mode on iOS Safari. -->
+    <!-- For iOS, the correct tag is: <meta name="apple-mobile-web-app-capable" content="yes"> -->
+    <!-- TODO: Monitor for updated meta tag standards from Apple or other browser vendors -->
+    <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="description" content="Parking sensors are used in locations across Stonnington to monitor time-limited parking spaces and more efficiently manage parking enforcement resources." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors" />
+    <meta property="og:title" content="Parking sensors" />
+    <meta property="og:description" content="Parking sensors are used in locations across Stonnington to monitor time-limited parking spaces and more efficiently manage parking enforcement resources." />
+    <meta property="og:image" content="https://www.stonnington.vic.gov.au/files/assets/public/v/1/services/smart-citiy/smarter-parking-tile.jpg?w=1200" />
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:title" content="Parking sensors" />
+    <meta property="twitter:description" content="Parking sensors are used in locations across Stonnington to monitor time-limited parking spaces and more efficiently manage parking enforcement resources." />
+    <meta property="twitter:image" content="https://www.stonnington.vic.gov.au/files/assets/public/v/1/services/smart-citiy/smarter-parking-tile.jpg?w=1080" />
+    <meta property="fb:app_id" content="293298574687227" />
+    <link rel="canonical" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors" />
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/files/ocfavicon/Public/apple-touch-icon.png?V=637426019771302964">
+<link rel="icon" type="image/png" sizes="32x32" href="/files/ocfavicon/Public/favicon-32x32.png?V=637426019771302964">
+<link rel="icon" type="image/png" sizes="16x16" href="/files/ocfavicon/Public/favicon-16x16.png?V=637426019771302964">
+<link rel="manifest" href="/files/ocfavicon/Public/site.webmanifest?V=637426019771302964">
+<link rel="shortcut icon" href="/files/ocfavicon/Public/favicon.ico?V=637426019771302964">
+<meta name="msapplication-TileColor" content="#FFFFFF">
+<meta name="msapplication-config" content="/files/ocfavicon/Public/browserconfig.xml?V=637426019771302964">
+    <script>
+        (function () {
+            if (window.__UNLOAD_LAZY_PATCH__) return;
+            window.__UNLOAD_LAZY_PATCH__ = true;
+
+            var supportsPageHide = ("onpagehide" in window);
+            var mappedType = supportsPageHide ? "pagehide" : "beforeunload";
+            var nativeAdd = window.addEventListener;
+            var nativeRemove = window.removeEventListener;
+            var unloadMap = null;
+            var patched = false;
+
+            function ensurePatched() {
+                if (patched) return;
+                unloadMap = new WeakMap();
+
+                window.addEventListener = function (type, listener, options) {
+                    if (type === "unload") {
+                        var wrapped = function (evt) {
+                            if (supportsPageHide && evt.persisted) return;
+                            listener.call(this, evt);
+                        };
+                        unloadMap.set(listener, wrapped);
+                        return nativeAdd.call(this, mappedType, wrapped, options);
+                    }
+                    return nativeAdd.call(this, type, listener, options);
+                };
+
+                window.removeEventListener = function (type, listener, options) {
+                    if (type === "unload") {
+                        var wrapped = unloadMap.get(listener);
+                        if (wrapped) {
+                            nativeRemove.call(this, mappedType, wrapped, options);
+                            unloadMap.delete(listener);
+                        }
+                        return;
+                    }
+                    return nativeRemove.call(this, type, listener, options);
+                };
+
+                var orig = null;
+                Object.defineProperty(window, "onunload", {
+                    configurable: true, enumerable: true,
+                    get: function () { return orig; },
+                    set: function (h) {
+                        orig = h;
+                        if (typeof h === "function") window.addEventListener("unload", h);
+                    }
+                });
+                patched = true;
+            }
+
+            window.addEventListener = function (type, listener, options) {
+                if (type === "unload") {
+                    ensurePatched();
+                    return window.addEventListener(type, listener, options);
+                }
+                return nativeAdd.call(this, type, listener, options);
+            };
+
+            window.removeEventListener = function (type, listener, options) {
+                if (type === "unload" && !patched) {
+                    return;
+                }
+                return nativeRemove.call(this, type, listener, options);
+            };
+
+            function patchTelerik() {
+                ensurePatched();
+                var ns = window.RadAjaxNamespace;
+                if (!ns || !ns.EventManager || !ns.EventManager.Add || ns.EventManager.__UnloadPatched) return;
+                var origAdd = ns.EventManager.Add;
+                ns.EventManager.Add = function (el, evtName, handler, clientId) {
+                    if (el === window && evtName === "unload") {
+                        return window.addEventListener("unload", handler);
+                    }
+                    return origAdd.call(this, el, evtName, handler, clientId);
+                };
+                ns.EventManager.__UnloadPatched = true;
+            }
+
+            if (window.RadAjaxNamespace)
+                patchTelerik();
+            else (window.requestIdleCallback || function (cb)
+            {
+                setTimeout(cb, 120);
+            })(patchTelerik);
+        })();
+    </script>
+    <!-- Preconnecting to Google Fonts servers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Defer Roboto font loading to avoid render-blocking -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const robotoLink = document.createElement('link');
+            robotoLink.rel = 'stylesheet';
+            robotoLink.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap';
+            document.head.appendChild(robotoLink);
+        });
+    </script>
+
+    <style>
+        .gm-style, .gm-style * {
+            font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+        }
+    </style>
+
+    <script>
+        document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, "js");
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    
+        
+            <script type="text/javascript">
+                window.__oc_flags_ImprovedBreakpointEventHandling = true;
+            </script>
+            
+        
+    
+    
+    
+        <script type="text/javascript">
+            var __metaQueryBreakpoints = {
+                'sc-size-4': '(max-width: 480px)',
+                'sc-size-3': '(min-width: 480px) and (max-width: 768px)',
+                'sc-size-2': '(min-width: 768px) and (max-width: 992px)',
+                'sc-size-1': '(min-width: 992px)'
+            }
+
+            var __ocSizePoints = [
+                { min: 0, name: 'sc-size-4' },
+                { min: 480, name: 'sc-size-3' },
+                { min: 768, name: 'sc-size-2' },
+                { min: 992, name: 'sc-size-1' }
+            ];
+
+        </script>
+    
+
+    <!-- Framework Section -->
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/files/templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/jquery-1.12.4.min.js?seamlessts=639257199089102022" ><\/script>')</script>
+
+    <!--Google Maps API Loader – Improved Version to avoid Warning
+    This script loads the Google Maps JavaScript API using a dynamic and async method.
+    It replaces the old static <script> tag to avoid performance warnings from Google.
+
+    Dynamically creates the <script> tag with loading = async for better performance
+    Builds the API URL with required libraries(places, geometry, marker, geocoding)
+    Uses a Promise and callback(google.maps.__ib__) to confirm when the script is ready
+
+    It Avoids Google’s warning about direct script loading
+    Improves page load speed by loading the API asynchronously-->
+
+    
+        <script>
+            (function (root) {
+                root.OpenCities = root.OpenCities || {};
+                if (!root.OpenCities.GoogleMapsLoader) {
+                    root.OpenCities.GoogleMapsLoader = {
+                        _cbs: [],
+                        _ready: false,
+                        onReady: function (cb) {
+                            if (this._ready) { try { cb(); } catch (e) { console.error(e); } }
+                            else if (typeof cb === 'function') this._cbs.push(cb);
+                        },
+                        _fire: function () {
+                            if (this._ready) return;
+                            this._ready = true;
+                            var q = this._cbs.splice(0);
+                            for (var i = 0; i < q.length; i++) {
+                                try { q[i](); } catch (e) { console.error(e); }
+                            }
+                        }
+                    };
+                }
+            })(window);
+
+            (g => {
+                var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__",
+                    m = document, b = window;
+                b = b[c] || (b[c] = {});
+                var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams,
+                    u = () => h || (h = new Promise(async (resolve, reject) => {
+                        a = m.createElement("script");
+                        e.set("libraries", [...r] + "");
+                        for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]);
+                        e.set("callback", c + ".maps." + q);
+                        a.src = "https://maps." + c + "apis.com/maps/api/js?" + e.toString();
+                        a.loading = "async";
+                        a.async = true;
+                        a.defer = true;
+                        d[q] = resolve;
+                        a.onerror = () => reject(Error(p + " could not load."));
+                        a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+                        m.head.append(a);
+                    }));
+                if (d[l]) {
+                    console.warn(p + " only loads once. Ignoring duplicate load.");
+                } else {
+                    d[l] = (f, ...n) => (r.add(f), u().then(() => d[l](f, ...n)));
+                }
+            })({
+                key: "AIzaSyCgITWZ6uVsa9aQ9p_i_tFaBTkXApPMsGU",
+                v: "3.65"
+            });
+
+            (async () => {
+                try {
+                    if (!google?.maps?.importLibrary) return;
+
+                    if (!window.OpenCities.__mapsLibsPromise) {
+                        window.OpenCities.__mapsLibsPromise = Promise.all([
+                            google.maps.importLibrary('maps'),
+                            google.maps.importLibrary('places'),
+                            google.maps.importLibrary('geocoding'),
+                            google.maps.importLibrary('marker'),
+                            google.maps.importLibrary('geometry')
+                        ]);
+                    }
+                    await window.OpenCities.__mapsLibsPromise;
+
+                    if (window.OpenCities?.GoogleMapsLoader) {
+                        window.OpenCities.GoogleMapsLoader._fire();
+                    }
+                } catch (err) {
+                    console.error('Google Maps failed to initialise', err);
+                }
+            })();
+        </script>
+    
+    <script src="/files/templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/modernizr.custom.710f3bf.js?seamlessts=639257199089102022" defer></script>
+    
+    <!--// End Framework Section -->
+    <!-- OpenCities Section -->
+    <script>
+        var OpenCities = OpenCities || {};
+        OpenCities.Paths = {
+            SiteTemplate: '/files/templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/',
+            ThemePath: '/files/templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/'
+        };
+    </script>
+    <script src='/ocapi/a5dd37ee-4263-483d-9abe-96701033f69b/en-AU/websitesettings.js'></script>
+    <script src="/files/templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/oc_head.js?applied=20260313044801"></script>
+    <!-- Script Combine. To enter debug mode for this browser session, enter OcScriptCombineDebug=true as a querystring -->
+<link href="/files/oc-templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/oc_grid.css~oc_style.css~oc_wizard_style.css~oc_main.css~oc_forms.css~oc_wizard.css~oc_wizard_menu.css~oc_main_s1.css~oc_wizard_s1.css~oc_wizard_menu_s1.css~oc_grid_s1.css~OcScriptCombine_Minify0?uniqueid=20260313044801" rel="stylesheet" type="text/css">
+    <!-- Script Combine. To enter debug mode for this browser session, enter OcScriptCombineDebug=true as a querystring -->
+<link href="/files/oc-templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/client_style.css~client.css~client_menu.css~client_s1.css~client_menu_s1.css~client_forms.css~OcScriptCombine_Minify0?uniqueid=20260313044801" rel="stylesheet" type="text/css">
+    <style type="text/css">.background-container
+{
+    background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg?w=480');
+    background-color:#FFFFFF;
+}
+
+@media (min-width: 480px)
+{
+    .background-container
+    {
+      background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg?w=768');
+    }
+}
+@media (min-width: 768px)
+{
+    .background-container
+    {
+      background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg?w=992');
+    }
+}
+@media (min-width: 992px)
+{
+    .background-container
+    {
+      background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg');
+    }
+}
+@media (min-width: 1280px)
+{
+    .background-container
+    {
+      background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg');
+    }
+}
+@media (min-width: 1920px)
+{
+    .background-container
+    {
+      background-image:url('/files/assets/public/v/1/services/parking/parking-background.jpg');
+    }
+}
+        </style><script>
+(function (BackgroundSettings, $, undefined) {
+    BackgroundSettings.initialise = function () {
+        this.Application = {"CSSSelector":".background-container","EnableFade":true,"MediaType":"image"};
+    };
+} (OpenCities.BackgroundSettings = OpenCities.BackgroundSettings || {}, jQuery));
+OpenCities.BackgroundSettings.initialise();
+</script>
+    
+    <!-- Script Combine. To enter debug mode for this browser session, enter OcScriptCombineDebug=true as a querystring -->
+<link href="/files/oc-templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/oc_print.css~client_print.css~OcScriptCombine_Minify0?uniqueid=20260313044801" rel="stylesheet" type="text/css" media="print">
+    <!-- Script Combine. To enter debug mode for this browser session, enter OcScriptCombineDebug=true as a querystring -->
+<script src="/files/oc-templates/00000000-0000-0000-0000-000000000000/10bd9e8b-2435-4b03-b0da-6e2cf57c16cf/v/1786/external_plugins.js~oc_form_helper.js~oc_main.js~plugins.js~oc_main_init.js~OcScriptCombine_Minify0?uniqueid=20260313044801" defer="true"></script>
+    <script type="text/javascript">
+    window._monsido = window._monsido || {
+        token: "fbtVBVKHutHJpd7Xsq8VmQ",
+        statistics: {
+            enabled: true,
+            documentTracking: {
+                enabled: true,
+                documentCls: "monsido_download",
+                documentIgnoreCls: "monsido_ignore_download",
+                documentExt: ["docx","doc","ptt","xls","xlsx","pdf"],
+            },
+        },
+    };
+</script>
+<script type="text/javascript" async src="https://app-script.monsido.com/v2/monsido-script.js"></script>
+<meta name="google-site-verification" content="6SwUYoiy8nuVGqA99JgznvFUzjqtpHwaxxm43RjNQVs" />
+<!-- Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '464941344697795');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=464941344697795&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+<meta name="facebook-domain-verification" content="fnf0g6u3vwfkuh82mlrdoikxm2rj36" />
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T62CT5P');</script>
+<!-- End Google Tag Manager -->
+
+<!--Hotjar-->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:3212209,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+<!--End Hotjar-->
+
+<!--UX Tweak-->
+<script type="text/javascript">(function(u,x,t,w,e,a,k,s){a=function(v){try{u.setItem(t+e,v)}catch(e){}v=JSON.parse(v);for(k=0;k<v.length;k++){s=x.createElement("script");s.text="(function(u,x,t,w,e,a,k){a=u[e]=function(){a.q.push(arguments)};a.q=[];a.t=+new Date;a.c=w;k=x.createElement('script');k.async=1;k.src=t;x.getElementsByTagName('head')[0].appendChild(k)})(window,document,'"+v[k].u+"',"+JSON.stringify(v[k].c)+",'"+v[k].g+"')";x.getElementsByTagName("head")[0].appendChild(s)}};try{k=u.getItem(t+e)}catch(e){}if(k){return a(k)}k=new XMLHttpRequest;k.onreadystatechange=function(){if(k.readyState==4&&k.status==200)a(k.responseText)};k.open("POST",w+e);k.send(x.URL)})(sessionStorage,document,"uxt:","https://api.uxtweak.com/snippet/","e9bd50e8-4cfe-4a84-899f-34dfa22126bd");</script>
+<!--End UX Tweak-->
+    
+
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="UYNRY-2YMH8-7PYXA-RUTF9-QCXU8",function(){function e(){if(!r){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.appendChild(e),r=!0}}function t(e){r=!0;var n,t,a,i,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",i=(a.frameElement||a).style,i.width=0,i.height=0,i.border=0,i.display="none",o.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void 0;",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=14,window.BOOMR.url=n+"UYNRY-2YMH8-7PYXA-RUTF9-QCXU8";var i=document.currentScript||document.getElementsByTagName("script")[0],o=i.parentNode,r=!1,d=document.createElement("link");if(d.relList&&"function"==typeof d.relList.supports&&d.relList.supports("preload")&&"as"in d)window.BOOMR.snippetMethod="p",d.href=window.BOOMR.url,d.rel="preload",d.as="script",d.addEventListener("load",e),d.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!r)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.appendChild(d);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="eqbuqaburifacjqacqkqaeaaabvloujx-f-19de96a99-clienttons-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"41","ak.cp":"1822889","ak.ai":parseInt("1075936",10),"ak.ol":"0","ak.cr":13,"ak.ipv":6,"ak.proto":"h2","ak.rid":"210bd37","ak.r":23319,"ak.a2":n,"ak.m":"dscb","ak.n":"essl","ak.cport":62064,"ak.gh":"104.97.78.60","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"","ak.t":"1790398775","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==frr3oB0vqCOtPZEe/ALvnvJi8jf3DP644AJQKtKNqn5vtZe0QTRjFlSa4ACYaMFBmtTcRESfXYY6nkBisvvWC3qcUMs3uTkwx/hYWM+2BZGzmTTH4//1lGbmL4/ka8kyW942PUYxHlN2ZSeSc+aUEqLlzBMEb0cO9Y1HN0iCMMLF0nnusrdR2laVeUfWS8F2f/zLNGPjsfar3JzlchyVQsha/+SAkO2lAto35dRnwXXBdretSbTQ10rS6H/SPtUE4PbJv6HZv9LD6A/YZ/lo+UzWwijxe1g/32/h4QPceIw2Fk8wWOt3UFyLDB6C90lwx/z2qIMGNYZJo7KlM0qSXsZBuPQRECx3QhfGNvAT3kHlNRkAj/l/i7Wa+6S0XckgmDWEYbMCzljssjlOPeJ5S8fMP7dfyxOgIfqAKwswoG0=","ak.pv":"146","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body class="body layout-modern side-menu side-menu-left site-search-always-visble  content-type-ston-general content-template-full-width group-template-oc-full-width-with-default-header page-name-parking-sensors page-sequence-11 page-depth-3 page-section-3 website-type-primary device-desktop " id="body-top">
+    <div id="skip-to-content-container">
+        <a href="#main-content" class="visuallyhidden focusable" id="skip-to-content-link">Skip to main content</a>
+    </div>
+    <script>
+        // OCNOW-11988 (Cursor): Proactively focus skip link when returning from browser chrome.
+        // Must run inline (not deferred oc_main.js) so focus is intercepted before NVDA speaks footer.
+        (function () {
+            var awaitingReentry = false;
+            var inertSupported = 'inert' in HTMLElement.prototype;
+
+            function isExplicitlyOutsideDocument(node) {
+                return node != null && !document.documentElement.contains(node);
+            }
+
+            function getSkipContainer() {
+                return document.getElementById('skip-to-content-container');
+            }
+
+            function getSkipLink() {
+                return document.getElementById('skip-to-content-link');
+            }
+
+            function applyGuard() {
+                awaitingReentry = true;
+                if (!inertSupported) {
+                    return;
+                }
+                var skipContainer = getSkipContainer();
+                var children = document.body.children;
+                for (var i = 0; i < children.length; i++) {
+                    if (children[i] !== skipContainer) {
+                        children[i].setAttribute('inert', '');
+                    }
+                }
+            }
+
+            function clearGuard() {
+                awaitingReentry = false;
+                if (!inertSupported) {
+                    return;
+                }
+                var children = document.body.children;
+                for (var i = 0; i < children.length; i++) {
+                    children[i].removeAttribute('inert');
+                }
+            }
+
+            function isSkipLinkElement(target) {
+                if (!target) {
+                    return false;
+                }
+                var skipContainer = getSkipContainer();
+                return target.id === 'skip-to-content-link' ||
+                    (skipContainer && skipContainer.contains(target));
+            }
+
+            function focusSkipLink() {
+                var skipLink = getSkipLink();
+                if (!skipLink) {
+                    return;
+                }
+                if (window.scrollY > 0) {
+                    window.scrollTo(0, 0);
+                }
+                skipLink.focus({ preventScroll: true });
+            }
+
+            function scheduleGuardIfDocumentLostFocus() {
+                window.setTimeout(function () {
+                    if (!document.hasFocus()) {
+                        applyGuard();
+                    }
+                }, 0);
+            }
+
+            document.addEventListener('focusout', function (e) {
+                if (isExplicitlyOutsideDocument(e.relatedTarget)) {
+                    applyGuard();
+                }
+            }, true);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Tab') {
+                    scheduleGuardIfDocumentLostFocus();
+                } else if (e.key === 'F6' || (e.key === 'l' && e.ctrlKey)) {
+                    scheduleGuardIfDocumentLostFocus();
+                }
+            }, true);
+
+            window.addEventListener('focus', function () {
+                if (!awaitingReentry) {
+                    return;
+                }
+                applyGuard();
+                focusSkipLink();
+            }, true);
+
+            document.addEventListener('focusin', function (e) {
+                var reentryFromChrome = awaitingReentry || isExplicitlyOutsideDocument(e.relatedTarget);
+                if (!reentryFromChrome) {
+                    return;
+                }
+                if (isSkipLinkElement(e.target)) {
+                    clearGuard();
+                    return;
+                }
+                applyGuard();
+                focusSkipLink();
+                clearGuard();
+            }, true);
+        })();
+    </script>
+    <form name="mainForm" method="post" action="/Services/Parking/Parking-sensors" id="mainForm">
+<input type="hidden" name="ctl04_seamless_script_manager_TSM" id="ctl04_seamless_script_manager_TSM" value="" />
+<input type="hidden" name="__SEAMLESSVIEWSTATE" id="__SEAMLESSVIEWSTATE" value="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" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="" />
+
+
+<script src="/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=ctl04_seamless_script_manager_TSM&amp;compress=1&amp;_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3aen-GB%3add3ac3d5-1e29-4112-8fed-529caffa8f24%3aea597d4b%3bOpenCities.CustomControls%3aen-GB%3a2c6af46a-a9e7-48e6-823a-b8e6c08bf5b8%3a8e1d32bf" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=ztfW3kfUj1kK9ZWYC4ej_YyY-llfPumdq9-NRUvh9Uam5JPIB5oZzJ19At_CwLQ5O31FJzhrxcBbfgAJUOFtlsCwTcvV8vK3u9gsUWJqmgh0Pw0YYlNx4NSp9KplnE_eT7S9eX_-PwKE2c7tRQNT04hzb2OTP6z1KWHhU4Jc8PGF8nZ6kyB3nQcnI8YgTawmmD1CJBE3-GOzNla5CiDCqFGMLX7lc0pw8SocqJVncUGV4ML4WKAG6oCiF3Aat7dRSXzCipTecSoQz6_8ge3paIj6t9K5lZIvko0VtvIf-LRJlXwMoWLOwyblUIiJ0HYy_XIYF05ue4Xr0Hi5uSGYnzdyAHVCqdaasvhSkhlS1EzKlnW_a6ebeVyv4s4VaIF-ednQeajwML4FIeYqGGhGzYw-FrCsqydzc6Eu7rJHlAyIr49xtnRz3udEIE14FUog0" type="text/javascript"></script>
+    
+<script type="text/javascript">
+    try{
+        function SeamlessEndRequestHandler(sender, args) {
+            try {
+                var dataItems = args.get_dataItems();
+                if(dataItems.ctl04_seamless_script_manager)
+                    document.getElementById('__SEAMLESSVIEWSTATE').value = dataItems.ctl04_seamless_script_manager;
+            }
+            catch (e) { }
+        }
+
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(SeamlessEndRequestHandler);
+    }
+    catch (e) { }
+</script>
+
+    <div class="unsupported-browser-warning js-element"></div>
+    
+    <div hidden>
+        <span id="new-window-0">opens in new tab or window </span>
+    </div>
+    <div class="overlay-container"></div>
+    
+    <div class="background-container">
+        <div class="page-container">
+            <!-- OC Layout Element GROUP TEMPLATE -->
+            <!--groupTemplateStart--><header><div class="print-header-outer-container print-element">
+<img src="/files/assets/public/templateimages/print-header.png" alt="City of Stonnington - Logo" />
+</div>
+            <div class="toolbar-outer-container">
+  <div class="toolbar-inner-container clearfix">
+    <div class="toolbar-item toolbar-quicklinks toolbar-display-dropdown">
+	<button type="button" aria-controls="toolbar-quicklinks-drop-down" aria-expanded="false" class="toolbar-button toolbar-button-quicklinks js-element"><span>Quick links</span><i aria-hidden="true"></i></button>	
+	<div id="toolbar-quicklinks-drop-down" class="toolbar-drop-down toolbar-quicklinks-drop-down clearfix">
+		<ul>
+		  <li><a href="https://www.stonnington.vic.gov.au/Contact-us/Our-online-self-service-platform" class="oc-icon-b oc-i--none link-type-external" target="_blank"><span>Online services</span></a></li>
+		</ul>
+	</div>
+</div><div class="toolbar-item toolbar-language notranslate toolbar-display-dropdown"><div class="no-js-element">
+		  <ul>
+		    <li id="toolbar-language-option-en-au-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=en-AU" class="lang-item lang-en-au" data-translate-to="en-au" lang="en-AU">English (Australia)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-zh-cn-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=zh-CN" class="lang-item lang-zh-cn" data-translate-to="zh-cn" lang="en">Chinese (Simplified)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-zh-tw-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=zh-TW" class="lang-item lang-zh-tw" data-translate-to="zh-tw" lang="en">Chinese (Traditional)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-fr-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=fr" class="lang-item lang-fr" data-translate-to="fr" lang="en">French<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-el-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=el" class="lang-item lang-el" data-translate-to="el" lang="en">Greek<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-hi-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=hi" class="lang-item lang-hi" data-translate-to="hi" lang="en">Hindi<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-id-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=id" class="lang-item lang-id" data-translate-to="id" lang="en">Indonesian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-it-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=it" class="lang-item lang-it" data-translate-to="it" lang="en">Italian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-ru-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=ru" class="lang-item lang-ru" data-translate-to="ru" lang="en">Russian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-es-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=es" class="lang-item lang-es" data-translate-to="es" lang="en">Spanish<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-th-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=th" class="lang-item lang-th" data-translate-to="th" lang="en">Thai<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-tr-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=tr" class="lang-item lang-tr" data-translate-to="tr" lang="en">Turkish<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li id="toolbar-language-option-vi-noscript"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=vi" class="lang-item lang-vi" data-translate-to="vi" lang="en">Vietnamese<span class="visuallyhidden"> Select this as your preferred language</span></a></li>
+          </ul>
+		</div>
+	<button type="button" role="combobox" aria-controls="toolbar-language-drop-down" aria-expanded="false" aria-haspopup="listbox" aria-autocomplete="none" aria-labelledby="toolbar-language-label" class="toolbar-button toolbar-button-language js-element">  
+        <span class="toolbar-language-globe-icon" aria-hidden="true"></span>
+        <span id="toolbar-language-label" class="current-language">
+            Select a language to translate to
+		</span>
+		<i aria-hidden="true"></i>
+	</button>
+	<div id="toolbar-language-drop-down" role="listbox" aria-label="Available languages" class="toolbar-drop-down toolbar-language-drop-down js-element clearfix">
+		<ul role="group">
+		    <li role="presentation"><a id="toolbar-language-option-en-au" role="option" aria-selected="true" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=en-AU" class="lang-item lang-en-au" data-translate-to="en-au" lang="en-AU">English (Australia)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-zh-cn" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=zh-CN" class="lang-item lang-zh-cn" data-translate-to="zh-cn" lang="en">Chinese (Simplified)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-zh-tw" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=zh-TW" class="lang-item lang-zh-tw" data-translate-to="zh-tw" lang="en">Chinese (Traditional)<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-fr" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=fr" class="lang-item lang-fr" data-translate-to="fr" lang="en">French<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-el" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=el" class="lang-item lang-el" data-translate-to="el" lang="en">Greek<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-hi" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=hi" class="lang-item lang-hi" data-translate-to="hi" lang="en">Hindi<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-id" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=id" class="lang-item lang-id" data-translate-to="id" lang="en">Indonesian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-it" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=it" class="lang-item lang-it" data-translate-to="it" lang="en">Italian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-ru" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=ru" class="lang-item lang-ru" data-translate-to="ru" lang="en">Russian<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-es" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=es" class="lang-item lang-es" data-translate-to="es" lang="en">Spanish<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-th" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=th" class="lang-item lang-th" data-translate-to="th" lang="en">Thai<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-tr" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=tr" class="lang-item lang-tr" data-translate-to="tr" lang="en">Turkish<span class="visuallyhidden"> Select this as your preferred language</span></a></li><li role="presentation"><a id="toolbar-language-option-vi" role="option" aria-selected="false" href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors?oc_lang=vi" class="lang-item lang-vi" data-translate-to="vi" lang="en">Vietnamese<span class="visuallyhidden"> Select this as your preferred language</span></a></li>
+        </ul>
+	</div></div>
+  </div>
+</div>
+            <div class="header-outer-container clearfix">
+<div class="side-menu-btn js-element">
+		<button type="button" aria-expanded="false" aria-controls="nav"><i aria-hidden="true"></i><span class="side-menu-btn-text">Menu</span></button>
+		</div>
+ 	<div class="header-container header-layout-1 clearfix">
+		
+			<div class="header-site-logo">
+				<a href="https://www.stonnington.vic.gov.au/Home" lang="en-AU" aria-label="City of Stonnington - Home - Logo">
+				</a>
+			</div>
+		    <div class="mobile-search-btn js-element">
+		        <button><i aria-hidden="true"></i><span class="mobile-search-btn-text"><span class="visuallyhidden">Open </span>Search</span></button>
+		    </div>
+			<div class="header-search-control-container" id="header-search">
+				<div class="search-inner-container">
+					<div class="sc-search-panel">
+	<label for="ctl07_txtSearch" id="ctl07_lblSearch" class="sc-search-label">Search</label><input name="ctl07$txtSearch" type="text" id="ctl07_txtSearch" class="sc-search-text" placeholder="Search 2-3 key words" /><input type="submit" name="ctl07$btnSearch" value="Search" id="ctl07_btnSearch" class="sc-search-button" />
+</div>
+					<div role="status" id="predictiveResults"></div>
+				</div>
+			</div>
+	</div>
+</div>
+<div class="navigation-outer-container">
+	<div id="nav" role="navigation" class="navigation-container" data-menu-type="offscreen" data-offscreen-position="left" aria-label="primary">
+		<div class="grid">
+			<div class="col-xs-12">              
+                <ul class="sf-menu" id="sc-main-menu"><li class="nav-section-quarters-1   first-item nav-item-seq-1">
+<a href="https://www.stonnington.vic.gov.au/About" class="nav-level-1 nav-has-children"  target="">
+	<i class="item-icon" aria-hidden="true"></i><span class="item-text">About</span>
+</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-1">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-1">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/About/About-Stonnington" class="nav-has-children"  target="">About Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-1"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-1">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Stonnington/Community-profile"  target="">Community profile</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Stonnington/Community-satisfaction"  target="">Community satisfaction</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Stonnington/History-and-heritage"  target="">History and heritage</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/About-Council" class="nav-has-children"  target="">About Council</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-2"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-2">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Mayor-and-Councillors"  target="">Mayor and Councillors</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Executive-team"  target="">Executive team</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Council-meetings"  target="">Council meetings</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Council-committees"  target="">Council committees</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/External-bodies"  target="">External bodies</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Governance-and-integrity"  target="">Governance and integrity</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Citizenship-ceremonies"  target="">Citizenship ceremonies</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Elections"  target="">Elections</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Past-Councils"  target="">Past Councils</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/About-Council/Councillor-Conversations"  target="">Councillor Conversations</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Living-in-Stonnington" class=""  target="">Living in Stonnington</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Careers" class="nav-has-children"  target="">Careers</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-4"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-4">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Careers/Current-vacancies"  target="_self">Current vacancies</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Careers/Why-work-at-Stonnington"  target="">Why work at Stonnington?</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Careers/Recruitment-process-and-application-tips"  target="">Recruitment process and application tips</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Media-centre" class="nav-has-children"  target="">Media centre</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-5"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-5">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/News-notices-and-media-releases"  target="">News, notices and media releases</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Stonnington-News"  target="">Stonnington News</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Media-enquiries"  target="">Media enquiries</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Subscribe-to-our-newsletters"  target="">Subscribe to our newsletters</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Social-media"  target="">Social media</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Trialling-30-kmh-speed-limits-in-Stonnington"  target="">Trialling 30 km/h speed limits in Stonnington</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Corporate-documents" class="nav-has-children"  target="">Corporate documents</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-6"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-6">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Corporate-documents/Annual-Report-and-Budget"  target="">Annual Report and Budget</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Corporate-documents/Council-Plan-and-Community-Vision"  target="">Council Plan and Community Vision</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Corporate-documents/Strategies-and-plans"  target="">Strategies and plans</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Corporate-documents/Local-Laws"  target="">Local Laws</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Major-infrastructure-works-and-projects" class="nav-has-children"  target="">Major infrastructure works and projects</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-7"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-7">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Major-infrastructure-works-and-projects/Prahran-Market-Restoration"  target="">Prahran Market Restoration</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Major-infrastructure-works-and-projects/Capital-works-in-Stonnington"  target="">Capital works in Stonnington</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Tenders-contracts-and-suppliers" class=""  target="">Tenders, contracts and suppliers</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/About/Advocacy" class="nav-has-children"  target="">Advocacy</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-1-nav-item-seq-9"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-1-nav-item-seq-9">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/A-safe-and-cohesive-community"  target="">A safe and cohesive community</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/A-thriving-Chapel-Street-precinct"  target="">A thriving Chapel Street precinct</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Community-infrastructure"  target="">Community infrastructure</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Inclusive-accessible-community-places"  target="">Inclusive, accessible community places</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Safe-and-accessible-open-space"  target="">Safe and accessible open space</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Safe-sustainable-and-diverse-travel"  target="">Safe, sustainable and diverse travel</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Sport-and-fair-access"  target="">Sport and fair access</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Strategic-and-operational-flexibility-for-Councils"  target="">Strategic and operational flexibility for Councils</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/About/Advocacy/Sustainability-and-environment"  target="">Sustainability and environment</a></li></ul></li></ul></li>
+          
+            <li class="nav-section-quarters-1 nav-active-path  nav-item-seq-2">
+<a href="https://www.stonnington.vic.gov.au/Services" class="nav-level-1 nav-has-children"  target="">Services</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-2">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-2">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/In-my-area" class=""  target="">In my area</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Make-a-payment" class=""  target="_self">Make a payment</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/MyStonnington-App" class=""  target="">MyStonnington App</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Ageing-well-in-Stonnington" class="nav-has-children"  target="">Ageing well in Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-4"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-4">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Ageing-well-in-Stonnington/Engaged-programs-and-events"  target="">Engaged programs and events</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Ageing-well-in-Stonnington/Community-transport"  target="">Community transport</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Ageing-well-in-Stonnington/Ageing-Well-Action-Plan"  target="">Ageing Well Action Plan</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services" class="nav-has-children"  target="">Children and Family Services</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-5"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-5">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Maternal-and-Child-Health-Services"  target="">Maternal and Child Health Services</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Early-Years-Services"  target="">Early Years Services</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Kindergarten-in-Stonnington"  target="">Kindergarten in Stonnington</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Playgroups-and-neighbourhood-houses"  target="">Playgroups and neighbourhood houses</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Stonnington-Toy-Library"  target="">Stonnington Toy Library</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Childrens-services-directory"  target="">Children's services directory</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Child-safety"  target="">Child safety</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Children-and-Family-Services/Child-Safety-Standards"  target="">Child Safety Standards</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Immunisation" class="nav-has-children"  target="">Immunisation</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-6"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-6">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Immunisation/2026-immunisation-session-calendar"  target="">2026 immunisation session calendar</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Middle-Years-and-Youth-Services" class=""  target="">Middle Years and Youth Services</a></li><li class="nav-active-path "><a  href="https://www.stonnington.vic.gov.au/Services/Parking" class="nav-has-children"  target="">Parking</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-8"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-8">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-permits"  target="">Parking permits</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Pay-or-manage-a-parking-fine"  target="">Pay or manage a parking fine</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Appeal-a-parking-fine"  target="">Appeal a parking fine</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Report-an-abandoned-or-illegally-parked-vehicle"  target="">Report an abandoned or illegally parked vehicle</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-exemptions-and-restrictions-for-street-sweeping"  target="">Parking exemptions and restrictions for street sweeping</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Towed-vehicles"  target="">Towed vehicles</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Car-share-parking-for-providers"  target="">Car share parking for providers</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-restrictions-in-your-street"  target="">Parking restrictions in your street</a></li><li  class="nav-active-path nav-active-page"><a href="https://www.stonnington.vic.gov.au/Services/Parking/Parking-sensors"  target="">Parking sensors</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Parking/Car-parks-in-Stonnington"  target="">Car parks in Stonnington</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals" class="nav-has-children"  target="">Pets and animals</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-9"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-9">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Pet-registration"  target="">Pet registration</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Microchipping-and-desexing-your-pet"  target="">Microchipping and desexing your pet</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Replacement-pet-tags"  target="">Replacement pet tags</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Animal-shelter"  target="">Animal shelter</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Off-lead-parks-and-reserves"  target="">Off-lead parks and reserves</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Pet-ownership-restrictions-and-permits"  target="">Pet ownership restrictions and permits</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Dealing-with-barking-dogs"  target="">Dealing with barking dogs</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Separation-anxiety"  target="">Separation anxiety</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Animal-welfare"  target="">Animal welfare</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Domestic-Animal-Management-Plan"  target="">Domestic Animal Management Plan</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Tips-and-tails"  target="">Tips and tails</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Pets-and-animals/Report-a-pet-or-animal-issue"  target="">Pet or animal issues</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Rates-and-property" class="nav-has-children"  target="">Rates and property</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-10"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-10">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/How-your-rates-are-calculated-including-State-Government-levy"  target="">How your rates are calculated (including State Government levy)</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Pay-your-rates"  target="">Pay your rates</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Funding-Stonnington-Tomorrow"  target="">Funding Stonnington Tomorrow</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Property-valuations-and-objections"  target="">Property valuations and objections</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Receiving-your-rates-notice"  target="">Receiving your rates notice</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Rates-pension-concession-application"  target="">Rates pension concession application</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Change-your-details"  target="">Change your details</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Apply-for-a-Land-Information-Certificate"  target="">Apply for a Land Information Certificate</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Property-statistics"  target="">Property statistics</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Rate-capping"  target="">Rate capping</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Rates-refund-request"  target="">Rates refund request</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Financial-hardship-assistance"  target="">Financial hardship assistance</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Rates-and-property/Request-your-rate-book"  target="">Request your rate book</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Road-management-safety-and-permits" class="nav-has-children"  target="">Road management, safety and permits</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-11"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-11">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Road-management-safety-and-permits/Heavy-vehicle-access"  target="">Heavy vehicle access</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Road-management-safety-and-permits/Safer-Stonnington-streets"  target="">Safer Stonnington streets</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Road-management-safety-and-permits/Department-of-Transport-and-Planning-managed-roads"  target="">Department of Transport and Planning managed roads</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Road-management-safety-and-permits/Road-footpath-and-carpark-issues"  target="">Road, footpath and carpark issues</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington" class="nav-has-children"  target="">Transforming Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-12"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-12">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Smart-City-Strategic-Framework"  target="">Smart City Strategic Framework</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Digital-inclusion"  target="">Digital inclusion</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/MyStonnington-app"  target="_self">MyStonnington app</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Monitoring-movement-across-our-City"  target="">Monitoring movement across our City</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Better-lighting-in-public-spaces"  target="">Better lighting in public spaces</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Smarter-parking"  target="">Smarter parking</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Environmental-sensors"  target="">Environmental sensors</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Smarter-waste-management"  target="">Smarter waste management</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington/Smart-City-data-collection-and-privacy"  target="">Smart City data collection and privacy</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips" class="nav-has-children"  target="">Trees and nature strips</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-13"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-13">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/Manage-trees-on-private-property"  target="">Manage trees on private property</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/Tree-issues"  target="">Report a tree issue</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/Applying-for-a-Nature-Strip-Planting-Permit"  target="">Applying for a Nature Strip Planting Permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/Find-tree-pruning-dates"  target="">Find tree pruning dates</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/How-we-maintain-trees"  target="">How we maintain trees</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Trees-and-nature-strips/Controlling-weeds"  target="">Controlling weeds</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling" class="nav-has-children"  target="">Waste and recycling</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-2-nav-item-seq-14"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-2-nav-item-seq-14">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Find-your-dates"  target="">Find your dates</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Request-a-bin-or-report-a-bin-issue"  target="">Request a bin or report a bin issue</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Waste-and-sustainability-fees-and-news"  target="">Waste and sustainability fees and news</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Manage-your-household-waste"  target="">Manage your household waste</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Your-bins"  target="">Your bins</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Manage-your-business-waste"  target="">Manage your business waste</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Waste-programs-and-resources"  target="">Waste programs and resources</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Waste-and-sustainability-events"  target="">Waste and sustainability events</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Services/Waste-and-recycling/Sustainability"  target="_self">Sustainability</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Services/Graffiti-issues" class=""  target="_self">Graffiti issues</a></li></ul></li>
+          
+            <li class="nav-section-quarters-2   nav-item-seq-3">
+<a href="https://www.stonnington.vic.gov.au/Community" class="nav-level-1 nav-has-children"  target="">Community</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-3">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-3">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion" class="nav-has-children"  target="">Access and inclusion</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-1"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-1">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/First-Peoples-reconciliation"  target="">First Peoples reconciliation</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Cultural-diversity"  target="">Cultural diversity</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/LGBTIQA-community"  target="">LGBTIQA+ community</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Accessible-toilets-and-changing-places"  target="">Accessible toilets and changing places</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Disability-and-accessibility"  target="">Disability and accessibility</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Be-an-accessible-business"  target="_self">Be an accessible business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Accessibility-in-Stonnington"  target="">Accessibility in Stonnington</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Access-and-inclusion/Carers-Week-2025"  target="_self">Carers Week 2025</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Active-Stonnington" class=""  target="_self">Active Stonnington</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture" class="nav-has-children"  target="">Arts and culture</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-3"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-3">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Contemporary-art-collection"  target="">Contemporary art collection</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Public-art-collection"  target="">Public art collection</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Public-mural-commissions"  target="">Public mural commissions</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Festivals-and-events"  target="">Festivals and events</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Arts-and-culture-grants"  target="_self">Arts and culture grants</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Art-Acquisitions-Advisory-Committee"  target="">Art Acquisitions Advisory Committee</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Arts-and-culture/Creative-Stonnington-Arts-and-Culture-Strategy-2023-2026"  target="">Creative Stonnington: Arts and Culture Strategy 2023-2026</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing" class="nav-has-children"  target="">Community health and wellbeing</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-4"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-4">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Health-and-wellbeing-profile"  target="">Health and wellbeing profile</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Child-Safety-Standards"  target="_self">Child Safety Standards</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Health-and-wellbeing-calendar"  target="">Health and wellbeing calendar</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Heatwaves-and-climate-change"  target="">Heatwaves and climate change</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Homelessness"  target="">Homelessness</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Preventing-all-forms-of-violence"  target="">Preventing all forms of violence</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Dispose-of-syringes-safely"  target="">Dispose of syringes safely</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/CCTV-for-street-safety"  target="">CCTV for street safety</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Support-services"  target="">Support services</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Gambling"  target="">Gambling</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Alcohol-tobacco-and-drugs"  target="">Alcohol, tobacco and drugs</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Street-based-sex-work"  target="">Street-based sex work</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Mental-Health"  target="">Mental Health</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Public-Housing"  target="">Public Housing</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/Fresh-Take-Project-to-tackle-youth-vaping"  target="">Fresh Take Project to tackle youth vaping</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-health-and-wellbeing/BINS4Blokes-initiative"  target="">BINS4Blokes initiative</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Community-safety" class="nav-has-children"  target="">Community safety</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-5"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-5">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Safer-Stonnington"  target="">Safer Stonnington</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Report-a-crime"  target="">Report a crime</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Report-a-safety-concern-to-Council"  target="">Report a safety concern to Council</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Crime-prevention-advice"  target="">Crime prevention advice</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Latest-news-about-community-safety"  target="">Latest news about community safety</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Community-safety/Community-safety-contacts"  target="">Community safety contacts</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Emergency-management" class="nav-has-children"  target="">Emergency management</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-6"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-6">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Emergency-management/Councils-role-in-emergencies"  target="">Council's role in emergencies</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Emergency-management/Emergency-management-for-residents"  target="">Emergency management for residents</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Emergency-management/Emergency-management-for-businesses"  target="">Emergency management for businesses</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Emergency-management/Bird-flu-2026"  target="">Updates about bird flu (H5N1 avian flu)</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Find-a-community-group" class="nav-has-children"  target="">Find a community group</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-7"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-7">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Find-a-community-group/Community-Directory-Terms-and-Conditions"  target="">Community Directory Terms and Conditions</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Getting-around-Stonnington" class="nav-has-children"  target="">Getting around Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-8"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-8">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Getting-around-Stonnington/Roll-and-Stroll-–-Active-Transport-to-School"  target="">Roll and Stroll – Active Transport to School</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Getting-around-Stonnington/Light-Insights-Trial"  target="">Light Insights Trial</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Grants" class="nav-has-children"  target="">Grants</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-9"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-9">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Grants/Arts-and-Culture-grants"  target="">Arts and Culture grants</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Grants/Community-grants"  target="">Community Grants</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Grants/Precinct-Activation-Grants"  target="">Precinct Activation Grants</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Have-your-say-Connect-Stonnington" class=""  target="_self">Have your say: Connect Stonnington</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Libraries" class=""  target="_blank">Libraries</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities" class="nav-has-children"  target="">Parks and sporting facilities</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-12"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-12">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Allocated-times-for-sports-grounds"  target="">Allocated times for sports grounds</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Hire-a-park"  target="">Hire a park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Melbourne-Bowling-Club"  target="">Melbourne Bowling Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Toorak-Bowling-Club"  target="">Toorak Bowling Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Chadstone-Bowling-Club"  target="">Chadstone Bowling Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Malvern-Bowling-Club"  target="">Malvern Bowling Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Peverill-Park"  target="">Peverill Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Chris-Gahan-Reserve"  target="">Chris Gahan Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Milton-Gray-Reserve"  target="">Milton Gray Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Grosvenor-Street-Reserve"  target="">Grosvenor Street Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Dyeworks-Park"  target="">Dyeworks Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Royal-South-Yarra-Tennis-Club"  target="">Royal South Yarra Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Kooyong-Lawn-Tennis-Club"  target="">Kooyong Lawn Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Hawksburn-Tennis-Club"  target="">Hawksburn Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Orrong-Park-Tennis-Centre"  target="">Orrong Park Tennis Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Penpraze-Park-tennis-courts"  target="">Penpraze Park tennis courts</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/East-Malvern-Tennis-Club"  target="">East Malvern Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/St-Marys-Eastervene-Tennis-Courts"  target="">St Mary's Eastervene Tennis Courts</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Chadstone-Tennis-Club"  target="">Chadstone Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/St-Rochs-Tennis-Courts"  target="">St Roch's Tennis Courts</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Glendearg-All-Saints-Malvern-Tennis-Club"  target="">Glendearg All Saints Malvern Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Gardiner-Tennis-Club"  target="">Gardiner Tennis Club</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Malvern-Tennis-Centre"  target="">Malvern Tennis Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Ardrie-Park"  target="">Ardrie Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Caroline-Gardens"  target="">Caroline Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Central-Park"  target="">Central Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Como-Park-and-Thomas-Oval-Dog-Park"  target="">Como Park and Thomas Oval Dog Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Darling-Gardens"  target="">Darling Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Darling-Park"  target="">Darling Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Glen-Iris-Wetlands"  target="">Glen Iris Wetlands</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Grattan-Gardens"  target="">Grattan Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Harry-Gregory-Reserve"  target="">Harry Gregory Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Hedgeley-Dene-Gardens"  target="">Hedgeley Dene Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Lumley-Gardens"  target="">Lumley Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Malvern-Cricket-Ground"  target="">Malvern Cricket Ground</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Malvern-Gardens"  target="">Malvern Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Urban-Forest-Reserve"  target="">Urban Forest Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/McArthur-Street-Park"  target="">McArthur Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Orrong-Romanis-Reserve"  target="">Orrong Romanis Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Phoenix-Park"  target="">Phoenix Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Princes-Gardens"  target="">Princes Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Rockley-Gardens"  target="">Rockley Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Sir-Robert-Menzies-Reserve"  target="">Sir Robert Menzies Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Sir-Zelman-Cowen-Park"  target="">Sir Zelman Cowen Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/T-H-King-Oval"  target="">T H King Oval</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Toorak-Park"  target="">Toorak Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Union-Street-Gardens"  target="">Union Street Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Victoria-Gardens"  target="">Victoria Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Waverley-Park"  target="">Waverley Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Windsor-Siding"  target="">Windsor Siding</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Prahran-Square"  target="">Prahran Square</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Malvern-Valley-Golf-Course"  target="">Malvern Valley Golf Course</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Grange-Road-Wetlands"  target="">Grange Road Wetlands</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Surrey-Park"  target="">Surrey Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Mount-Street-Park"  target="">Mount Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Bangs-Street-Park"  target="">Bangs Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Hobson-Street-park"  target="">Hobson Street park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Basil-Street-Park"  target="">Basil Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/South-Yarra-Siding-Reserve"  target="">South Yarra Siding Reserve</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Izett-Street-Park"  target="">Izett Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Vista-Grove-Park"  target="">Vista Grove Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Dixon-Street-Park"  target="">Dixon Street Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Connell-Park"  target="">Connell Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Brookville-Gardens"  target="">Brookville Gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/Winter-Street-Pop-Up-Park"  target="">Winter Street Pop Up Park</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Parks-and-sporting-facilities/William-Street-Park"  target="">William Street Park</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Plan-an-event" class="nav-has-children"  target="">Plan an event</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-13"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-13">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Plan-an-event/Apply-for-an-Event-Permit"  target="">Apply for an Event Permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Plan-an-event/Apply-to-host-a-street-party"  target="">Apply to host a street party</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Plan-an-event/Event-guidelines"  target="">Event guidelines</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Promote-your-community-event" class=""  target="">Promote your community event</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington" class="nav-has-children"  target="">Sustainable Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-15"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-15">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Reduce-your-footprint"  target="">Reduce your footprint</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Grow-a-sustainable-garden"  target="">Grow a sustainable garden</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Support-biodiversity"  target="">Support biodiversity</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Join-our-Sustainable-Stonnington-community"  target="">Join our Sustainable Stonnington community</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Adapt-to-climate-change"  target="">Adapt to climate change</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Sustainable-Stonnington/Creating-a-Sustainable-Stonnington"  target="">Creating a Sustainable Stonnington</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Venue-hire" class="nav-has-children"  target="">Venue hire</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-16"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-16">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Chapel-Off-Chapel"  target="">Chapel Off Chapel</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Grattan-Gardens-Community-Centre"  target="">Grattan Gardens Community Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Malvern-Banquet-Hall"  target="">Malvern Banquet Hall</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Malvern-Community-Arts-Centre"  target="">Malvern Community Arts Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Malvern-Library-Meeting-Room"  target="">Malvern Library Meeting Room</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Malvern-Town-Hall"  target="">Malvern Town Hall</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Malvern-Town-Hall-Upper-Foyer"  target="">Malvern Town Hall Upper Foyer</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Phoenix-Park-Community-Centre"  target="">Phoenix Park Community Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Phoenix-Park-Library-Meeting-Room"  target="">Phoenix Park Library Meeting Room</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Prahran-RSL"  target="">Prahran RSL</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Toorak-South-Yarra-Library-Meeting-Room"  target="">Toorak South Yarra Library Meeting Room</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Conditions-of-use-Community-facilities"  target="">Conditions of use - Community facilities</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Conditions-of-hire-Malvern-Town-Hall"  target="">Conditions of hire - Malvern Town Hall</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Prahran-Square"  target="">Prahran Square</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Venue-hire/Margaret-Connellan-Stadium"  target="">Margaret Connellan Stadium</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Community/Volunteer-Stonnington" class="nav-has-children"  target="">Volunteer Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-3-nav-item-seq-17"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-3-nav-item-seq-17">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Volunteer-Stonnington/Volunteer-opportunities"  target="">Volunteer opportunities</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Volunteer-Stonnington/Support-for-volunteer-organisations"  target="">Support for volunteer organisations</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Volunteer-Stonnington/Stonnington-Volunteer-Awards"  target="">Stonnington Volunteer Awards</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Community/Volunteer-Stonnington/Discover-volunteer-events"  target="">Discover volunteer events</a></li></ul></li></ul></li>
+          
+            <li class="nav-section-quarters-2   nav-item-seq-4">
+<a href="https://www.stonnington.vic.gov.au/Planning-and-building" class="nav-level-1 nav-has-children"  target="">Planning and building</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-4">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-4">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning" class="nav-has-children"  target="">Planning</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-4-nav-item-seq-1"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-4-nav-item-seq-1">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/For-applicants"  target="">For applicants</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/For-objectors"  target="">For objectors</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/Planning-enforcement"  target="">Planning enforcement</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/Planning-Register"  target="">Planning Register</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/Planning-information-requests"  target="">Planning information requests</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/State-Government-planning-changes"  target="">State Government planning changes</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Planning/Ministerial-Planning-Applications"  target="">Ministerial Planning Applications</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Planning-and-building/Building" class="nav-has-children"  target="">Building</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-4-nav-item-seq-2"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-4-nav-item-seq-2">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Building/Building-permits"  target="">Building permits</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Building/Local-Law-permits-Building"  target="">Local Law permits - Building</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Building/Building-and-property-information"  target="">Building and property information</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Building/Homeowner-and-tenant-information"  target="">Homeowner and tenant information</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Building/Construction-site-and-building-safety-issues"  target="">Construction site and building safety issues</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning" class="nav-has-children"  target="">Strategic planning</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-4-nav-item-seq-3"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-4-nav-item-seq-3">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Planning-scheme"  target="">Planning scheme</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Plans-guidelines-and-frameworks"  target="">Plans, guidelines and frameworks</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Planning-Strategies"  target="">Planning Strategies</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Stonnington-Heritage-Review"  target="">Stonnington Heritage Review</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Stonnington-Thematic-Environmental-History-Post-war-Addendum"  target="">Stonnington Thematic Environmental History: Post-war Addendum</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Flood-risk-management"  target="">Flood risk management</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Stonnington’s-Urban-Greening-Framework"  target="">Stonnington’s Urban Greening Framework</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Planning-and-building/Strategic-planning/Heritage-FAQs"  target="">Heritage FAQs</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Planning-and-building/Development-Contribution-Levy-Calculator" class=""  target="">Development Contribution Levy Calculator</a></li></ul></li>
+          
+            <li class="nav-section-quarters-3   nav-item-seq-5">
+<a href="https://www.stonnington.vic.gov.au/Whats-On" class="nav-level-1 nav-has-children"  target="">What's On Stonnington</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-5">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-5">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Upcoming-events" class="nav-has-children"  target="">Upcoming events</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-5-nav-item-seq-1"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-5-nav-item-seq-1">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Upcoming-events/Lets-line-dance"  target="">Let's line dance!</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Upcoming-events/Learn-mahjong-and-eat-dim-sum"  target="">Learn mahjong and eat dim sum</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Upcoming-events/Trivia-and-sausage-sizzle"  target="">Trivia and sausage sizzle</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-arts-and-culture" class=""  target="_self">Explore our arts and culture</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage" class="nav-has-children"  target="">Explore our parks, trails and heritage</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-5-nav-item-seq-3"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-5-nav-item-seq-3">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Parks-reserves-and-gardens"  target="">Parks, reserves and gardens</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Dog-off-leash-areas"  target="_self">Dog off-leash areas</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Walking-trails"  target="">Walking trails</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Walk-the-Yarra"  target="">Walk the Yarra</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Our-Indigenous-past"  target="_self">Our Indigenous past</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/Explore-our-heritage"  target="_self">Explore our heritage</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Whats-On/Explore-our-parks-trails-and-heritage/The-Life-of-the-Yarra-audio-tour"  target="_self">The Life of the Yarra audio tour</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/What’s-On-at-Prahran-Square" class=""  target="_self">What’s On at Prahran Square</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/What’s-On-at-Stonnington-Libraries" class=""  target="_self">What’s On at Stonnington Libraries</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Whats-On-at-Chapel-Off-Chapel" class=""  target="_blank">What's On at Chapel Off Chapel</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Prahran-Market-and-so-much-more" class=""  target="">Prahran Market and so much more</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Whats-On/Subscribe-to-Whats-On" class=""  target="_self">Subscribe to What's On</a></li></ul></li>
+          
+            <li class="nav-section-quarters-3   nav-item-seq-6">
+<a href="https://www.stonnington.vic.gov.au/Business" class="nav-level-1 nav-has-children"  target="">Business</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-6">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-6">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Business-Handbook" class=""  target="">Business Handbook</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Doing-business-in-Stonnington" class="nav-has-children"  target="">Doing business in Stonnington</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-2"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-2">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Doing-business-in-Stonnington/Permit-Finder"  target="">Permit Finder</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals" class="nav-has-children"  target="">Business permits and approvals</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-3"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-3">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-footpath-trading-permit"  target="">Apply for a footpath trading permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-roadside-dining-permit"  target="">Apply for a roadside dining permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Register-a-food-business"  target="">Register a food business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-busking-permit"  target="">Apply for a busking permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-domestic-animal-business-permit"  target="">Apply for a domestic animal business permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-Film-Permit"  target="">Apply for a Film Permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-fundraising-permit"  target="">Apply for a fundraising permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Changes-to-Licenced-Premises-Requirements"  target="">Changes to Licenced Premises Requirements</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-personal-training-permit"  target="">Apply for a personal training permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-street-promotion-and-sampling-permit"  target="">Apply for a street promotion and sampling permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-trader-directional-sign"  target="">Apply for a trader directional sign</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Building-Permit-for-businesses"  target="">Building Permit for businesses</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Planning-permit-for-business"  target="">Planning permit for business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Register-an-accommodation-business"  target="">Register an accommodation business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Register-a-beauty-hair-or-health-business"  target="">Register a beauty, hair or health business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Request-a-Pre-Purchase-Inspection-Report"  target="">Request a Pre-Purchase Inspection Report</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Temporary-advertising-on-Council-land-permit"  target="">Temporary advertising on Council land permit</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Temporary-food-business"  target="">Temporary food business</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Understand-business-noise-requirements"  target="">Understand business noise requirements</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-permits-and-approvals/Apply-for-a-plans-assessment"  target="">Apply for a plans assessment</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Business-events" class="nav-has-children"  target="">Business events</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-4"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-4">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Business-events/Small-business-mentoring"  target="_self">Small business mentoring</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Business-support" class=""  target="">Business support</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Business-directory" class=""  target="">Business directory</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Economic-Data" class="nav-has-children"  target="">Economic Data</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-7"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-7">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Economic-Data/2025-Business-Health-survey"  target="">2025 Business Health survey</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Revitalising-Chapel-Street" class=""  target="">Revitalising Chapel Street</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy" class="nav-has-children"  target="">Place-led Economic Development Strategy</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-9"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-9">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/Glenferrie-Road"  target="_self">Glenferrie Road</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/Hawksburn-Village"  target="_self">Hawksburn Village</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/High-Street"  target="_self">High Street</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/Prahran"  target="_self">Prahran</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/South-Yarra"  target="_self">South Yarra</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/Toorak-Village"  target="_self">Toorak Village</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Place-led-Economic-Development-Strategy/Windsor"  target="_self">Windsor</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Accessible-and-inclusive-business" class="nav-has-children"  target="">Accessible and inclusive business</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-6-nav-item-seq-10"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-6-nav-item-seq-10">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Business/Accessible-and-inclusive-business/Be-a-walking-and-bike-friendly-business"  target="">Be a walking and bike-friendly business</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Sustainable-businesses" class=""  target="">Sustainable businesses</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Business/Stonnington-Liquor-Forum" class=""  target="">Stonnington Liquor Forum</a></li></ul></li>
+          
+            <li class="nav-section-quarters-4   nav-item-seq-7">
+<a href="https://www.stonnington.vic.gov.au/Contact-us" class="nav-level-1 nav-has-children"  target="">Contact us</a>
+<button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow" aria-controls="sc-menu-second-level-nav-item-seq-7">
+              <i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-second-level-nav-item-seq-7">
+
+          
+            <li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Online-services" class="nav-has-children"  target="">Online services</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-7-nav-item-seq-1"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-7-nav-item-seq-1">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Online-services/About-our-online-self-service-platform"  target="">About our online self-service platform</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue" class="nav-has-children"  target="">Report an issue</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-7-nav-item-seq-2"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-7-nav-item-seq-2">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Business-or-trader-issues"  target="">Business or trader issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Construction-site-and-building-safety-issues"  target="_self">Construction site and building safety issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Drainage-and-storm-water-issues"  target="">Drainage and storm water issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Graffiti-issues"  target="">Graffiti issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Lighting-issues"  target="">Lighting issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Noise-issues"  target="">Noise issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Odour-and-fumes-issues"  target="">Odour and fumes issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Park-and-garden-issues"  target="">Park and garden issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Pet-or-animal-issues"  target="_self">Pet or animal issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Road-footpath-and-carpark-issues"  target="_self">Road, footpath and carpark issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Tree-issues"  target="_self">Tree issues</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Report-an-issue/Waste-issues"  target="_self">Waste issues</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Visit-us-in-person" class="nav-has-children"  target="">Visit us in person</a><button aria-label="Expand" aria-haspopup="true" class="mobnav-subarrow-child" aria-controls="sc-menu-third-level-nav-item-seq-7-nav-item-seq-3"><i aria-hidden="true"></i>
+              </button>
+<ul id="sc-menu-third-level-nav-item-seq-7-nav-item-seq-3">
+          
+            <li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Visit-us-in-person/Stonnington-Council-Customer-Service-and-Visitor-Hub"  target="">Stonnington Services and Visitor Centre</a></li><li  class=" "><a href="https://www.stonnington.vic.gov.au/Contact-us/Visit-us-in-person/Stonnington-Service-Centre"  target="">Stonnington City Centre</a></li></ul></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Provide-your-feedback" class=""  target="">Provide your feedback</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Lodge-a-claim-for-compensation" class=""  target="">Lodge a claim for compensation</a></li><li class=" "><a  href="https://www.stonnington.vic.gov.au/Contact-us/Media-enquiries-redirect" class=""  target="_self">Media enquiries</a></li></ul></li>
+          
+            </ul>
+			</div>
+		</div>
+	</div>
+</div>
+            </header>
+            <div class="content-outer-container">
+                <div id="main" role="main" class="main-outer-container clearfix">
+                        
+                        <div class="content-main-container">
+                            <div class="grid">
+					            <div class="col-xs-12">
+						            <nav id="breadcrumbs-container" aria-label="You are here:">
+							            <span role="list">
+<span role="listitem">
+	<a href="https://www.stonnington.vic.gov.au/Home"  lang="en-AU">Home</a>
+	<span class="nav-separator" aria-hidden="true" role="presentation">/</span>
+</span>
+          <span role="listitem"><a href="https://www.stonnington.vic.gov.au/Services" >Services</a><span class='nav-separator' aria-hidden="true" role="presentation">/</span></span><span role="listitem">
+	<a href="https://www.stonnington.vic.gov.au/Services/Parking" >
+		Parking
+	</a>
+	<span class='nav-separator' aria-hidden="true" role="presentation">/</span>
+</span>
+<span class="current-page" role="listitem" aria-current="page" >Parking sensors</span>
+          </span>
+						            </nav>
+					            </div>
+                      
+					            <div class="col-xs-12">
+						            <div class="main-inner-container">
+							            <div id="main-content" class="main-container clearfix">
+							              
+                            <!-- OC Layout Element Conent Template -->
+							              <!--normalTemplateStart--><div class="grid">
+    <div class="col-xs-12">
+		<h1 class='oc-page-title '>Parking sensors</h1>
+    </div>
+    
+    <div class="col-xs-12">
+
+        
+        <div class="clearfix"></div>
+        
+        <div class="wysiwyg-content body-content" ><p>Electronic parking sensors are used in locations across Stonnington to accurately monitor time-limited parking spaces and more efficiently manage parking enforcement resources.</p>
+<p>The rollout of parking sensor monitoring comes following a successful trial in three local shopping precincts - Glenferrie Road Malvern, High Street Armadale and Toorak Village Toorak.</p>
+<p>Over the course of the six-month trial, the improved effectiveness of parking enforcement from the sensor technology resulted in a significant improvement in parking compliance, with a 32 per cent drop in the number of drivers overstaying timed parking restrictions.</p>
+<p>This reduction in overstays has freed up many parking spaces, making more spaces available for visitors to our busy precincts.</p>
+<p>The sensors are also a valuable tool for our parking enforcement team to ensure resources are deployed where they are needed most.</p>
+<p>The City of Stonnington will join a number of neighbouring councils where the use of electronic parking sensors is commonplace.</p>
+<p>The introduction of parking sensors is part of a broader Stonnington Smart Cities Strategy being rolled out across the city. For more information visit the <a href="https://www.stonnington.vic.gov.au/Services/Transforming-Stonnington">Smart Cities</a> webpage.</p>
+
+</div>
+        
+       	<!-- CTA button on mobile -->
+        
+        <!-- End CTA button -->
+        
+        <!-- On this page -->        
+        
+        	<nav id="toc"></nav>
+			<script type='text/javascript'>
+	$(document).ready(function() {
+		var toc = '';
+		var cntr = 0;
+		var tocId;
+		function getId(headerText) {
+			var idStyle = 'naturalText';
+			if (idStyle === 'naturalText') {
+				//Change spaces to dashes, and make all lower-case. Limit to six words.
+				headerText = headerText.toLocaleLowerCase();
+				hdrText = headerText.split(' ', 6);
+				return hdrText.join('-');
+			} else {
+			//the id's should be "toc1", "toc2", "toc3", etc.
+			return 'toc' + ++cntr;
+		}
+	}			
+
+	$('h2:not(.footer-title)').each(function(e) {
+	//$('h2').each(function(e) {
+		$hdr = $(this);
+		/*if (!(tocId = $hdr.attr('id'))) { //hdr does not already have an id
+			tocId = getId($hdr.text());
+			$hdr.attr('id', tocId);
+		}
+		toc += '<li class="' + $hdr[0].tagName + '"><a href="#' + tocId + '">' + $hdr.text() + '</a></li>';*/	
+		if (!$hdr.closest('div.oc-emergency-dismissed').length && !(tocId = $hdr.attr('id'))) {
+			tocId = getId($hdr.text());
+			$hdr.attr('id', tocId);
+		}
+		if (!$hdr.closest('div.oc-emergency-dismissed').length) {
+			toc += '<li class="' + $hdr[0].tagName + '"><a href="#' + tocId + '">' + $hdr.text() + '</a></li>';
+		}		
+	});
+	
+	$('#toc').html('<div class="emphasis-box-2" style="width:100% !important; margin-bottom:30px;"><h2>On this page</h2><ul class="toc-nav">' + toc + '</ul></div>');
+	});
+</script>
+		
+		<!-- End On this page -->
+	
+       	<div class="wysiwyg-content subpage-content" ><h2>What is a parking sensor and how does it work?</h2>
+<p>A parking sensor is a small electronic device installed underneath a car parking bay. The sensor registers when a vehicle enters and leaves the parking bay. This information tells us a lot about the typical use of bays in different parts of the city. It also alerts our parking officers if a vehicle has overstayed time restrictions for a particular parking bay.</p>
+<p>All data collected from the sensors is safely sent to a secure storage facility in Melbourne in line with Australian data sovereignty laws.&nbsp;The sensors do not collect any private or identifiable data like registration plates, names or similar.</p>
+<h2>Are the sensors accurate?</h2>
+<p>Yes. The sensors are very accurate and receive regular health checks to ensure they record vehicle movements correctly. The sensor time is synchronised through a central server set to Australian eastern standard time.</p>
+<h2>Will the sensors be used to issue parking fines?</h2>
+<p>Yes. The sensors record when a vehicle enters and leaves an on-street parking bay or off-street car park bay. When a vehicle has overstayed the maximum time permitted, a parking officer in the immediate vicinity of the vehicle will receive an alert from the sensor. The officer will verify the details and determine whether a parking fine should be issued.</p>
+<h2>Where are the sensors located?</h2>
+<p>Parking sensors are installed in multiple on-street parking bays and in off-street car parks across Stonnington.</p>
+<p><span style="font-size: 1em;">Signs advising electronic parking sensors are in use are displayed at each location.</span></p>
+<h2>What are the benefits of the sensors?</h2>
+<p>Using parking sensor technology to monitor parking behaviour:</p>
+<ul>
+<li data-offset-key="mlfa-0-0">provides accurate data on the way parking is being used</li>
+<li data-offset-key="mlfa-0-0">allows us to manage parking enforcement more efficiently</li>
+<li data-offset-key="mlfa-0-0">encourages motorists to follow restrictions</li>
+<li data-offset-key="mlfa-0-0">helps improve turnover of parking spaces</li>
+<li data-offset-key="mlfa-0-0">makes it easier to locate available parking via the <a href="https://www.paystay.com.au/app" target="_self" title="PayStay website">PayStay app</a>.</li>
+</ul>
+
+</div>
+       	
+       	<!-- Accordion -->
+       	<div class="accordion-list-container">
+        	
+        </div>
+        <!-- End Accordion -->
+        
+    </div>
+
+	<!-- Right side column -->
+	
+    
+    <!---->
+</div><!--normalTemplateEnd-->
+                            
+                            
+                            
+							            </div>
+						            </div>
+					            </div>
+                        
+                            </div>
+                        </div>
+                        <div class="back-to-top-container text-center">
+                            <a href="#body-top" id="back-to-top"><i aria-hidden="true"></i><span class="js-visuallyhidden">Back to top</span></a>
+                        </div>
+                </div>
+            </div><!--groupTemplateEnd-->
+            <footer>
+                
+                    <div class="footer-outer-container footer-first-row">
+                        <div class="footer-container clearfix">
+                            <div class="grid grid-pad">
+                                <div class="col-xs-12 col-s-6 col-m-4 " >
+	<h2 class="footer-title">Contact us</h2>
+	<p><a href="https://www.stonnington.vic.gov.au/Contact-us">Find out how you can get in touch</a><br />
+<strong>Telephone:&nbsp;</strong><a href="tel:0382901333">03 8290 1333</a>&nbsp;(all hours)<br />
+<strong>Post:</strong>&nbsp;PO Box 58 Malvern Vic 3144</p>
+<p><strong><a href="https://www.stonnington.vic.gov.au/Contact-us/Stonnington-City-Centre" target="_self">Stonnington City Centre</a></strong><br />
+311 Glenferrie Road, Malvern<br />
+Monday to Friday, 8:30 am to 5 pm</p>
+<p><strong><a href="https://www.stonnington.vic.gov.au/Contact-us/Stonnington-Services-and-Visitor-Hub" target="_self">Stonnington Services and Visitor Centre</a></strong><br />
+Prahran Square, corner Chatham and Izett streets, Prahran<br />
+Monday to Friday, 8:30 am to 12 pm, 1 pm to 5 pm<br />
+Saturday 11 am to 3 pm</p>
+<p><strong>National Relay Service</strong><br />
+If you have a hearing or speech impairment, contact us through the National Relay Service (NRS).<br />
+For TTY, phone <a href="tel:133677">13 36 77</a> then ask for 03 8290 1333.<br />
+For Speak and Listen, phone <a href="tel:1300555727">1300 555 727</a> then ask for 03 8290 1333.<br />
+Internet relay users, connect to the NRS and then ask for 03 8290 1333.</p>
+<p><strong>Download MyStonnington app</strong><br />
+<a href="https://apps.apple.com/au/app/mystonnington/id1586086618" data-uw-rm-brl="PR" data-uw-original-href="https://apps.apple.com/au/app/mystonnington/id1586086618">App Store</a>&nbsp;&nbsp;<a href="https://play.google.com/store/apps/details?id=com.appetiser.cityofstonnington" data-uw-rm-brl="PR" data-uw-original-href="https://play.google.com/store/apps/details?id=com.appetiser.cityofstonnington">Google Play</a></p>
+
+
+	<ul class="footer-links with-icons social-media-links">   </ul>
+	<p>&nbsp;</p>
+
+
+</div><div class="col-xs-12 col-s-6 col-m-4 " >
+	<h2 class="footer-title">Community languages</h2>
+	<p>Mandarin &ndash; 普通话 <a href="tel:0392800730">03 9280 0730</a><br />
+Cantonese - 廣東話 <a href="tel:0392800731">03 9280 0731</a><br />
+Greek &ndash; Ellīnik&aacute; <a href="tel:0392800732">03 9280 0732</a><br />
+Italian &ndash; Italiano <a href="tel:0392800733">03 9280 0733</a><br />
+Polish &ndash; Polski <a href="tel:0392800734">03 9280 0734</a><br />
+Russian &ndash; Русский <a href="tel:0392800735">03 9280 0735</a><br />
+Indonesian &ndash; Bahasa Indonesia <a href="tel:0392800737">03 9280 0737</a><br />
+Vietnamese &ndash; Tiếng Việt <a href="tel:0392800748">03 9280 0748</a><br />
+Other languages <a href="tel:0392800736">03 9280 0736</a></p>
+
+
+	<ul class="footer-links with-icons social-media-links">   </ul>
+	
+</div><div class="col-xs-12 col-s-6 col-m-4 " >
+	<h2 class="footer-title">Connect with us</h2>
+	
+	<ul class="footer-links with-icons social-media-links">  <li class="footer-link-facebook">
+	<a href="https://www.facebook.com/stonningtoncitycouncil" target="_blank"  >
+<i aria-hidden="true"></i>Facebook
+</a>
+</li>
+          <li class="footer-link-twitter">
+	<a href="https://twitter.com/StonningtonCity" target="_blank"  >
+<i aria-hidden="true"></i>Twitter
+</a>
+</li>
+          <li class="footer-link-linkedin">
+	<a href="https://www.linkedin.com/company/stonnington-city-council" target="_blank"  >
+<i aria-hidden="true"></i>LinkedIn
+</a>
+</li>
+          <li class="footer-link-youtube">
+	<a href="https://www.youtube.com/user/cityofstonnington/" target="_self"  >
+<i aria-hidden="true"></i>YouTube
+</a>
+</li>
+          <li class="footer-link-instagram">
+	<a href="https://www.instagram.com/stonningtoncitycouncil/" target="_blank"  >
+<i aria-hidden="true"></i>Instagram
+</a>
+</li>
+           </ul>
+	<p><a href="https://www.stonnington.vic.gov.au/About/Media-centre/Subscribe-to-our-newsletters" target="_self">Subscribe to our newsletters</a></p>
+<p>We acknowledge the City of Stonnington is situated on the Traditional Lands of the Wurundjeri Woi-wurrung and Bunurong peoples of the East Kulin Nations and pay our respect to their Elders past and present.</p>
+<p>We extend that respect to all First Peoples. We acknowledge their living connection to Country, relationship with the land and all living things extending back tens of thousands of years.</p>
+
+
+</div>
+                            </div>
+                        </div>
+                    </div>
+                
+                <div class="footer-outer-container footer-second-row">
+                    <div class="footer-container clearfix">
+                        <div class="grid grid-pad footer-secondary-links">
+                            <div class="col-xs-12 col-m-7">
+                                
+                                    <div><a href="https://www.stonnington.vic.gov.au/Information-pages/Copyright" target="_self"  >Copyright</a>&nbsp;| <a href="https://www.stonnington.vic.gov.au/Information-pages/Accessibility" target="_self"  >Accessibility</a>&nbsp;| <a href="https://www.stonnington.vic.gov.au/Information-pages/Disclaimer" target="_self"  >Disclaimer</a>&nbsp;| <a href="https://www.stonnington.vic.gov.au/Information-pages/City-of-Stonnington-Information-Privacy-Policy" target="_self"  >Privacy Policy</a>&nbsp;| <a href="https://ess.stonnington.vic.gov.au/" target="_self"  >Employee Self Service</a></div>
+                                
+                            </div>
+                            <div class="col-xs-12 col-m-5 powered-by">
+                                <div class="right">
+                                    &copy; 2026 City of Stonnington&nbsp;|&nbsp;<span class="powered-by">Powered by <a href="https://granicus.com/solution/govaccess/opencities/" target="_blank">Granicus</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/files/oc-resources/b9015858-988c-48a4-9473-7c193df083e4/JsTextSnippets.js?ocsvclang=en-AU" type="text/javascript"></script><script>OpenCitiesResourceStrings["Sys Js Comments Collapse Thread"] = "Collapse thread";OpenCitiesResourceStrings["Sys Js Comments Expand Thread"] = "Expand thread";OpenCitiesResourceStrings["Sys Js Label Next Event"] = "Next event";OpenCitiesResourceStrings["Sys Js MyArea Driving Time"] = "Driving time";OpenCitiesResourceStrings["Sys Js Search View More results"] = "View more results";</script>
+    
+    
+<script type="text/javascript">
+(function(u,t,d){
+  var i=d.createElement(t);i.type='text/javascript';i.async=true;i.src=u;
+  var s=d.getElementsByTagName(t)[0]; s.parentNode.insertBefore(i,s);
+})('https://stellar-tracker.inside-graph.com/gtm/IN-1000990/include.js','script',document);
+</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T62CT5P"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+     jQuery('.menu a').click(function(){
+     var match = jQuery(this).attr('href').match(/#\S+/);
+     ga('send', 'pageview', location.pathname + match[0]);
+  });
+  });
+</script>
+
+<script>(function(d){var s = d.createElement("script");s.setAttribute("data-account", "tQpOLCokT9");s.setAttribute("src", "https://cdn.userway.org/widget.js");(d.body || d.head).appendChild(s);})(document)</script><noscript>Please ensure Javascript is enabled for purposes of <a href="https://userway.org">website accessibility</a></noscript>
+    <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71404922-4', 'auto');
+ ga('send', 'pageview');
+</script>
+    
+    
+
+<script type="text/javascript">
+//<![CDATA[
+window.__TsmHiddenField = $get('ctl04_seamless_script_manager_TSM');//]]>
+</script>
+</form>
+</body>
+</html>

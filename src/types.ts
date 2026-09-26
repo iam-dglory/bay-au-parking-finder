@@ -36,15 +36,13 @@ export interface SpotStatusPing {
 export type ModerationStatus = 'pending' | 'approved' | 'rejected'
 
 /** Real occupancy reading from a council-installed in-ground sensor, where
- * one exists for this bay. Hardware ground truth, not a crowdsourced guess --
- * shown with higher confidence than a ping whenever both are present. */
+ * one exists for this bay. Requires an exact bay match and a recent source update before use. */
 export interface SensorStatus {
+  sensor_kerbside_id?: string | number
   status: 'present' | 'unoccupied'
   status_timestamp: string
-  /** When the sensor itself last checked in at all, regardless of whether
-   * its reading changed. The right signal for "is this sensor still
-   * working" -- status_timestamp alone can't tell a long-parked car apart
-   * from a sensor that's stopped reporting. */
+  /** Council feed lastupdated timestamp. This is source freshness, not a
+   * guarantee of arrival-time vacancy or a separately measured device heartbeat. */
   last_confirmed_at: string
   synced_at?: string
   match_method?: 'kerbside_id' | 'coordinate' | 'unknown'
@@ -128,7 +126,13 @@ export interface CarPark {
   occupancy?: 'not_provided' | 'operator_snapshot'
   occupancy_snapshot?: { source_url: string; fetched_at: string; vehicles: Record<string,{capacity:number;occupied:number;available:number}> }
   pricing_checked_at?: string
-  tariffs?: { vehicle: string; period: string; amount: number }[]
+  tariffs?: { vehicle: string; period: string; amount: number; category?: string; conditions?: string }[]
+  price_summary?: string | null
+  price_summary_conditions?: string
+  vehicle_capacity?: Record<string,number>
+  location_source_url?: string
+  mapped_zone?: boolean
+  source_terms?: Record<string,string>
   hourly_rate_min?: number | null
   hourly_rate_max?: number | null
   currency?: string | null

@@ -1,0 +1,151 @@
+Parking Time
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+4 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+4 wheeler -Metro 
+travelers used CMRL 
+card in AG for the day 
+(Amount in Rs.)
+0-6hrs. 20 10 30 20
+6-12hrs. 30 15 40 30
+More then 12hrs. 40 20 60 40
+Beyond service hours. 50 50 100 100
+Parking Time
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+4 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+4 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+0-6hrs. 25 10 40 20
+6-12hrs. 40 15 50 30
+More then 12hrs. 55 20 65 40
+Beyond service hours. 70 50 125 100
+ Parking Slab 
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+4 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+4 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+0 to 4hrs. 10 5 40 30
+4 to 8hrs. 20 10 80 60
+8 to 12hrs. 30 15 150 120
+More then 12hrs.(up to Revenue  hours) 40 20 250 200
+Beyond service hours (Night Halt Charges) 100 50 150 100
+Parking Time
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+4 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+4 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+0-6hrs. 25 10 50 20
+6-12hrs. 40 15 75 30
+More then 12hrs. 55 20 90 40
+Beyond service hours. 70 50 125 100
+PARKING TARIFF FOR CMRL METRO STATIONS w.e.f 01.02.2025
+Applicable Stations: (20 Stations)
+Wimco Nagar Depot, Wimco Nagar, Toll Gate, Tondiarpet,  Sri Thiyagaraya college, Thousand light, AG DMS,  Teynampet,  Saidapet,  Little mount, Nehru park, 
+Kilpauk,  Pachaiappas,   Shenoy Nagar, Anna Nagar east, Anna Nagar Tower,  Ekkattuthangal, Koyambedu,  Arumbakkam & St. Thomas Mount
+***  AG-DMS, Anna Nagar Tower, Tondiarpet, Kilpak, Ekkattuthangal metro stations are having only 2 Wheeler parking
+Note: 
+(i)  Differently abled persons vehicle - Free parking during Revenue hours only. 
+(ii) E- vehicle - Free parking applicable only for CMRL Commuters during Revenue hours. 
+(iii) Commuter fare not applicable for Halt days, commuter fare calculated only for exit day for all vehicles.
+(iv) Parking Night Halt hours (01:00hrs. to 04:30hrs.)
+Parking Tariff for Chennai central station w.e.f 1.2.2025
+Parking Tariff for Mannadi -w.e.f 1.2.2025
+PARKING TARIFF FOR CMRL METRO STATIONS w.e.f 1.2.2025
+Applicable Stations: (16 Stations) - Thiruvotriyur  metro, Thiruvotiyur Theradi, Kaladipet, New Washermenpet,  Highcourt, Washermenpet, Government Estate, 
+LIC,  Nandanam,  Guindy, Nanganallur Road, Meenambakkam, Airport station Parking Lot 2 (Near Pallavaram), Egmore, Thirumangalam, Ashok Nagar & Alandur
+***Thiruvotriyur  metro, Thiruvotiyur Theradi, Kaladipet, New Washermenpet, Meenambakkam  stations are having only 2 Wheeler parking
+Parking Time
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+0-3hrs. 40 10
+0-6hrs. 80 15
+6-12hrs. 120 20
+More then 12hrs. 160 30
+Beyond service hours. (Night Halt Charges) 100 50
+Parking Time 
+2 wheeler -  Non- 
+commuters / irregular 
+commuters
+(Amount in Rs.)
+2 wheeler -Metro 
+travelers used 
+CMRL/NCMC card in 
+AG for the day 
+(Amount in Rs.)
+0hrs.-3hrs. Rs.50 Rs.20
+3hrs – 6hrs Rs.100 Rs.30
+6hrs – 12 hrs. Rs.150 Rs.50
+More then 12hrs. Rs.200 Rs.100 
+Beyond service hours. (Night Halt Charges) Rs.125 Rs.50
+Parking Time 2 wheeler
+Up to 2 hours 30
+Parking Time
+0 hrs. to 6hrs.
+After 6 hrs. (every 1 hour) 20
+Parking Tariff for Thirumangalam near VR Mall 
+Next Every hour 20
+Other Commercial vehicles Parking Tariff 
+(Tempo, Lorry, bus, Maxi cab etc.)
+Other Commercial Vehicles
+150
+Parking Tariff for Vadapalani w.e.f 1.5.2024
+Parking Tariff for Airport station Parking Lot 1 w.e.f 1.5.2024

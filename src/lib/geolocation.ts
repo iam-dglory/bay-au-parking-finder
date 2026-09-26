@@ -15,19 +15,20 @@ export class LocationError extends Error {
  * as an installed app, falling back to the browser API when running as a website.
  * Distinguishes *why* it failed (denied vs unavailable vs timed out) so the UI can
  * give actionable guidance instead of one generic dead-end message. */
-export async function getBrowserLocation(): Promise<{ coords: { latitude: number; longitude: number } }> {
+export async function getBrowserLocation(): Promise<{ coords: { latitude: number; longitude: number; accuracy?: number } }> {
   if (Capacitor.isNativePlatform()) {
     let status = await Geolocation.checkPermissions()
-    if (status.location !== 'granted') {
+    if (status.location !== 'granted' && status.coarseLocation !== 'granted') {
       status = await Geolocation.requestPermissions()
     }
-    if (status.location !== 'granted') {
+    if (status.location !== 'granted' && status.coarseLocation !== 'granted') {
       throw new LocationError('permission_denied', 'Location permission was denied.')
     }
     try {
-      return await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 8000 })
-    } catch {
-      throw new LocationError('unavailable', 'Could not determine your location.')
+      return await Geolocation.getCurrentPosition({ enableHighAccuracy: false, timeout: 5000, maximumAge: 15000 })
+    } catch (error) {
+      const reason = String((error as {code?:string})?.code) === 'OS-PLUG-GLOC-0010' ? 'timeout' : 'unavailable'
+      throw new LocationError(reason, 'Could not determine your location.')
     }
   }
   return new Promise((resolve, reject) => {
@@ -42,7 +43,7 @@ export async function getBrowserLocation(): Promise<{ coords: { latitude: number
         else if (err.code === err.TIMEOUT) reject(new LocationError('timeout', err.message))
         else reject(new LocationError('unavailable', err.message))
       },
-      { enableHighAccuracy: true, timeout: 8000 },
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 15000 },
     )
   })
 }
@@ -53,28 +54,29 @@ export async function getBrowserLocation(): Promise<{ coords: { latitude: number
  * GPS radio stays on and drains battery for no reason. Silently does
  * nothing on error (a dropped GPS signal mid-drive shouldn't crash the map;
  * it just stops updating until signal returns). */
-export function watchLocation(onUpdate: (pos: { latitude: number; longitude: number }) => void): () => void {
+export function watchLocation(onUpdate: (pos: { latitude: number; longitude: number; accuracy?: number }) => void): () => void {
   if (Capacitor.isNativePlatform()) {
     let watchId: string | null = null
     let cancelled = false
     Geolocation.watchPosition({ enableHighAccuracy: true, timeout: 10000 }, (pos, err) => {
-      if (err || !pos) return
-      onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+      if (cancelled || err || !pos) return
+      onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy })
     }).then((id) => {
-      if (cancelled) Geolocation.clearWatch({ id })
+      if (cancelled) void Geolocation.clearWatch({ id }).catch(() => {})
       else watchId = id
-    })
+    }).catch(() => {})
     return () => {
       cancelled = true
-      if (watchId) Geolocation.clearWatch({ id: watchId })
+      if (watchId) void Geolocation.clearWatch({ id: watchId }).catch(() => {})
     }
   }
 
   if (!navigator.geolocation) return () => {}
+  let active = true
   const watchId = navigator.geolocation.watchPosition(
-    (pos) => onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+    (pos) => { if (active) onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy }) },
     () => {},
     { enableHighAccuracy: true, timeout: 10000 },
   )
-  return () => navigator.geolocation.clearWatch(watchId)
+  return () => { active = false; navigator.geolocation.clearWatch(watchId) }
 }

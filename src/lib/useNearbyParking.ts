@@ -3,7 +3,9 @@ import { supabase } from './supabaseClient'
 import { logSearchEvent } from './searchEvents'
 import { loadNearbyPages } from './nearbyPages'
 import type { ParkingSpot } from '../types'
-import { catalogSpot, indiaNearby } from './indiaParking'
+import { catalogSpot } from './indiaParking'
+import { regionalNearby, mergeMappedBays } from './regionalParking'
+import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from './melbourneSensors'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
@@ -19,18 +21,25 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setLoading(true)
     setError(null)
     try {
-      const [remote, local] = await Promise.allSettled([loadNearbyPages<ParkingSpot>(async (offset) => {
+      const remoteDeadline = AbortSignal.timeout(15000)
+      const [remote, local, council] = await Promise.allSettled([loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })
-          .order('distance_m').order('id').range(offset, offset + 999)
+          .order('distance_m').order('id').range(offset, offset + 999).abortSignal(remoteDeadline)
         if (rpcError) throw rpcError
         return { rows: (data ?? []) as ParkingSpot[], total: count }
-      }, () => sequence.current !== request), indiaNearby(lat,lng,radiusM)])
-      if (remote.status === 'rejected' && local.status === 'rejected') throw remote.reason
-      const rows = [...(remote.status === 'fulfilled' ? remote.value : []), ...(local.status === 'fulfilled' ? local.value.filter(row=>row.kind==='bay').map(catalogSpot) : [])]
+      }, () => sequence.current !== request), regionalNearby(lat,lng,radiusM), fetchMelbourneSensors(lat,lng,radiusM)])
+      if (remote.status === 'rejected' && local.status === 'rejected' && council.status === 'rejected') throw remote.reason
+      let rows = mergeMappedBays(remote.status === 'fulfilled' ? remote.value : [],local.status === 'fulfilled' ? local.value.filter(row=>row.kind==='bay').map(catalogSpot) : [])
       if (request !== sequence.current) return
-      if (remote.status === 'rejected') setError('Community and sensor data could not refresh. Saved map locations remain available.')
-      if (local.status === 'rejected') setError('India map locations could not load. Please refresh.')
+      if (isMelbourneSearch(lat,lng)) {
+        // Legacy coordinate matches from the database must not colour another bay.
+        rows = rows.map(row => ({...row, sensor_status: row.sensor_status?.match_method === 'kerbside_id' ? row.sensor_status : null}))
+        if (council.status === 'fulfilled') rows = mergeMelbourneSensors(rows, council.value, {lat,lng}, new Date().toISOString())
+        else setError('Council availability could not refresh. Parking locations remain available; try Refresh.')
+      }
+      if (remote.status === 'rejected') setError('Council parking schedules could not refresh. Saved map locations remain available.')
+      if (local.status === 'rejected') setError('Mapped parking locations could not load. Please refresh.')
       setSpots(rows)
       setUpdatedAt(new Date())
       if (recordSearch) logSearchEvent({ lat, lng }, radiusM, rows.length)

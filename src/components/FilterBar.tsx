@@ -22,6 +22,8 @@ const CATEGORY_OPTIONS: { label: string; value: SignType | 'all' }[] = [
 ]
 
 export function FilterBar({
+  vacantOnly,
+  onVacantOnlyChange,
   radiusM,
   onRadiusChange,
   freeOnly,
@@ -31,6 +33,8 @@ export function FilterBar({
   showCarParks,
   onShowCarParksChange,
 }: {
+  vacantOnly: boolean
+  onVacantOnlyChange: (v: boolean) => void
   radiusM: number
   onRadiusChange: (v: number) => void
   freeOnly: boolean
@@ -57,6 +61,7 @@ export function FilterBar({
             {opt.label}
           </button>
         ))}
+        <button onClick={() => onVacantOnlyChange(!vacantOnly)} aria-pressed={vacantOnly} className={`shrink-0 rounded-xl border px-3.5 py-2 text-sm font-semibold ${vacantOnly ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}>Vacant now</button>
         <button
           onClick={() => onFreeOnlyChange(!freeOnly)}
           className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${

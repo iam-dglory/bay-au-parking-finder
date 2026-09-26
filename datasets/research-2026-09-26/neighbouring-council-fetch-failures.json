@@ -1,0 +1,12 @@
+[
+  {
+    "dataset": "car-parks-locations-in-city-of-casey",
+    "source_url": "https://data.casey.vic.gov.au/api/v2/catalog/datasets/car-parks/exports/geojson",
+    "error": "HTTP/network request failed"
+  },
+  {
+    "dataset": "car-parks-locations-in-city-of-casey",
+    "source_url": "https://data.casey.vic.gov.au/api/v2/catalog/datasets/car-parks/exports/geojson",
+    "error": "HTTP/network request failed"
+  }
+]

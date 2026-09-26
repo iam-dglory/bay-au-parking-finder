@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient'
 import type { SpotStatusPing, SensorStatus } from '../types'
+import { SENSOR_MAX_AGE_MINUTES } from './availability'
 import { haversineMeters } from './distance'
 
 export const OCCUPANCY_FRESHNESS_MINUTES = 30
@@ -61,13 +62,10 @@ export interface SensorOccupancyInfo {
   possiblyStuck: boolean
 }
 
-const SENSOR_HEARTBEAT_STALE_HOURS = 1 / 3
+const SENSOR_HEARTBEAT_STALE_HOURS = SENSOR_MAX_AGE_MINUTES / 60
 
-/** A council-installed in-ground sensor's reading, where this bay has one.
- * Unlike a crowdsourced ping, a sensor reading doesn't go stale just because
- * time has passed since the last change -- it stays true until the sensor
- * reports otherwise, so it's shown with no freshness decay and no
- * corroboration requirement. It's real hardware ground truth, not a guess. */
+/** Historical sensor display helper. Live map state is decided exclusively
+ * by availability(), including identity and source/download freshness. */
 export function getSensorOccupancyInfo(sensorStatus: SensorStatus | null, now: Date = new Date()): SensorOccupancyInfo | null {
   if (!sensorStatus) return null
   const status = sensorStatus.status === 'present' ? 'occupied' : 'free'

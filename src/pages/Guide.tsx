@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Clock, DollarSign, IdCard, Ban, Truck, CircleHelp, Accessibility, ParkingCircle } from 'lucide-react'
+import { Clock, DollarSign, IdCard, Ban, Truck, MapPin, Accessibility, ParkingCircle } from 'lucide-react'
 import { getSignOptionsForCountry } from '../lib/countrySignPresets'
 import { SIGN_AVAILABILITY, SIGN_TYPE_MEANING, GUIDE_COUNTRIES, COUNTRY_GUIDE_INTRO, GUIDE_GENERIC_INTRO } from '../lib/signGuide'
 import { detectCountry } from '../lib/geocoding'
@@ -14,12 +14,13 @@ const SIGN_TYPE_ICON: Record<SignType, typeof Clock> = {
   PERMIT_ONLY: IdCard,
   NO_STOPPING_CLEARWAY: Ban,
   LOADING_ZONE: Truck,
-  INFORMAL_TOLERATED: CircleHelp,
+  INFORMAL_TOLERATED: MapPin,
   ACCESSIBLE_PERMIT: Accessibility,
 }
 
-export function Guide({ location }: { location: { lat: number; lng: number } | null }) {
-  const [country, setCountry] = useState<GuideCountry>('Australia')
+export function Guide({ location }: { location: { lat: number; lng: number; country?: string } | null }) {
+  const knownCountry = GUIDE_COUNTRIES.find(c => c === location?.country)
+  const [country, setCountry] = useState<GuideCountry>(knownCountry ?? 'Australia')
   const [autoDetected, setAutoDetected] = useState(false)
 
   // Default the guide to whichever country the app already knows you're in,
@@ -27,11 +28,12 @@ export function Guide({ location }: { location: { lat: number; lng: number } | n
   useEffect(() => {
     if (autoDetected || !location) return
     setAutoDetected(true)
+    if (knownCountry) { setCountry(knownCountry); return }
     detectCountry(location.lat, location.lng).then((detected) => {
       const match = GUIDE_COUNTRIES.find((c) => c.toLowerCase() === detected?.toLowerCase())
       if (match) setCountry(match)
     })
-  }, [location, autoDetected])
+  }, [location, autoDetected, knownCountry])
 
   const signs = getSignOptionsForCountry(country === 'Other' ? undefined : country)
   const intro = country === 'Other' ? GUIDE_GENERIC_INTRO : COUNTRY_GUIDE_INTRO[country]
