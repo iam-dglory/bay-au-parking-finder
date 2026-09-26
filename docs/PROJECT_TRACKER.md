@@ -24,6 +24,10 @@ Form metadata: `form_version=2`, `consent_version=2026-09-25`, database `created
 
 Release identifier: `coverage-2026-09-26` (web source and datasets; Android internal-testing binary is separate).
 
+- Application/data source commit: `fa27ca7`.
+- GitHub Pages deployment commit: `0c51191`; build succeeded 26 Sep 2026 at 05:30 UTC.
+- Served app entry, India catalog, Melbourne index/CBD tile and waitlist page match the validated production build byte for byte.
+
 Details and limits: [coverage release](coverage-release-2026-09-26.md). Source archives, operator documents and published catalogs are tracked in Git; subscriber data remains private.
 
 - Direct council sensor layer with exact IDs, a five-minute source freshness limit and missing published sensor coordinates.

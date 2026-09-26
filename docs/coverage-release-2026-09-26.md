@@ -1,5 +1,7 @@
 # Bay coverage release — 26 September 2026
 
+Source version: `fa27ca7`, tag `coverage-2026-09-26`; Pages deployment: `0c51191` (successful build, 26 Sep 2026 05:30 UTC).
+
 Status: source and web release; Android internal-testing binary must be rebuilt separately. Coverage is partial, not an inventory of every legal space or every sign.
 
 ## Tracked fixes
