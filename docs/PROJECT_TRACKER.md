@@ -28,9 +28,11 @@ Form metadata: `form_version=2`, `consent_version=2026-09-25`, database `created
 - Added exact facility tariffs, time-window conditions, Queen Street entry, opening hours and the operator's 506-space undercover capacity. Historical census duplicates are replaced in the display; their source records remain stored.
 - Archived three QVM operator pages, facility/census crosswalk and per-space area memberships. Applied source-polygon grouping to 21,541 mapped Melbourne spaces without attaching guessed sensors.
 - Validation: 70 frontend tests, two geometry/operator-source checks, lint, production build, 73,413 catalog records and 1,174 archive hashes. Phone checks verify market area details and map boundary. Live occupancy for the market car parks is not published through a confirmed reusable feed.
-- Details: [QVM-01 correction](qvm-parking-area-fix-2026-09-26.md). Deployment version is recorded after the live build is verified.
+- Source commit `2bc0ed4`, tag `qvm-area-2026-09-26`; Pages commit `9106edf`, built successfully at 13:20:49 UTC on 26 Sep. Served HTML, JavaScript/CSS, Melbourne index/market tile and waitlist match the validated build byte for byte.
+- Phone verification (390 × 844): two current market facilities, no duplicate census listings, open-air boundary/P marker, scrollable tariff table, no horizontal overflow. Compass controls hide during a parking-area popup so the title stays readable.
+- Details: [QVM-01 correction](qvm-parking-area-fix-2026-09-26.md).
 
-Release identifier: `coverage-2026-09-26` (web source and datasets; Android internal-testing binary is separate).
+Earlier coverage release: `coverage-2026-09-26` (web source and datasets; Android internal-testing binary is separate).
 
 - Application/data source commit: `fa27ca7`.
 - GitHub Pages deployment commit: `0c51191`; build succeeded 26 Sep 2026 at 05:30 UTC.

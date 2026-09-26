@@ -1,6 +1,6 @@
 # QVM parking-area correction — 26 September 2026
 
-Issue QVM-01: the open-air car park appeared as hundreds of individual grey bays. Status: implemented and validated; deployment recorded in the project tracker.
+Issue QVM-01: the open-air car park appeared as hundreds of individual grey bays. Status: deployed and verified. Source `2bc0ed4` / tag `qvm-area-2026-09-26`; Pages `9106edf` (13:20:49 UTC). Served files match the validated build.
 
 | Item | Change | Evidence / limit |
 | --- | --- | --- |
@@ -17,3 +17,5 @@ Source pages: [facilities](https://qvm.com.au/parking/), [prices](https://qvm.co
 The same classification repair groups 21,541 mapped off-street spaces across Greater Melbourne. Displayed standalone catalog bays: 24,472. Council street-sensor matching remains by exact council ID.
 
 Validation: 70 frontend tests, two geometry/operator-source checks, lint, TypeScript and production build passed. Catalog verification: 73,413 retained records, 21,541 parent memberships, 603 QVM memberships and 1,174 file hashes. This verifies classification and source handling, not real-world vacancy accuracy.
+
+Phone browser: 390 × 844; correct map boundary and P marker, two facility entries, no historic duplicates or horizontal overflow; directions above the scrollable price table. Compass controls hide while a popup is open to avoid covering its title.
