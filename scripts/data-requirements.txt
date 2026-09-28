@@ -1,1 +1,2 @@
 beautifulsoup4==4.15.0
+osmium==4.3.1

@@ -5,6 +5,7 @@ import { zoomForRadius } from '../lib/mapZoom'
 import { SpotCard } from '../components/SpotCard'
 import { ParkingAreaDetails } from '../components/ParkingAreaDetails'
 import { isIndiaSearch } from '../lib/indiaParking'
+import { isUSSearch } from '../lib/usaParking'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
 import { FilterBar } from '../components/FilterBar'
 import { useNearbyParking } from '../lib/useNearbyParking'
@@ -15,8 +16,6 @@ import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
 import { LOGO_URL } from '../lib/assets'
 import type { ParkingSpot, SpotStatus, SignType } from '../types'
-
-const DESTINATION_SEARCH_DEBOUNCE_MS = 400
 
 export function Home({
   center,
@@ -49,7 +48,7 @@ export function Home({
   const [destSearching, setDestSearching] = useState(false)
   const [showDestSuggestions, setShowDestSuggestions] = useState(false)
   const destBoxRef = useRef<HTMLDivElement>(null)
-  const destDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const destRequest = useRef(0)
 
   const effectiveCenter = destination ?? center
 
@@ -57,6 +56,15 @@ export function Home({
   const { spots, loading, error, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
   const { carParks, error: areaError, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks && !vacantOnly)
   const india = isIndiaSearch(effectiveCenter.lat,effectiveCenter.lng)
+  const usa = isUSSearch(effectiveCenter.lat,effectiveCenter.lng)
+
+  useEffect(() => {
+    if (usa) {
+      setVacantOnly(false)
+      setFreeOnly(false)
+      setCategory('all')
+    }
+  }, [usa])
 
   useEffect(() => {
     setAreaLimit(20)
@@ -81,24 +89,17 @@ export function Home({
     return summary
   }, [ranked, now])
 
-  useEffect(() => {
-    let active = true
-    if (destDebounceRef.current) clearTimeout(destDebounceRef.current)
-    if (!destQuery.trim()) {
-      setDestResults([])
-      setDestSearching(false)
-      return
-    }
+  async function searchDestination() {
+    if (destQuery.trim().length < 3) return
+    const request = ++destRequest.current
     setDestSearching(true)
-    destDebounceRef.current = setTimeout(async () => {
-      const found = await searchPlaces(destQuery, center)
-      if (active) { setDestResults(found); setDestSearching(false) }
-    }, DESTINATION_SEARCH_DEBOUNCE_MS)
-    return () => {
-      active = false
-      if (destDebounceRef.current) clearTimeout(destDebounceRef.current)
+    const found = await searchPlaces(destQuery, center)
+    if (request === destRequest.current) {
+      setDestResults(found)
+      setDestSearching(false)
+      setShowDestSuggestions(true)
     }
-  }, [destQuery, center])
+  }
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -204,17 +205,22 @@ export function Home({
                 autoFocus
                 value={destQuery}
                 onChange={(e) => {
+                  destRequest.current++
                   setDestQuery(e.target.value)
+                  setDestResults([])
+                  setDestSearching(false)
                   setShowDestSuggestions(true)
                 }}
                 onFocus={() => setShowDestSuggestions(true)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); void searchDestination() } }}
                 placeholder="e.g. Westfield Bondi Junction"
-                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-20 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
               />
+              <button type="button" onClick={() => void searchDestination()} disabled={destSearching || destQuery.trim().length < 3} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50">Search</button>
             </div>
             {showDestSuggestions && destQuery.trim() && (
               <div className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-                {!destSearching && destResults.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">No matches. Try a different search.</p>}
+                {!destSearching && destResults.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">Press Search to find places.</p>}
                 {destResults.map((p, i) => (
                   <button key={i} onClick={() => selectDestination(p)} className="block w-full px-3 py-2.5 text-left hover:bg-slate-50">
                     <p className="text-sm font-medium text-slate-800">{p.name}</p>
@@ -244,7 +250,7 @@ export function Home({
           </button>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-slate-900">{loading && !updatedAt ? 'Finding parking spots…' : `${ranked.length.toLocaleString()} parking spots`}</span>
+          <span className="text-sm font-semibold text-slate-900">{loading && !updatedAt ? 'Finding parking…' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
@@ -252,8 +258,9 @@ export function Home({
           <summary className="cursor-pointer py-2 font-medium">{loading && !updatedAt ? 'Loading availability' : india || occupancySummary.vacant + occupancySummary.occupied === 0 ? 'Mapped parking · availability on arrival' : <><span className="text-emerald-700">{occupancySummary.vacant} vacant</span> · <span className="text-rose-700">{occupancySummary.occupied} occupied</span></>} · Details</summary>
           <div className="space-y-2 rounded-xl bg-slate-50 p-3">
             <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} availability on arrival</span> · Blue P: parking areas · numbered groups: zoom in</p>
-            <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>
+            {!usa && <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>}
             {india && <p>Chennai, Bengaluru and Hyderabad: mapped bays and areas from OpenStreetMap. Published operator prices appear where matched. Coverage is partial; live occupancy is not connected.</p>}
+            {usa && <p>US locations are mapped parking areas and some individually mapped spaces. This map does not provide live vacancy or complete parking rules. Check signs and prices on arrival.</p>}
             <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
           </div>
         </details>
@@ -272,6 +279,7 @@ export function Home({
         onCategoryChange={setCategory}
         showCarParks={showCarParks}
         onShowCarParksChange={setShowCarParks}
+        mappedOnly={usa}
       />
       </details>
 

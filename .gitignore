@@ -13,6 +13,7 @@ dist-ssr
 dist-ghpages
 *.local
 .env
+datasets/us/raw-pbf/
 .env.local
 private/
 __pycache__/

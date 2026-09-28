@@ -55,13 +55,23 @@ function normalize(s: string): string {
  * improves its own text-matching/ranking), and results are then strictly
  * filtered to that state — otherwise, picking "New South Wales" and typing a
  * Victorian suburb would still surface Victorian results. */
-export async function searchCities(query: string, countryCode: string, stateName?: string): Promise<CitySearchResult[]> {
+export async function searchCities(query: string, countryCode: string, stateName?: string, online = false): Promise<CitySearchResult[]> {
   if (!query.trim()) return []
   const supportedCities = [
     { name: 'Melbourne', stateName: 'Victoria', country:'AU', lat: -37.8136, lng: 144.9631 },
     { name: 'Chennai', stateName: 'Tamil Nadu', country:'IN', lat: 13.0827, lng: 80.2707 },
     { name: 'Bengaluru', stateName: 'Karnataka', country:'IN', lat: 12.9716, lng: 77.5946 },
     { name: 'Hyderabad', stateName: 'Telangana', country:'IN', lat: 17.385, lng: 78.4867 },
+    { name: 'New York', stateName: 'New York', country:'US', lat: 40.7128, lng: -74.006 },
+    { name: 'Los Angeles', stateName: 'California', country:'US', lat: 34.0522, lng: -118.2437 },
+    { name: 'Chicago', stateName: 'Illinois', country:'US', lat: 41.8781, lng: -87.6298 },
+    { name: 'Houston', stateName: 'Texas', country:'US', lat: 29.7604, lng: -95.3698 },
+    { name: 'San Francisco', stateName: 'California', country:'US', lat: 37.7749, lng: -122.4194 },
+    { name: 'Seattle', stateName: 'Washington', country:'US', lat: 47.6062, lng: -122.3321 },
+    { name: 'Washington', stateName: 'District of Columbia', country:'US', lat: 38.9072, lng: -77.0369 },
+    { name: 'Miami', stateName: 'Florida', country:'US', lat: 25.7617, lng: -80.1918 },
+    { name: 'Honolulu', stateName: 'Hawaii', country:'US', lat: 21.3099, lng: -157.8581 },
+    { name: 'Anchorage', stateName: 'Alaska', country:'US', lat: 61.2181, lng: -149.9003 },
   ]
   const typed = normalize(query)
   const local = supportedCities.filter(city => {
@@ -70,8 +80,9 @@ export async function searchCities(query: string, countryCode: string, stateName
     const stateMatch = !stateName || normalize(city.stateName ?? '') === normalize(stateName)
     return city.country === countryCode && nameMatch && stateMatch
   })
-  // Pilot city centres are ready offline; a network lookup must not delay them.
-  if (local.length) return local
+  // Typing only searches bundled centres. The public geocoder is called only
+  // after an explicit user search, never as an autocomplete service.
+  if (local.length || !online) return local
   try {
     const q = stateName ? `${query}, ${stateName}` : query
     const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&countrycodes=${countryCode.toLowerCase()}&addressdetails=1&limit=10`

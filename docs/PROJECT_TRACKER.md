@@ -1,6 +1,6 @@
 # Bay project tracker
 
-Last updated: 26 September 2026 (Australia/Melbourne)
+Last updated: 28 September 2026 (Australia/Melbourne)
 
 ## Current release state
 
@@ -19,6 +19,13 @@ Last updated: 26 September 2026 (Australia/Melbourne)
 | Drives in Melbourne | `drives_in_melbourne` | Required boolean |
 
 Form metadata: `form_version=2`, `consent_version=2026-09-25`, database `created_at`. Name, suburb and driving frequency were removed from the public form. QA addresses on reserved example domains do not enter the notification queue.
+
+## 28 September US catalog expansion
+
+- Added 54 state/territory-source extracts: 1,530,539 published OSM parking records across 36,292 compressed geographic tiles. This comprises 112,285 individually mapped space records and 1,418,254 area/zone records, including 52,209 mapped street-parking zones. Records can overlap at state boundaries and are not a count of physically available spaces. The 54 filtered parking-only source archives, source PBF checksums, published tiles and coverage audit are retained. [Source, scope and rebuild procedure](us-parking-coverage-2026-09-28.md).
+- US maps separate mapped areas, street-parking zones and individually mapped spaces. Spaces inside mapped facilities are grouped under the facility marker. The displayed count is mapped places, never claimed vacancies.
+- US occupancy is not marked vacant or occupied because the source does not supply a nationwide live sensor feed. Bay displays 1,571 source records with an explicit `charge` tag and a current-price caveat; a bare `fee=yes` does not supply an hourly rate.
+- All 54 regions passed the archive checksum and tile count audit; non-empty 5 km samples include New York City, Los Angeles, Chicago, Houston, San Francisco, Seattle, Washington DC, Miami, Honolulu, Anchorage, San Juan, Pago Pago and Hagatna. `datasets/manifest.json` accounts for every published US tile and source archive. Frontend validation: 73 tests across 14 files, lint and a 223 MB production build passed. Deployment verification and commit IDs follow the release.
 
 ## 26 September coverage release
 

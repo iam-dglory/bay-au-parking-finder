@@ -32,6 +32,7 @@ export function FilterBar({
   onCategoryChange,
   showCarParks,
   onShowCarParksChange,
+  mappedOnly = false,
 }: {
   vacantOnly: boolean
   onVacantOnlyChange: (v: boolean) => void
@@ -46,6 +47,8 @@ export function FilterBar({
    * clutter the map for someone just looking for a free on-street bay. */
   showCarParks: boolean
   onShowCarParksChange: (v: boolean) => void
+  /** Regions with mapped parking but no connected bay-level live feed. */
+  mappedOnly?: boolean
 }) {
   return (
     <div className="border-b border-slate-200/80 bg-white px-3 py-2">
@@ -61,15 +64,15 @@ export function FilterBar({
             {opt.label}
           </button>
         ))}
-        <button onClick={() => onVacantOnlyChange(!vacantOnly)} aria-pressed={vacantOnly} className={`shrink-0 rounded-xl border px-3.5 py-2 text-sm font-semibold ${vacantOnly ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}>Vacant now</button>
-        <button
+        {!mappedOnly && <button onClick={() => onVacantOnlyChange(!vacantOnly)} aria-pressed={vacantOnly} className={`shrink-0 rounded-xl border px-3.5 py-2 text-sm font-semibold ${vacantOnly ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}>Vacant now</button>}
+        {!mappedOnly && <button
           onClick={() => onFreeOnlyChange(!freeOnly)}
           className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
             freeOnly ? 'border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/15' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:bg-emerald-50'
           }`}
         >
           <BadgeDollarSign className="h-4 w-4" strokeWidth={2} /> No fee
-        </button>
+        </button>}
         <button
           onClick={() => onShowCarParksChange(!showCarParks)}
           className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
@@ -79,7 +82,7 @@ export function FilterBar({
           <CarFront className="h-4 w-4" strokeWidth={2} /> Parking areas
         </button>
       </div>
-      <div className="flex items-center gap-2 overflow-x-auto py-1">
+      {!mappedOnly && <div className="flex items-center gap-2 overflow-x-auto py-1">
         <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400"><Filter className="h-3.5 w-3.5" /> Zone</span>
         {CATEGORY_OPTIONS.map((opt) => (
           <button
@@ -92,7 +95,7 @@ export function FilterBar({
             <span>{opt.value === 'PAID_METER' ? <Tag className="h-3.5 w-3.5" /> : opt.value === 'TIME_LIMITED' ? <Clock3 className="h-3.5 w-3.5" /> : opt.value === 'LOADING_ZONE' ? <HardHat className="h-3.5 w-3.5" /> : opt.value === 'ACCESSIBLE_PERMIT' ? <Accessibility className="h-3.5 w-3.5" /> : null}</span>{opt.label}
           </button>
         ))}
-      </div>
+      </div>}
     </div>
   )
 }

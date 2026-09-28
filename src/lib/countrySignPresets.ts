@@ -43,7 +43,7 @@ const INDIA_SIGN_OPTIONS: SignOption[] = [
 ]
 
 const UNITED_STATES_SIGN_OPTIONS: SignOption[] = [
-  { type: 'FREE_UNLIMITED', label: 'Free, unrestricted', hint: 'No sign, no time limit' },
+  { type: 'FREE_UNLIMITED', label: 'Free, unrestricted', hint: 'Use only where local signs and rules confirm no fee or limit' },
   { type: 'TIME_LIMITED', label: 'Time limited', hint: 'e.g. "2 hour parking 8am-6pm"' },
   { type: 'PAID_METER', label: 'Metered', hint: 'Parking meter or pay station' },
   { type: 'PERMIT_ONLY', label: 'Residential permit zone', hint: 'Permit required, e.g. "Zone 4 permit only"' },

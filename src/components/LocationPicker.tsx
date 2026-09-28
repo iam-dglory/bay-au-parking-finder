@@ -67,6 +67,15 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     onPick(city.lat, city.lng, city.stateName ? `${city.name}, ${city.stateName}` : city.name, Country.getCountryByCode(countryCode)?.name)
   }
 
+  async function searchOnline() {
+    if (!citySearch.trim()) return
+    setSearching(true)
+    const found = await searchCities(citySearch, countryCode, selectedStateName, true)
+    setResults(found)
+    setSearching(false)
+    setShowSuggestions(true)
+  }
+
   async function handleUseGps() {
     setLocating(true)
     setGpsError(null)
@@ -96,7 +105,7 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
           <span className="text-2xl font-semibold tracking-tight text-white">Bay</span>
         </div>
         <p className="text-sm text-slate-300">Find parking with clearer evidence.</p>
-        <div className="mt-2 flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium text-indigo-100"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Melbourne pilot coverage</div>
+        <div className="mt-2 flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium text-indigo-100"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Melbourne · India · United States</div>
       </div>
 
       <div className="flex flex-1 flex-col items-center px-5 py-7">
@@ -185,13 +194,15 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
                   setShowSuggestions(true)
                 }}
                 onFocus={() => setShowSuggestions(true)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); void searchOnline() } }}
                 placeholder="Search for a city or suburb"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
+            <button type="button" onClick={() => void searchOnline()} className="mt-2 text-xs font-semibold text-blue-700">Search city</button>
             {showSuggestions && citySearch.trim() && (
               <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-                {!searching && results.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">No matches. Try a different spelling.</p>}
+                {!searching && results.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">Press Search city to look up this place.</p>}
                 {results.map((c, i) => (
                   <button
                     key={`${c.name}-${c.lat}-${c.lng}-${i}`}

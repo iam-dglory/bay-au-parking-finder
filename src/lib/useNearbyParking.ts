@@ -6,6 +6,7 @@ import type { ParkingSpot } from '../types'
 import { catalogSpot } from './indiaParking'
 import { regionalNearby, mergeMappedBays } from './regionalParking'
 import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from './melbourneSensors'
+import { isUSSearch } from './usaParking'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
@@ -22,7 +23,7 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setError(null)
     try {
       const remoteDeadline = AbortSignal.timeout(15000)
-      const [remote, local, council] = await Promise.allSettled([loadNearbyPages<ParkingSpot>(async (offset) => {
+      const [remote, local, council] = await Promise.allSettled([isUSSearch(lat, lng) ? Promise.resolve([] as ParkingSpot[]) : loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })
           .order('distance_m').order('id').range(offset, offset + 999).abortSignal(remoteDeadline)
@@ -38,7 +39,7 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
         if (council.status === 'fulfilled') rows = mergeMelbourneSensors(rows, council.value, {lat,lng}, new Date().toISOString())
         else setError('Council availability could not refresh. Parking locations remain available; try Refresh.')
       }
-      if (remote.status === 'rejected') setError('Council parking schedules could not refresh. Saved map locations remain available.')
+      if (remote.status === 'rejected') setError('Parking schedules could not refresh. Saved map locations remain available.')
       if (local.status === 'rejected') setError('Mapped parking locations could not load. Please refresh.')
       setSpots(rows)
       setUpdatedAt(new Date())

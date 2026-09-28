@@ -2,6 +2,7 @@ import type { CarPark, ParkingSpot } from '../types'
 import { haversineMeters } from './distance'
 import { indiaNearby, nearbyCatalog } from './indiaParking'
 import { isMelbourneSearch } from './melbourneSensors'
+import { usaNearby } from './usaParking'
 
 interface TileIndex { tile_size: number; tiles: string[] }
 let index: Promise<TileIndex> | undefined
@@ -12,7 +13,7 @@ async function json<T>(path: string): Promise<T> {
   return response.json() as Promise<T>
 }
 export async function regionalNearby(lat: number, lng: number, radius: number): Promise<CarPark[]> {
-  if (!isMelbourneSearch(lat,lng)) return indiaNearby(lat,lng,radius)
+  if (!isMelbourneSearch(lat,lng)) return (await indiaNearby(lat,lng,radius)).concat(await usaNearby(lat,lng,radius))
   index ??= json<TileIndex>('melbourne/index.json').catch(error => { index = undefined; throw error })
   const meta = await index
   const latDelta = radius / 111000, lngDelta = radius / (111000 * Math.cos(lat * Math.PI / 180))
