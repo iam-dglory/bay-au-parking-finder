@@ -1,217 +1,103 @@
-<title>Bay Privacy Policy</title>
-<style>
-  :root {
-    --bg: #ffffff;
-    --surface: #f8fafc;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --text-muted: #475569;
-    --text-faint: #94a3b8;
-    --accent: #4f46e5;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0b1120;
-      --surface: #131b2e;
-      --border: #263145;
-      --text: #f1f5f9;
-      --text-muted: #b6c2d9;
-      --text-faint: #64748b;
-      --accent: #818cf8;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0b1120;
-    --surface: #131b2e;
-    --border: #263145;
-    --text: #f1f5f9;
-    --text-muted: #b6c2d9;
-    --text-faint: #64748b;
-    --accent: #818cf8;
-  }
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="How Bay collects, uses, shares and protects information in its parking app and early-access waitlist.">
+  <title>Bay Privacy Policy</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17233e; background: #f6f8fc; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    a { color: #1656cb; text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; border-radius: 3px; }
+    .wrap { max-width: 930px; margin: 0 auto; padding: 0 22px; }
+    header { background: #fff; border-bottom: 1px solid #e3e9f2; }
+    .bar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { font-size: 24px; font-weight: 800; letter-spacing: -.055em; color: #0b1b43; text-decoration: none; }
+    .brand-mark { color: #2261eb; }
+    .back { font-size: 14px; font-weight: 600; }
+    main { padding-top: 42px; padding-bottom: 70px; }
+    .eyebrow { color: #1656cb; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin: 0 0 8px; }
+    h1 { font-size: clamp(32px, 6vw, 48px); line-height: 1.12; letter-spacing: -.045em; margin: 0 0 10px; color: #0b1b43; }
+    .date { color: #65738e; margin: 0 0 24px; font-size: 14px; }
+    .intro { font-size: 18px; max-width: 70ch; margin: 0 0 26px; }
+    .summary { background: #eaf1ff; border: 1px solid #cadcff; border-radius: 18px; padding: 20px 24px; margin-bottom: 28px; }
+    .summary strong { color: #0b388e; }
+    .summary p { margin: 6px 0 0; }
+    nav { background: #fff; border: 1px solid #e3e9f2; border-radius: 18px; padding: 20px 24px; margin: 0 0 34px; }
+    nav h2 { font-size: 17px; margin: 0 0 8px; }
+    nav ol { columns: 2; column-gap: 30px; margin: 0; padding-left: 21px; }
+    nav li { break-inside: avoid; padding: 2px 0; font-size: 14px; }
+    section { scroll-margin-top: 24px; border-top: 1px solid #dfe6f0; padding-top: 12px; margin-top: 28px; }
+    section h2 { color: #0b1b43; font-size: 22px; line-height: 1.3; letter-spacing: -.02em; margin: 10px 0; }
+    h3 { color: #132956; font-size: 16px; margin: 18px 0 4px; }
+    p { margin: 8px 0 12px; }
+    ul { margin: 8px 0 14px; padding-left: 23px; }
+    li { margin: 5px 0; }
+    footer { background: #fff; border-top: 1px solid #e3e9f2; padding: 24px 0; color: #65738e; font-size: 14px; }
+    @media (max-width: 640px) { main { padding-top: 30px; } nav ol { columns: 1; } .bar { min-height: 60px; } .intro { font-size: 16px; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap bar"><a class="brand" href="./" aria-label="Bay home"><span class="brand-mark">b</span> Bay</a><a class="back" href="./">Back to Bay</a></div></header>
+  <main class="wrap">
+    <p class="eyebrow">Your data, clearly explained</p>
+    <h1>Bay Privacy Policy</h1>
+    <p class="date">Last updated: 29 September 2026</p>
+    <p class="intro">Bay helps people find mapped parking places and understand available parking information. This policy covers the Bay app, website, early-access waitlist and related feedback forms. “Bay”, “we” and “us” refer to the Bay app team. For privacy questions, contact <a href="mailto:gopikaaravindoffl@gmail.com">gopikaaravindoffl@gmail.com</a>.</p>
+    <div class="summary"><strong>At a glance</strong><p>You can search for parking without joining the waitlist. If you use your location, Bay uses it to find nearby places and records search coordinates with an anonymous app identifier. Sign photos you upload have public URLs, even while a sign report is pending review. Waitlist email addresses are kept out of the public parking map.</p></div>
+    <nav aria-label="Privacy policy contents"><h2>On this page</h2><ol>
+      <li><a href="#about">About Bay</a></li><li><a href="#collect">Information We Collect</a></li><li><a href="#use">How We Use Information</a></li><li><a href="#location">Location Data</a></li><li><a href="#submissions">Photographs and User Submissions</a></li><li><a href="#services">Third-Party Services / Supabase</a></li><li><a href="#sharing">Data Sharing</a></li><li><a href="#retention">Data Retention</a></li><li><a href="#security">Data Security</a></li><li><a href="#choices">Your Choices and Data Deletion</a></li><li><a href="#children">Children’s Privacy</a></li><li><a href="#international">International Data Processing</a></li><li><a href="#changes">Changes to This Policy</a></li><li><a href="#contact">Contact Us</a></li><li><a href="#parking-disclaimer">Parking-information disclaimer</a></li>
+    </ol></nav>
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
-    padding: 0 16px;
-    padding-block: 48px;
-  }
+    <section id="about"><h2>1. About Bay</h2><p>Bay combines public parking datasets, available live sensor readings, parking-area information and community sign submissions. Coverage, prices, restrictions and live availability vary by location and source. Using the parking map creates an anonymous app session; it does not require you to provide a name or email address.</p></section>
 
-  main {
-    max-width: 720px;
-    margin: 0 auto;
-  }
+    <section id="collect"><h2>2. Information We Collect</h2>
+      <h3>Location information</h3><p>If you allow location access, we receive your device’s coordinates to find nearby parking and show your position. If you search manually, we use the place or coordinates you choose instead. For searches that return results, Bay stores the search latitude and longitude, radius, result count, time and anonymous app user ID. A selected sign pin and address are stored when you submit a sign.</p>
+      <h3 id="waitlist">Waitlist information</h3><p>The current early-access form asks only for an email address, Android or iPhone choice, and the country where you drive most (Australia, India or the United States). We also store signup time and form/consent version. Earlier waitlist forms may have collected a name, suburb, driving frequency or whether the person drives in Melbourne. We keep these historical responses private; we do not infer a country for an older signup.</p>
+      <h3>Parking-sign photographs and submissions</h3><p>When you add a sign, we collect its photo, pinned location, address, rules, notes you enter, submission time and anonymous app user ID. A photo may contain information visible in the scene or embedded in the image file.</p>
+      <h3>Feedback</h3><p>In-app feedback can include your message, optional rating, page context, submission time and anonymous app user ID. The separate survey can include ratings, written answers and an optional tester number. Please do not put personal or sensitive information in free-text answers unless needed for your request.</p>
+      <h3>App activity and technical information</h3><p>Supabase creates an anonymous authentication session so Bay can link contributions and activity to a user ID. Bay records certain parking searches and when you request directions to a sign, including the referenced place and time. Your browser, app platform and service providers may also process technical information such as IP address, request logs and device/browser details needed to deliver and secure the service.</p>
+    </section>
 
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
+    <section id="use"><h2>3. How We Use Information</h2><p>We use information to show nearby parking and rules; display available sensor readings; process and review sign submissions; remember your contributions and directions activity; organise early-access invitations and launch updates; respond to feedback and privacy requests; measure use and improve accuracy; and protect Bay from misuse. Waitlist details are used for Bay early-access and launch communications, not added to public parking datasets.</p></section>
 
-  .eyebrow::before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    border-radius: 5px;
-    background: var(--accent);
-    display: inline-block;
-  }
+    <section id="location"><h2>4. Location Data</h2><p>Location permission is optional for finding parking: you can choose a city or place manually. When you grant permission, Bay uses location while you use the nearby-parking feature, including updates as your position changes. Search coordinates can be stored with your anonymous app ID as described above; they are not merely processed on your device. Coordinates may be sent to Supabase to retrieve nearby results and to OpenStreetMap’s Nominatim service to turn a location into an address. You can revoke location permission in your device or browser settings, though nearby results may then require a manual search.</p></section>
 
-  h1 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: clamp(32px, 5vw, 44px);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    margin: 0 0 8px;
-  }
+    <section id="submissions"><h2>5. Photographs and User Submissions</h2><p>You choose a photo using your camera or photo library when submitting a parking sign. Sign details are reviewed before a new report appears on the shared map. <strong>The uploaded photo is stored in a publicly readable Supabase storage bucket and has a public URL as soon as it is uploaded, even if the related report is pending or its submission later fails.</strong> Do not upload faces, number plates, private documents or other personal information. Approved sign details and their photos may be visible to other users. Contact us to request removal of a report or photo; include its link or approximate location so we can find it.</p><p>Older beta versions accepted manual occupied/vacant observations. The current app no longer offers that reporting control, but historical submissions may remain in Bay’s database until removed under our retention process.</p></section>
 
-  .updated {
-    color: var(--text-faint);
-    font-size: 14px;
-    margin-bottom: 40px;
-  }
+    <section id="services"><h2>6. Third-Party Services / Supabase</h2><ul>
+      <li><strong>Supabase</strong> provides anonymous authentication, the parking database, sign-photo storage, waitlist storage and feedback storage.</li>
+      <li><strong>GitHub Pages</strong> hosts the Bay website and may receive ordinary website request information.</li>
+      <li><strong>OpenStreetMap tile servers and Nominatim</strong> provide map tiles and place search/reverse geocoding. Relevant map requests, search terms or coordinates, and network information are sent to those services.</li>
+      <li><strong>City of Melbourne</strong> may receive requests for published sensor data when the Melbourne live layer loads.</li>
+      <li><strong>Google Maps</strong> receives a destination when you choose “Get directions” and open its service.</li>
+    </ul><p>These services may have their own privacy practices. Bay also displays parking information from public authorities and other map or operator sources; displaying their data does not mean they receive your waitlist email.</p></section>
 
-  h2 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 22px;
-    font-weight: 600;
-    margin: 40px 0 12px;
-  }
+    <section id="sharing"><h2>7. Data Sharing</h2><p>We share information with the service providers above as needed to operate Bay. Approved sign submissions and their photos can be shown publicly, and sign-photo URLs can be accessed directly. Waitlist entries, search-event records, feedback and survey answers are not exposed through Bay’s public data endpoints. We do not sell personal information or provide it to advertisers. We may disclose information if required by applicable law or a valid legal process.</p></section>
 
-  p, li {
-    font-size: 16px;
-    line-height: 1.65;
-    color: var(--text-muted);
-    max-width: 65ch;
-  }
+    <section id="retention"><h2>8. Data Retention</h2><p>We keep waitlist entries while managing early access and launch communications, and keep app activity, feedback and submissions while needed to operate, audit and improve Bay. We have not set a universal automatic deletion date for these records. We review removal requests and delete data we can identify when it is no longer needed, subject to applicable legal requirements and any short-lived operational backups. A sign photo may remain in public storage until it is separately removed, even if a pending database submission failed.</p></section>
 
-  ul {
-    padding-left: 20px;
-    margin: 12px 0;
-  }
+    <section id="security"><h2>9. Data Security</h2><p>Bay uses encrypted network connections and Supabase access controls for non-public database records. Access is limited by the role of the user or service. No system can guarantee perfect security, and public sign photos should be treated as public before you upload them. Please contact us if you believe a submission or your information has been exposed incorrectly.</p></section>
 
-  li {
-    margin-bottom: 8px;
-  }
+    <section id="choices"><h2>10. Your Choices and Data Deletion</h2><ul>
+      <li>Use manual place search instead of granting device-location access; revoke permission later in device or browser settings.</li>
+      <li>Do not join the waitlist or submit a sign or feedback if you do not want to provide that information.</li>
+      <li>Ask us to access, correct or delete your waitlist entry, feedback, sign report, photo or associated anonymous app data by emailing <a href="mailto:gopikaaravindoffl@gmail.com?subject=Bay%20privacy%20request">gopikaaravindoffl@gmail.com</a>. For a waitlist request, write from the signup email if possible. For app data, include the sign link or location and any details that help us locate your anonymous record. We may need to verify that a request relates to you before making changes.</li>
+    </ul><p>Deleting the app or clearing browser data does not automatically delete records already sent to Bay. We will explain if we cannot identify a record or must retain specific information for a lawful reason. If you have a privacy complaint, email us with “Privacy complaint” in the subject; we will review it and respond. Australian users may also contact the <a href="https://www.oaic.gov.au/privacy/privacy-complaints" rel="noopener noreferrer">Office of the Australian Information Commissioner</a> if their concern remains unresolved.</p></section>
 
-  li b, p b {
-    color: var(--text);
-    font-weight: 600;
-  }
+    <section id="children"><h2>11. Children’s Privacy</h2><p>Bay is intended for people looking for parking and is not directed to children under 13. We do not knowingly seek information from children under 13. If you believe a child has submitted information, contact us so we can review and remove it where appropriate.</p></section>
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin: 16px 0;
-  }
+    <section id="international"><h2>12. International Data Processing</h2><p>Bay is available to people in Australia, India and the United States. Supabase, GitHub and the other services listed above may process information outside your country, including in the United States. The location of processing can vary by provider and service. Where required, we will take steps to handle cross-border information in accordance with applicable privacy law.</p></section>
 
-  .card p {
-    margin: 0;
-  }
+    <section id="changes"><h2>13. Changes to This Policy</h2><p>We may update this policy as Bay’s features or data practices change. We will publish the revised text here and change the date at the top. Material changes may also be communicated in the app or by other appropriate means before they take effect.</p></section>
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 15px;
-  }
+    <section id="contact"><h2>14. Contact Us</h2><p>For privacy questions, access, correction, deletion or complaints, contact the Bay app team at <a href="mailto:gopikaaravindoffl@gmail.com">gopikaaravindoffl@gmail.com</a>. Tell us what you need and provide enough detail to locate the relevant record, without sending passwords or unrelated sensitive documents.</p></section>
 
-  th, td {
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-muted);
-    vertical-align: top;
-  }
-
-  th {
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  a {
-    color: var(--accent);
-  }
-
-  footer {
-    margin-top: 56px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    color: var(--text-faint);
-    font-size: 13px;
-  }
-</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-
-<main>
-  <span class="eyebrow">Bay</span>
-  <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: 19 September 2026</p>
-
-  <p>Bay ("we", "us") helps people find parking — free public spots, and rules reported by the community — in Australia and worldwide. This page explains what information Bay collects, why, and how you can contact us about it.</p>
-
-  <section id="waitlist"><h2>Early-access waitlist</h2><p>If you join the waitlist, we store your email, phone type and the country where you drive most (Australia, India or the United States) in a private Supabase table to organise testing invitations and launch updates. Earlier signups were asked whether they drove in Melbourne; those existing answers remain private. These details are not part of our public parking datasets or GitHub archives. To request removal, use the contact information below.</p></section><h2>What Bay does <i>not</i> collect</h2>
-  <div class="card">
-    <p>Using the parking map does not require your name, email address, or phone number. The optional early-access waitlist collects an email address, Android/iPhone choice and a country choice. There is no account sign-up. Bay uses anonymous authentication: your device is given a random, anonymous identifier so your reports and activity are linked to that identifier only — never to your real identity.</p>
-  </div>
-
-  <h2>Information we collect</h2>
-  <table>
-    <tr><th>Data</th><th>Why we collect it</th></tr>
-    <tr><td><b>Location</b> (GPS, or the city/suburb you search for)</td><td>To show parking spots and rules near you. Location is used on your device to query nearby results and is not stored against your identity beyond what's needed to serve that request.</td></tr>
-    <tr><td><b>Parking signs and spots you report</b> (address, pin location, sign rules, notes, and a photo of the sign)</td><td>To build the shared, public map of parking availability that every user relies on. A photo is required for every report and is reviewed before the report is shown to anyone else, to keep the map accurate and free of spam. The photo is publicly visible once approved, the same as the rest of the report.</td></tr>
-    <tr><td><b>Occupancy reports</b> ("mark occupied/free") and your device location at the moment you submit one</td><td>To show other nearby users a live, time-limited signal about a spot — these expire automatically (occupancy reports become "unknown" after 30 minutes). Your location at submission time is checked against the spot's location to confirm you're actually near it, but is not stored — only the fact that the check passed.</td></tr>
-    <tr><td><b>Anonymous device identifier</b></td><td>To let you see your own reports and history ("My activity"), and to attribute contributions without collecting personal information.</td></tr>
-  </table>
-
-  <h2>Who we share it with</h2>
-  <p>Bay is built on a small number of infrastructure providers who process data on our behalf, strictly to run the app:</p>
-  <ul>
-    <li><b>Supabase</b> — hosts our database and anonymous authentication.</li>
-    <li><b>OpenStreetMap / Nominatim</b> — provides map tiles and location search. Search queries you type (e.g. a city or suburb name) are sent to this service to find matching places.</li>
-  </ul>
-  <p>We do not sell your information, and we do not share it with advertisers.</p>
-
-  <h2>Data you contribute publicly</h2>
-  <p>Parking signs (once approved), their photos, and occupancy signals are shared with everyone using Bay — that's how a crowdsourced parking directory works. Please don't include personal information (yours or anyone else's, including number plates or faces) in a sign photo, note, or description you submit.</p>
-
-  <h2>Your choices</h2>
-  <ul>
-    <li>Location access is optional for finding parking — you can search for a city manually instead of sharing your device's location. It is required to submit an occupancy report, since that's how we confirm you're near the spot.</li>
-    <li>Camera access is required to report a new parking sign, since a photo is mandatory for every report.</li>
-    <li>The parking map uses an anonymous account. Waitlist contact information is separate. If you'd like a specific report removed, contact us below with the address or approximate location and we'll remove it.</li>
-  </ul>
-
-  <h2>How reports are reviewed</h2>
-  <p>A new parking sign report isn't shown to other users right away. It's checked against its photo first, to confirm it shows a real, current sign matching what was reported. Until that check is done, only you can see it (marked "Pending review" in My Activity); if it's rejected, we'll leave it visible to you as rejected rather than silently discard it.</p>
-
-  <h2>Children's privacy</h2>
-  <p>Bay is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
-
-  <h2>Changes to this policy</h2>
-  <p>If this policy changes, we'll update the "last updated" date above. Continued use of Bay after a change means you accept the updated policy.</p>
-
-  <h2>Data sources and attribution</h2>
-  <p>Some parking sign data on Bay was not reported by users but sourced from official council open data, to give the map real coverage from day one. This data is credited here as required by its licence:</p>
-  <ul>
-    <li><b>Brisbane City Council</b> — "Parking – Sign locations", licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, sourced from <a href="https://data.brisbane.qld.gov.au/explore/dataset/parking-sign-locations/" target="_blank" rel="noreferrer">data.brisbane.qld.gov.au</a>.</li>
-    <li><b>City of Melbourne</b> — "Sign plates located in each Parking zone", "Pay Stay parking restrictions", and related street-segment and bay-location datasets, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY</a>, sourced from <a href="https://data.melbourne.vic.gov.au/" target="_blank" rel="noreferrer">data.melbourne.vic.gov.au</a>.</li>
-    <li><b>City of Sydney</b> — "Mobility parking" and "Free 15 minute parking", licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, sourced from <a href="https://data.cityofsydney.nsw.gov.au/" target="_blank" rel="noreferrer">data.cityofsydney.nsw.gov.au</a>.</li>
-  </ul>
-
-  <h2>Contact</h2>
-  <p>Questions about this policy or a data removal request can be sent to <a href="mailto:gopikaaravindoffl@gmail.com">gopikaaravindoffl@gmail.com</a>.</p>
-
-  <footer>Bay — parking, found.</footer>
-</main>
+    <section id="parking-disclaimer"><h2>15. Parking-information disclaimer</h2><p>Parking data, signs, opening hours, prices and sensor readings can be incomplete, delayed or change without notice. A mapped space or vacant reading does not guarantee that parking is permitted or available when you arrive. Check the physical sign, road markings and current operator terms before parking. This parking-information notice is separate from Bay’s privacy practices.</p></section>
+  </main>
+  <footer><div class="wrap">© 2026 Bay · Parking, found.</div></footer>
+</body>
+</html>
