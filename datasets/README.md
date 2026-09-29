@@ -8,6 +8,8 @@ Source licence terms must be checked per dataset before reuse; retain council at
 
 The 28 September OSM parking-only source archives and tiled catalog are documented in the [US coverage audit](../docs/us-parking-coverage-2026-09-28.md). The 29 September San Francisco follow-up adds an official SFMTA meter inventory snapshot under `us/2026-09-28/`, with a reproducible query, raw archive, filtered map tiles and checksum entries in `manifest.json`. This maps meter locations, not live vacancy, current prices, or sign-plate rules. Large upstream OSM PBF downloads remain local; their source URLs and checksums are preserved in the state manifests while the filtered parking archives and published tiles are tracked in Git.
 
+Three further SFMTA curb-regulation research archives are in `us/2026-09-29/`: time-limited parking, other regulations and color curbs. They include source metadata, full features and geometry, but are withheld from the app because the source's currency/completeness and per-meter sign applicability are not established. See the US audit for counts and limitations.
+
 ## 26 September 2026 release
 
 Current source audit, coverage limits and reproducible build: [coverage release](../docs/coverage-release-2026-09-26.md). Raw snapshots are in `melbourne/2026-09-26/` and `india/2026-09-26/`; source gaps are in `research-2026-09-26/source-gap-ledger.json`. Melbourne catalog tiles and the India catalog are versioned in `public/data/`.

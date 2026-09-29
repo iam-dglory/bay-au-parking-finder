@@ -307728,5 +307728,41 @@
     "bytes": 29143,
     "sha256": "55a9903990dd99497cbada1679e3032516f9ee27a65656947d1729749a2d8d38",
     "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "datasets/us/2026-09-29/san-francisco-sfmta-regulations-manifest.json",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer",
+    "kind": "sfmta_regulation_research_archive",
+    "fetched_at": "2026-09-29T01:09:51.465152+00:00",
+    "bytes": 4432,
+    "sha256": "0382c35d689e77ffe40602c74d3158ea42ecc4b801c22610b9eaffd17654ce58",
+    "provenance_note": "Official SFMTA layer retained for research; source cautions against treating it as complete or vetted parking advice."
+  },
+  {
+    "path": "datasets/us/2026-09-29/san-francisco-sfmta-time-limited-parking.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/9",
+    "kind": "sfmta_regulation_research_archive",
+    "fetched_at": "2026-09-29T01:09:51.465152+00:00",
+    "bytes": 512905,
+    "sha256": "8565361024115d833319d73c76deab0a29a60b8152c97248a9d059e60e6bf849",
+    "provenance_note": "Official SFMTA layer retained for research; source cautions against treating it as complete or vetted parking advice."
+  },
+  {
+    "path": "datasets/us/2026-09-29/san-francisco-sfmta-other-parking-regulations.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/10",
+    "kind": "sfmta_regulation_research_archive",
+    "fetched_at": "2026-09-29T01:09:51.465152+00:00",
+    "bytes": 75618,
+    "sha256": "1a253b5827f4b7d8b30be0d3786e98b3de4235c0b96816e33bbff0a5071a88c4",
+    "provenance_note": "Official SFMTA layer retained for research; source cautions against treating it as complete or vetted parking advice."
+  },
+  {
+    "path": "datasets/us/2026-09-29/san-francisco-sfmta-color-curb.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/18",
+    "kind": "sfmta_regulation_research_archive",
+    "fetched_at": "2026-09-29T01:09:51.465152+00:00",
+    "bytes": 830871,
+    "sha256": "b0f7eae6418c55f1481c34d462fb712dba2dd4e85131961b5744dfd3307fa50c",
+    "provenance_note": "Official SFMTA layer retained for research; source cautions against treating it as complete or vetted parking advice."
   }
 ]

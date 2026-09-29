@@ -1,0 +1,37 @@
+{
+  "collected_at": "2026-09-29T01:09:51.465152+00:00",
+  "published_in_app": false,
+  "reason": "SFMTA says regulation data is not comprehensively updated or vetted; no verified per-meter sign match.",
+  "layers": [
+    {
+      "layer": 9,
+      "name": "time-limited-parking",
+      "source": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/9",
+      "description": "| A. METHODOLOGY | Mix of manual updates and data compilation.| B. UPDATE FREQUENCY | Updated as MTA Board resolutions are passed that impact parking regulations.| C. OTHER CRITICAL INFO | This dataset has not been comprehesively updated or vetted for accuracy. Dataset does not include color curb regulations such as loading zones or blue zones. Does not include detailed information for metered parking such as cap color or operating hours, which is contained in a separate relational database maintained by SFpark. No parking any time blockfaces were verified using Google Streetview, and only for Mission Bay blockfaces (Feburary 2017). | D. ATTRIBUTES |Agency: The agency for which a Government Permit is allowed on that blockface;Regulation: Primary parking regulation applied to that blockface - Government permit, No overnight parking, RPP, Time limited, No parking any time, Unregulated. In the case of Residential Parking Permit areas, there is also a time limit for non-RPP holders, specified in the \"HrLimit\" field;Days: Days for which regulation is in effect;Hours: Hours for which regulation is in effect;HrLimit: Max number of hours allowed for parking on that blockface (unless RPP holder);PermitArea: Name of the RPP area, where appropriate;name: Either blockface number; street name; or for Oversized Vehicle regulations, street name, cross streets, and blockface direction;enacted: Month and year of MTA Board resolution passed",
+      "feature_count": 6894,
+      "path": "datasets/us/2026-09-29/san-francisco-sfmta-time-limited-parking.json.gz",
+      "bytes": 512905,
+      "sha256": "8565361024115d833319d73c76deab0a29a60b8152c97248a9d059e60e6bf849"
+    },
+    {
+      "layer": 10,
+      "name": "other-parking-regulations",
+      "source": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/10",
+      "description": "| A. METHODOLOGY | Mix of manual updates and data compilation.| B. UPDATE FREQUENCY | Updated as MTA Board resolutions are passed that impact parking regulations.| C. OTHER CRITICAL INFO | This dataset has not been comprehesively updated or vetted for accuracy. Dataset does not include color curb regulations such as loading zones or blue zones. Does not include detailed information for metered parking such as cap color or operating hours, which is contained in a separate relational database maintained by SFpark. No parking any time blockfaces were verified using Google Streetview, and only for Mission Bay blockfaces (Feburary 2017). | D. ATTRIBUTES |Agency: The agency for which a Government Permit is allowed on that blockface;Regulation: Primary parking regulation applied to that blockface - Government permit, No overnight parking, RPP, Time limited, No parking any time, Unregulated. In the case of Residential Parking Permit areas, there is also a time limit for non-RPP holders, specified in the \"HrLimit\" field;Days: Days for which regulation is in effect;Hours: Hours for which regulation is in effect;HrLimit: Max number of hours allowed for parking on that blockface (unless RPP holder);PermitArea: Name of the RPP area, where appropriate;name: Either blockface number; street name; or for Oversized Vehicle regulations, street name, cross streets, and blockface direction;enacted: Month and year of MTA Board resolution passed",
+      "feature_count": 871,
+      "path": "datasets/us/2026-09-29/san-francisco-sfmta-other-parking-regulations.json.gz",
+      "bytes": 75618,
+      "sha256": "1a253b5827f4b7d8b30be0d3786e98b3de4235c0b96816e33bbff0a5071a88c4"
+    },
+    {
+      "layer": 18,
+      "name": "color-curb",
+      "source": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/18",
+      "description": "All assets maintained by the Color Curb Program as of August 25, 2021.",
+      "feature_count": 17577,
+      "path": "datasets/us/2026-09-29/san-francisco-sfmta-color-curb.json.gz",
+      "bytes": 830871,
+      "sha256": "b0f7eae6418c55f1481c34d462fb712dba2dd4e85131961b5744dfd3307fa50c"
+    }
+  ]
+}
