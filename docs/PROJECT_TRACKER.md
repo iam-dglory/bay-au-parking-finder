@@ -10,7 +10,29 @@ Last updated: 29 September 2026 (Australia/Melbourne)
 - Waitlist data: private Supabase table `public.waitlist_signups`. Public roles can insert and cannot read, update or delete subscriber data.
 - Signup email delivery: database queue implemented; an email sending service is still required before messages can be delivered to `gopikaaravindoffl@gmail.com`.
 
-## Waitlist v2
+## Waitlist v3 — three-country early access
+
+The same public link now accepts early-access interest for Australia, India and the United States. The form stores only email, phone type and the country where the person drives most; it does not ask for a city or invent equal data coverage. The authenticated Supabase migration `20260929040000_waitlist_v3_countries.sql` was applied on 29 September. Existing v1/v2 responses remain unchanged, and duplicate v2/v3 emails are accepted by the form as already joined without creating a second row. The owner-notification queue handles v3 records but still needs an email sender to deliver alerts.
+
+| Form field | Stored column | Rule |
+| --- | --- | --- |
+| Email | `email` | Required, normalized to lower case |
+| Android / iPhone | `device` | Required: `android` or `iphone` |
+| Where do you drive most? | `country_code` | Required: `AU`, `IN` or `US` |
+
+Form metadata: `form_version=3`, `consent_version=2026-09-29`, database `created_at`. The previous `drives_in_melbourne` value is not sent by v3; historical v2 answers remain private. Do not commit subscriber rows or private workbook.
+
+### Coverage reality across the three countries
+
+| Country | App data available | Live occupancy / price limits |
+| --- | --- | --- |
+| Australia | Greater Melbourne catalog with 46,002 mapped bay records and 24,793 mapped area/zone records, plus council-sign/rule sources. | Current Melbourne council sensor readings apply only to exact matched published sensor bays; they do not cover every bay or all Australia. Eleven operator-priced records in the 26 Sep catalog. |
+| India | Chennai 128 bays / 593 areas; Bengaluru 102 / 1,379; Hyderabad 21 / 395. | No confirmed reusable current bay-sensor feed. 40 Chennai, 70 Bengaluru and 2 Hyderabad priced records are source-specific, not citywide tariffs. Other Indian cities do not have comparable coverage yet. |
+| United States | 54 state/territory OSM extracts with 1,530,539 mapped records, including 112,285 individually mapped spaces and 52,209 street-parking zones; San Francisco adds 16,450 official meter locations. | No nationwide live vacancy or complete sign inventory. SFMTA meters are mapped locations, not current availability. Prices are shown only from explicit source charges; a fee tag alone is not a tariff. |
+
+Counts are source records, not unique legal spaces or current vacancies. The app must continue to use neutral status when a reliable live reading is absent. See [coverage release](coverage-release-2026-09-26.md) and [US source audit](us-parking-coverage-2026-09-28.md).
+
+## Waitlist v2 (historical)
 
 | Form field | Stored column | Rule |
 | --- | --- | --- |
