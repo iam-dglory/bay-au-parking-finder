@@ -91,6 +91,12 @@ export function Guide({ location }: { location: { lat: number; lng: number; coun
             )
           })}
         </div>
+
+        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <p className="font-semibold text-slate-900">Privacy &amp; your data</p>
+          <p className="mt-1">See what Bay stores and how to request access or deletion.</p>
+          <a className="mt-2 inline-block font-semibold text-blue-700 underline underline-offset-2" href="./privacy-policy.html">Read Bay Privacy Policy</a>
+        </div>
       </div>
     </div>
   )

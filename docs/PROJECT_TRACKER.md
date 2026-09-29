@@ -2,6 +2,12 @@
 
 Last updated: 29 September 2026 (Australia/Melbourne)
 
+## Privacy policy — 29 September 2026
+
+- Replaced the legacy policy with a standalone, mobile-friendly 15-section Bay Privacy Policy and kept the waitlist's `#waitlist` link working. Source: `public/privacy-policy.html` (also mirrored at repository root). The Guide now links to it from within the app. The policy discloses stored search coordinates, anonymous usage records, current and historical waitlist fields, third-party map/geocoding services, and the fact that uploaded sign-photo URLs are public before moderation.
+- Based on the current app and Supabase migrations; no subscriber data was placed in Git. The policy does not claim automatic deletion periods or that all sign photos stay private during review.
+- Before representing the Android release as fully Play-compliant, reconcile the Play Console Data safety form with this policy, confirm an in-app account/data-deletion path for anonymous sessions, verify the actual deletion workflow and provider processing regions, and address the public sign-photo bucket. A policy page alone cannot implement these controls.
+
 ## Current release state
 
 - Source branch: `main`; Android release is in Google Play internal testing.
