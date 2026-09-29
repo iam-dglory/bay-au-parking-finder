@@ -1,6 +1,6 @@
 # Bay project tracker
 
-Last updated: 28 September 2026 (Australia/Melbourne)
+Last updated: 29 September 2026 (Australia/Melbourne)
 
 ## Current release state
 
@@ -21,6 +21,9 @@ Last updated: 28 September 2026 (Australia/Melbourne)
 Form metadata: `form_version=2`, `consent_version=2026-09-25`, database `created_at`. Name, suburb and driving frequency were removed from the public form. QA addresses on reserved example domains do not enter the notification queue.
 
 ## 28 September US catalog expansion
+
+- 29 Sep follow-up: added official SFMTA meter-location layer for San Francisco. Of 17,310 active general-use query rows, 16,450 without additional signage are published; 860 special-signage rows are archived only. The city-centre 500 m search now returns 1,024 meter locations and 78 OSM parking areas/zones. M clusters remain distinct from P areas. Meter locations do not establish current vacancy, legal parking hours, or price. Raw source, 3 tiles and manifest are registered in the dataset ledger. [Source and limitations](us-parking-coverage-2026-09-28.md).
+- The phone map groups dense meter locations, and the US list puts street locations before parking areas. A failed meter catalog now shows a load error instead of silently presenting incomplete coverage. Validation: 75 frontend tests, lint, production build, checksum audit and 390 × 844 phone map/list check passed.
 
 - Added 54 state/territory-source extracts: 1,530,539 published OSM parking records across 36,292 compressed geographic tiles. This comprises 112,285 individually mapped space records and 1,418,254 area/zone records, including 52,209 mapped street-parking zones. Records can overlap at state boundaries and are not a count of physically available spaces. The 54 filtered parking-only source archives, source PBF checksums, published tiles and coverage audit are retained. [Source, scope and rebuild procedure](us-parking-coverage-2026-09-28.md).
 - US maps separate mapped areas, street-parking zones and individually mapped spaces. Spaces inside mapped facilities are grouped under the facility marker. The displayed count is mapped places, never claimed vacancies.

@@ -307674,5 +307674,59 @@
     "sha256": "862470e89fc17e351737c6f6af6d7517bdd8f4ca8e0e1b78c24c45f5ad48e1b9",
     "generated_at": "2026-09-28T12:47:57.312371+00:00",
     "provenance_note": "Filtered from Geofabrik state OSM PBF; source SHA-256 and download URL are in each state manifest. OSM \u00a9 contributors, ODbL 1.0."
+  },
+  {
+    "path": "datasets/us/2026-09-28/san-francisco-sfmta-general-meters.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_source_archive",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 558663,
+    "sha256": "cf646c021228758e22cdb74ec9cd65437778b0f923d15f2e0a7e786b1213079b",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "datasets/us/2026-09-28/san-francisco-sfmta-general-meters-manifest.json",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_source_archive",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 981,
+    "sha256": "731b782ac2dfecb84bf7a8013bc27c1ac80c4017a3775f2231cd6cbd08b00c62",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "public/data/sf-meters/index.json",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_catalog",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 399,
+    "sha256": "768fe261102360926ce1fe76ac1a73f6880cd06fa24bf0cea4cf968fdac45761",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "public/data/sf-meters/377_-1224.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_catalog",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 86422,
+    "sha256": "137510737cb61eedc51ba499c31c3863bf7e3a1b77533221fb4e67aa518a78ff",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "public/data/sf-meters/377_-1225.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_catalog",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 461975,
+    "sha256": "fca4d30bed1b60862e55ebd406a1b2da1077ab72a3dca37ef450f5f609548517",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
+  },
+  {
+    "path": "public/data/sf-meters/378_-1225.json.gz",
+    "source_url": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+    "kind": "sfmta_meter_catalog",
+    "fetched_at": "2026-09-28T23:58:27.725022+00:00",
+    "bytes": 29143,
+    "sha256": "55a9903990dd99497cbada1679e3032516f9ee27a65656947d1729749a2d8d38",
+    "provenance_note": "SFMTA active general-use on-street meter inventory; additional-signage rows remain only in the raw archive. No live vacancy, sign-plate rules, or current rates."
   }
 ]

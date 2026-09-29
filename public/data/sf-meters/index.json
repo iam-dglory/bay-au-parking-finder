@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "tile_size": 0.1,
+  "tiles": [
+    "377_-1224",
+    "377_-1225",
+    "378_-1225"
+  ],
+  "source": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+  "collected_at": "2026-09-28T23:58:27.725022+00:00",
+  "coverage_note": "General-use SFMTA meter locations only; no sign-plate inventory, current price, legal schedule, or live vacancy."
+}

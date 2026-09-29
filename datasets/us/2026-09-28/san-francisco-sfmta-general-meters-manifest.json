@@ -1,0 +1,33 @@
+{
+  "source": "https://services.sfmta.com/arcgis/rest/services/Parking/parking/FeatureServer/11",
+  "where": "ACTIVE_METER_FLAG='M' AND CAP_COLOR='Grey' AND ON_OFFSTREET_TYPE='ON' AND JURISDICTION='SFMTA'",
+  "fields": [
+    "OBJECTID",
+    "POST_ID",
+    "MS_PAY_STATION_ID",
+    "MS_SPACE_NUM",
+    "METER_TYPE",
+    "ACTIVE_METER_FLAG",
+    "CAP_COLOR",
+    "STREET_NAME",
+    "STREET_NUM",
+    "LATITUDE",
+    "LONGITUDE",
+    "LAST_UPD_DT",
+    "SIGNAGE"
+  ],
+  "collected_at": "2026-09-28T23:58:27.725022+00:00",
+  "raw_count": 17310,
+  "published_count": 16450,
+  "skipped": {
+    "additional_signage": 860
+  },
+  "tiles": {
+    "377_-1225": 13019,
+    "378_-1225": 864,
+    "377_-1224": 2567
+  },
+  "archive": "datasets/us/2026-09-28/san-francisco-sfmta-general-meters.json.gz",
+  "archive_sha256": "cf646c021228758e22cdb74ec9cd65437778b0f923d15f2e0a7e786b1213079b",
+  "meaning": "Mapped general-use parking meter locations, not signed parking permissions or occupancy."
+}

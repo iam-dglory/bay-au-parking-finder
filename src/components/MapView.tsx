@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Circle, Polygon, Popup, useMap, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
@@ -47,11 +47,56 @@ function carParkIcon() {
   })
 }
 
+function meterIcon() {
+  return L.divIcon({
+    className: '',
+    html: `<div title="Mapped SFMTA parking meter · availability on arrival" aria-label="Mapped SFMTA parking meter" style="width:30px;height:30px;border-radius:9px;background:#475569;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;font-family:sans-serif">M</div>`,
+    iconSize: [30, 30], iconAnchor: [15, 15],
+  })
+}
+
+function meterGroupIcon(count: number) {
+  const label = `${count} SFMTA meter locations · zoom in for details`
+  return L.divIcon({className: '', iconSize: [44, 44], iconAnchor: [22, 22],
+    html: `<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:12px;background:#475569;color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;align-items:center;justify-content:center;gap:2px;font:700 11px/1 sans-serif"><span>M</span><span>${count}</span></div>`})
+}
+
 function clusterIcon(cluster: { getChildCount(): number }, areas = false) {
   const count = cluster.getChildCount()
   const label = `${count} ${areas ? 'parking areas' : 'mapped parking spots'} · zoom in for details`
   // Cluster colour describes the layer, not its size or presumed vacancy.
   return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:${areas ? '12px' : '50%'};background:${areas ? '#2563eb' : '#475569'};color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px/1.1 sans-serif">${areas ? '<span style="font-size:10px">P</span>' : ''}${count}</div>`})
+}
+
+/** Aggregate dense meter inventory before making Leaflet markers. At street
+ * zoom, only markers in the visible map bounds are mounted on the phone. */
+function SfMeterMarkers({spots, onSelectSpot}: {
+  spots: (ParkingSpot & {status: SpotStatus})[]
+  onSelectSpot?: (spot: ParkingSpot & {status: SpotStatus}) => void
+}) {
+  const map = useMap()
+  const [view, setView] = useState(() => ({zoom: map.getZoom(), bounds: map.getBounds()}))
+  useMapEvents({zoomend: () => setView({zoom: map.getZoom(), bounds: map.getBounds()}),
+    moveend: () => setView({zoom: map.getZoom(), bounds: map.getBounds()})})
+  const markers = useMemo(() => {
+    const bounds = view.bounds.pad(.3)
+    const visible = spots.filter(spot => bounds.contains([spot.lat, spot.lng]))
+    if (view.zoom >= 19) return visible.map(spot => ({lat: spot.lat, lng: spot.lng, spot, count: 1}))
+    const cell = view.zoom <= 15 ? .003 : view.zoom === 16 ? .002 : view.zoom === 17 ? .0012 : .00035
+    const bins = new Map<string, typeof visible>()
+    for (const spot of visible) {
+      const key = `${Math.floor(spot.lat / cell)}_${Math.floor(spot.lng / cell)}`
+      const group = bins.get(key)
+      if (group) group.push(spot)
+      else bins.set(key, [spot])
+    }
+    return [...bins.values()].map(group => ({lat: group.reduce((n, spot) => n + spot.lat, 0) / group.length,
+      lng: group.reduce((n, spot) => n + spot.lng, 0) / group.length,
+      spot: group.length === 1 ? group[0] : null, count: group.length}))
+  }, [spots, view])
+  return <>{markers.map((marker, i) => <Marker key={marker.spot?.id ?? `meter-group-${i}`}
+    position={[marker.lat, marker.lng]} icon={marker.spot ? meterIcon() : meterGroupIcon(marker.count)}
+    eventHandlers={{click: () => marker.spot ? onSelectSpot?.(marker.spot) : map.flyTo([marker.lat, marker.lng], Math.min(19, view.zoom + 2))}} />)}</>
 }
 
 function pickIcon() {
@@ -128,8 +173,10 @@ export function MapView({
   carParks?: CarPark[]
 }) {
   const mePosition = myLocation ?? center
+  const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
+  const otherSpots = spots.filter(spot => spot.catalog?.source_name !== 'SFMTA meter inventory')
   return (
-    <MapContainer center={[center.lat, center.lng]} zoom={zoom} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
+    <MapContainer center={[center.lat, center.lng]} zoom={zoom} maxZoom={19} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
       <ResizeMap />
       <MapOrientation />
       <TileLayer
@@ -145,8 +192,9 @@ export function MapView({
         />
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
+      <SfMeterMarkers spots={meterSpots} onSelectSpot={onSelectSpot} />
       <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false} disableClusteringAtZoom={18}>
-        {spots.map((spot) => (
+        {otherSpots.map((spot) => (
           <Marker
             key={spot.id}
             position={[spot.lat, spot.lng]}

@@ -46,4 +46,37 @@ describe('US mapped parking', () => {
     const { usaNearby } = await import('./usaParking')
     expect((await usaNearby(row.lat, row.lng, 100)).map(area => area.id)).toEqual([row.id])
   })
+
+  it('adds SFMTA meter locations without claiming vacancy or discarding mapped areas', async () => {
+    vi.resetModules()
+    const lat = 37.7749, lng = -122.4194
+    const key = `${Math.floor(lat / .1)}_${Math.floor(lng / .1)}`
+    const area = { id: 'osm:way:200', kind: 'area', country: 'US', lat, lng,
+      address_text: 'Parking area', distance_m: 0, occupancy: 'not_provided' }
+    const meter = { id: 'sfmta:meter:300', kind: 'bay', country: 'US', lat, lng,
+      address_text: 'Metered parking', distance_m: 0, occupancy: 'not_provided',
+      source_name: 'SFMTA meter inventory' }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url.endsWith('usa/index.json')) return Response.json({ tile_size: .1, states: { california: [key] } })
+      if (url.endsWith('sf-meters/index.json')) return Response.json({ tile_size: .1, tiles: [key] })
+      if (url.includes('sf-meters/')) return Response.json([meter])
+      return Response.json([area])
+    }))
+    const { usaNearby } = await import('./usaParking')
+    const results = await usaNearby(lat, lng, 500)
+    expect(results.map(row => row.id)).toEqual([area.id, meter.id])
+    expect(results.every(row => row.occupancy === 'not_provided')).toBe(true)
+  })
+
+  it('surfaces a missing SF meter layer instead of silently showing incomplete coverage', async () => {
+    vi.resetModules()
+    const lat = 37.7749, lng = -122.4194
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url.endsWith('usa/index.json')) return Response.json({ tile_size: .1, states: {} })
+      if (url.endsWith('sf-meters/index.json')) return new Response(null, { status: 503 })
+      throw new Error(`Unexpected tile: ${url}`)
+    }))
+    const { usaNearby } = await import('./usaParking')
+    await expect(usaNearby(lat, lng, 500)).rejects.toThrow('San Francisco meter locations could not load')
+  })
 })

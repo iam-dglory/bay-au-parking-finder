@@ -16,6 +16,13 @@ export function SpotCard({
   spot: ParkingSpot & { status: SpotStatus }
   onClick: () => void
 }) {
+  if (spot.catalog?.source_name === 'SFMTA meter inventory') {
+    return <button onClick={onClick} className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-200 hover:shadow-lg">
+      <p className="font-semibold text-slate-900">{spot.address_text}</p>
+      <p className="mt-1 text-sm text-slate-500">{formatDistance(spot.distance_m)} away · Availability on arrival</p>
+      <p className="mt-2 text-xs font-medium text-slate-600">Meter mapped by SFMTA. Check the street sign for parking hours and current price.</p>
+    </button>
+  }
   return (
     <button
       onClick={onClick}

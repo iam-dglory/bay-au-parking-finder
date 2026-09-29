@@ -123,6 +123,19 @@ export function Home({
     setDestResults([])
   }
 
+  const areaList = <>
+    {carParks.length>0 && <p className="text-xs font-semibold text-slate-500">Parking areas · {Math.min(areaLimit,carParks.length)} of {carParks.length} · spot filters apply to individual bays</p>}
+    {carParks.slice(0,areaLimit).map(area=><article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-4"><ParkingAreaDetails area={area} compact /></article>)}
+    {carParks.length > areaLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setAreaLimit(n=>n+20)}>Show more parking areas</button>}
+  </>
+  const spotList = <>
+    {ranked.length>0 && <p className="pt-3 text-xs font-semibold text-slate-500">{usa ? 'Mapped street parking' : 'Parking spots'} · {Math.min(spotLimit,ranked.length)} of {ranked.length}</p>}
+    {ranked.slice(0,spotLimit).map((spot) => (
+      <SpotCard key={spot.id} spot={spot} onClick={() => setSelectedSpot(spot)} />
+    ))}
+    {ranked.length > spotLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setSpotLimit(n=>n+30)}>Show more parking spots</button>}
+  </>
+
   if (!expanded) {
     return (
       <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc] text-slate-900">
@@ -250,7 +263,7 @@ export function Home({
           </button>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-slate-900">{loading && !updatedAt ? 'Finding parking…' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
+          <span className="text-sm font-semibold text-slate-900">{(loading || areasLoading) && !updatedAt && ranked.length + carParks.length === 0 ? 'Finding parking…' : (error || areaError) && ranked.length + carParks.length === 0 ? 'Parking data unavailable' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
@@ -260,7 +273,7 @@ export function Home({
             <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} availability on arrival</span> · Blue P: parking areas · numbered groups: zoom in</p>
             {!usa && <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>}
             {india && <p>Chennai, Bengaluru and Hyderabad: mapped bays and areas from OpenStreetMap. Published operator prices appear where matched. Coverage is partial; live occupancy is not connected.</p>}
-            {usa && <p>US locations are mapped parking areas and some individually mapped spaces. This map does not provide live vacancy or complete parking rules. Check signs and prices on arrival.</p>}
+            {usa && <p>Blue P pins are parking areas. In San Francisco, M pins are SFMTA mapped meter locations. Neither confirms a free space or the current price; check the meter and street signs on arrival.</p>}
             <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
           </div>
         </details>
@@ -307,15 +320,8 @@ export function Home({
         ) : (
           <div className="h-full space-y-2 overflow-y-auto p-4">
             {(loading || areasLoading) && <p className="text-center text-sm text-slate-400">Loading…</p>}
-            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking in this search. Try a wider radius in Filters.'}</p>}
-            {carParks.length>0 && <p className="text-xs font-semibold text-slate-500">Parking areas · {Math.min(areaLimit,carParks.length)} of {carParks.length} · spot filters apply to individual bays</p>}
-            {carParks.slice(0,areaLimit).map(area=><article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-4"><ParkingAreaDetails area={area} compact /></article>)}
-            {carParks.length > areaLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setAreaLimit(n=>n+20)}>Show more parking areas</button>}
-            {ranked.length>0 && <p className="pt-3 text-xs font-semibold text-slate-500">Parking spots · {Math.min(spotLimit,ranked.length)} of {ranked.length}</p>}
-            {ranked.slice(0,spotLimit).map((spot) => (
-              <SpotCard key={spot.id} spot={spot} onClick={() => setSelectedSpot(spot)} />
-            ))}
-            {ranked.length > spotLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setSpotLimit(n=>n+30)}>Show more parking spots</button>}
+            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{error || areaError ? 'Parking data could not load. Use Retry above.' : vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking in this search. Try a wider radius in Filters.'}</p>}
+            {usa ? <>{spotList}{areaList}</> : <>{areaList}{spotList}</>}
           </div>
         )}
       </div>
