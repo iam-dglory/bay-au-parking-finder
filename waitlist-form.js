@@ -1,9 +1,9 @@
-export function signupPayload(email, device, melbourne) {
+export function signupPayload(email, device, country) {
   email=email.trim().toLowerCase()
   if(email.length>254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a valid email address.')
   if(!['android','iphone'].includes(device)) throw new Error('Choose Android or iPhone.')
-  if(!['yes','no'].includes(melbourne)) throw new Error('Choose whether you drive in Melbourne.')
-  return {email,device,drives_in_melbourne:melbourne==='yes',form_version:2,consent_version:'2026-09-25'}
+  if(!['AU','IN','US'].includes(country)) throw new Error('Choose where you drive most.')
+  return {email,device,country_code:country,form_version:3,consent_version:'2026-09-29'}
 }
 export const WAITLIST_URL='https://iam-dglory.github.io/bay-au-parking-finder/waitlist.html'
 
@@ -15,7 +15,7 @@ if(typeof document!=='undefined') {
     error.textContent=''
     try {
       const data=new FormData(form)
-      const payload=signupPayload(data.get('email'),data.get('device'),data.get('melbourne'))
+      const payload=signupPayload(data.get('email'),data.get('device'),data.get('country'))
       button.disabled=true;button.textContent='Saving your spot…'
       const response=await fetch('https://ezwiagssiuvmhayvsmbk.supabase.co/rest/v1/waitlist_signups',{
         method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah',Prefer:'return=minimal'},body:JSON.stringify(payload),
@@ -34,7 +34,7 @@ if(typeof document!=='undefined') {
   })
   document.querySelector('#shareLink')?.addEventListener('click',async()=>{
     try {
-      if(navigator.share)await navigator.share({title:'Bay · Find parking. Faster.',text:'Your car deserves a spot. You deserve your time back. Join Bay’s Melbourne early access.',url:WAITLIST_URL})
+      if(navigator.share)await navigator.share({title:'Bay · Find parking. Faster.',text:'Your car deserves a spot. You deserve your time back. Join Bay early access.',url:WAITLIST_URL})
       else document.querySelector('#shareStatus').textContent='Copy the link and paste it into an Instagram message or story.'
     } catch(err) {if(err.name!=='AbortError')document.querySelector('#shareStatus').textContent='Copy the link to share Bay.'}
   })
