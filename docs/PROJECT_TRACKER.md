@@ -22,6 +22,8 @@ The same public link now accepts early-access interest for Australia, India and 
 
 Form metadata: `form_version=3`, `consent_version=2026-09-29`, database `created_at`. The previous `drives_in_melbourne` value is not sent by v3; historical v2 answers remain private. Do not commit subscriber rows or private workbook.
 
+29 Sep verification: source implementation commit `d66edf61`; Pages commit `af737af4`. The served waitlist has all three country choices. At a 390 × 844 phone viewport it scrolls vertically and has no horizontal overflow. A reserved example-domain QA signup submitted through the live form stored `device=iphone`, `country_code=IN`, `form_version=3` with no Melbourne value and no owner-notification queue item. The private workbook was refreshed from the authenticated table: 1 genuine signup, 3 QA rows excluded; the hourly refresh automation now understands v3 and preserves the historical Melbourne column. No real subscriber was contacted. The sender connection is still outstanding.
+
 ### Coverage reality across the three countries
 
 | Country | App data available | Live occupancy / price limits |
@@ -31,6 +33,8 @@ Form metadata: `form_version=3`, `consent_version=2026-09-29`, database `created
 | United States | 54 state/territory OSM extracts with 1,530,539 mapped records, including 112,285 individually mapped spaces and 52,209 street-parking zones; San Francisco adds 16,450 official meter locations. | No nationwide live vacancy or complete sign inventory. SFMTA meters are mapped locations, not current availability. Prices are shown only from explicit source charges; a fee tag alone is not a tariff. |
 
 Counts are source records, not unique legal spaces or current vacancies. The app must continue to use neutral status when a reliable live reading is absent. See [coverage release](coverage-release-2026-09-26.md) and [US source audit](us-parking-coverage-2026-09-28.md).
+
+29 Sep integrity recheck: 73,413 Australia/India regional catalog records, 1,015 Melbourne tiles, 21,541 grouped Melbourne spaces, price/access rules, source IDs and sensor-versus-snapshot semantics passed `verify_regional_catalogs.py`. The US verifier passed all 54 extracts, 1,530,539 records and 36,292 published tiles. All 75 frontend tests, lint and production build passed. These checks verify stored data and UI behavior, not real-world vacancy accuracy or complete national sign coverage.
 
 ## Waitlist v2 (historical)
 
