@@ -1,6 +1,12 @@
 # Bay project tracker
 
-Last updated: 29 September 2026 (Australia/Melbourne)
+Last updated: 1 October 2026 (Australia/Melbourne)
+
+## Android closed-test preparation — 1 October 2026
+
+- Built Bay `1.1.0` (Android version code `2`) from source commit `45e8bff9` and the current web assets. The signed local bundle is `/Users/gopika/Documents/Codex/2026-09-24/c/outputs/android/bay-1.1.0-code2-2026-10-01.aab` outside Git; SHA-256 `beb9b0656f8f27b90c053e4258ca923bbe8ce2a3e54384b9511f464c7222c088`. The upload certificate SHA-256 matches Play Console's registered upload key (`A2:03:2D:9A:BB:4E:F3:B9:02:D7:1C:D2:80:BC:42:0E:46:86:55:3D:CC:E3:79:6E:3F:1E:BD:35:1F:A1:08:87`). Keep the private keystore and properties out of Git.
+- All 75 tests, lint, production web build and signed Gradle AAB build passed. The AAB contains the newly built web assets. Play Console's closed-test track now targets Australia, India and the United States; its tester setup uses the existing nine-person `Bay Internal Testers` list and `gopikaaravindoffl@gmail.com` for feedback. The release name and en-US notes are saved as a draft.
+- At this snapshot the AAB has **not yet been uploaded**, so the closed-test release cannot be sent to Google for review or joined by testers. Chrome's ChatGPT extension requires “Allow access to file URLs” for its file upload flow. Play Console requires 12 testers opted in continuously for at least 14 days before a production-access application; currently 0 are opted in. This is a tester/account requirement, not a phone-download count.
 
 ## Privacy policy — 29 September 2026
 
