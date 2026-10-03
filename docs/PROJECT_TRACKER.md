@@ -1,12 +1,13 @@
 # Bay project tracker
 
-Last updated: 1 October 2026 (Australia/Melbourne)
+Last updated: 3 October 2026 (Australia/Melbourne)
 
 ## Android closed test — 1 October 2026
 
 - Built Bay `1.1.0` (Android version code `2`) from source commit `45e8bff9` and the current web assets. The signed local bundle is `/Users/gopika/Documents/Codex/2026-09-24/c/outputs/android/bay-1.1.0-code2-2026-10-01.aab` outside Git; SHA-256 `beb9b0656f8f27b90c053e4258ca923bbe8ce2a3e54384b9511f464c7222c088`. The upload certificate SHA-256 matches Play Console's registered upload key (`A2:03:2D:9A:BB:4E:F3:B9:02:D7:1C:D2:80:BC:42:0E:46:86:55:3D:CC:E3:79:6E:3F:1E:BD:35:1F:A1:08:87`). Keep the private keystore and properties out of Git.
 - All 75 tests, lint, production web build and signed Gradle AAB build passed. The AAB contains the newly built web assets. Play Console's closed-test track targets Australia, India and the United States; its tester setup uses the selected nine-person `Bay Internal Testers` list and `gopikaaravindoffl@gmail.com` for feedback.
 - The signed AAB was uploaded to Play Console's **Alpha closed-testing** release, and Play accepted version code `2` / version `1.1.0` (target SDK 36). The release review found no blocking errors; it showed two nonblocking warnings about missing deobfuscation and native debug-symbol files. On 1 October, all 14 pending release, country, tester, listing and app-content changes were submitted and subsequently **published**. Play now shows the track as **Active** and Bay 1.1.0 Closed Beta as **Available to selected testers**, released 1 October at 4:14 pm. The web join link is `https://play.google.com/apps/testing/au.com.bayparking.app`; the Play listing is `https://play.google.com/store/apps/details?id=au.com.bayparking.app`. The Dashboard currently shows **0 opted-in testers**. Before applying for production access, at least 12 tester accounts must remain opted in continuously for 14 days; nine addresses are currently on the selected list. Adding an address or installing on multiple phones does not replace opt-in.
+- On 3 October, the Google Group **Bay Android Testers** was created at `https://groups.google.com/g/bay-parking-beta-testers` (`bay-parking-beta-testers@googlegroups.com`) with requests to join enabled. Alpha tester access was changed from the nine-person email list to this group and submitted to Google for review. Once that change is approved, people must first join the group, then opt in at `https://play.google.com/apps/testing/au.com.bayparking.app` using the same Google account.
 
 ## Privacy policy — 29 September 2026
 
