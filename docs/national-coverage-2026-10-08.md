@@ -28,6 +28,69 @@ area is excluded as well.
 - No live vacancy colour unless a current council/operator feed provides it.
   The national OSM baseline uses “availability on arrival”.
 
+## Published coverage — 8 October 2026
+
+The following counts are from the completed country imports and their verified manifests. A zero is retained rather than being inferred: the India source contained no eligible mapped parking feature in Lakshadweep. Country-wide coverage means Bay can search the current mapped baseline in every defined state/territory boundary; it does **not** make the source a complete parking, tariff, sign or sensor inventory.
+
+### India
+
+| State / territory | Source-backed parking records |
+| --- | ---: |
+| Andaman and Nicobar Islands | 16 |
+| Andhra Pradesh | 382 |
+| Arunachal Pradesh | 18 |
+| Assam | 42 |
+| Bihar | 87 |
+| Chandigarh | 138 |
+| Chhattisgarh | 105 |
+| Dadra and Nagar Haveli and Daman and Diu | 10 |
+| Delhi | 602 |
+| Goa | 527 |
+| Gujarat | 559 |
+| Haryana | 428 |
+| Himachal Pradesh | 188 |
+| Jammu and Kashmir | 176 |
+| Jharkhand | 58 |
+| Karnataka | 1,766 |
+| Kerala | 2,740 |
+| Ladakh | 47 |
+| Lakshadweep | 0 |
+| Madhya Pradesh | 212 |
+| Maharashtra | 1,410 |
+| Manipur | 11 |
+| Meghalaya | 68 |
+| Mizoram | 1 |
+| Nagaland | 20 |
+| Odisha | 124 |
+| Puducherry | 84 |
+| Punjab | 299 |
+| Rajasthan | 344 |
+| Sikkim | 46 |
+| Tamil Nadu | 1,022 |
+| Telangana | 518 |
+| Tripura | 5 |
+| Uttar Pradesh | 484 |
+| Uttarakhand | 243 |
+| West Bengal | 287 |
+
+Published map records: **12,992** across 2,010 nearby-loadable tiles. These state counts include mapped child bays that are grouped beneath their parking area on the map, so they are not a count of visible pins, spaces, vacancies or legal entitlement.
+
+### Australia
+
+| State / territory | Source-backed parking records |
+| --- | ---: |
+| Australian Capital Territory | 13,973 |
+| New South Wales | 62,130 |
+| Northern Territory | 5,303 |
+| Other Territories | 113 |
+| Queensland | 35,877 |
+| South Australia | 21,275 |
+| Tasmania | 5,869 |
+| Victoria | 83,499 |
+| Western Australia | 25,423 |
+
+Published map records: **138,187** across 6,869 nearby-loadable tiles. These state counts include mapped child bays that are grouped beneath their parking area on the map, so they are not a count of visible pins, spaces, vacancies or legal entitlement.
+
 ## Source inventory
 
 | Source | Stored record | Used in the app | Boundary |

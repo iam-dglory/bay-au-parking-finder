@@ -38,7 +38,10 @@ export function Home({
   onSavePlace: (kind: SavedPlaceKind) => void
   onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
-  const [expanded, setExpanded] = useState(false)
+  // The map is the home screen: drivers should not need an extra tap before
+  // seeing nearby parking. The lightweight welcome panel remains available via
+  // the Bay mark in the map header.
+  const [expanded, setExpanded] = useState(true)
   const [radiusM, setRadiusM] = useState(1000)
   const [vacantOnly, setVacantOnly] = useState(false)
   const [freeOnly, setFreeOnly] = useState(false)
@@ -154,15 +157,15 @@ export function Home({
 
         <div className="flex flex-1 flex-col items-center gap-5 px-6 py-7 text-center">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Parking intelligence, in one place</div>
-            <p className="text-2xl font-semibold tracking-tight text-slate-950">Your next stop starts here.</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500">Explore nearby parking, check availability and understand the rules before you arrive.</p>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Ready when you are</div>
+            <p className="text-2xl font-semibold tracking-tight text-slate-950">Find parking without the circling.</p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">Start nearby, search a destination, or jump to a saved place.</p>
           </div>
 
           <div className="flex h-36 shrink-0 w-full max-w-sm flex-col items-center justify-center rounded-3xl border border-slate-200 bg-gradient-to-br from-blue-50 to-white p-5 shadow-xl shadow-slate-200/80">
             <MapPin className="h-7 w-7 text-blue-600" strokeWidth={1.8} />
-            <p className="mt-2 text-sm font-semibold text-slate-800">Parking map ready</p>
-            <p className="mt-1 text-xs text-slate-500">Open it when you are ready to search.</p>
+            <p className="mt-2 text-sm font-semibold text-slate-800">Parking map</p>
+            <p className="mt-1 text-xs text-slate-500">Areas, prices and live availability where a source provides it.</p>
           </div>
 
           <div>
@@ -175,7 +178,7 @@ export function Home({
             className="flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 font-semibold text-white shadow-xl shadow-blue-600/20 transition hover:bg-blue-700"
           >
             <LocateFixed className="h-4 w-4" strokeWidth={2} />
-            Find parking near me
+            Open parking map
           </button>
           <button onClick={onChangeLocation} className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-blue-700">
             <Pencil className="h-3.5 w-3.5 text-slate-400" strokeWidth={2} />
@@ -188,7 +191,7 @@ export function Home({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden overscroll-y-contain">
-      <div className="shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
+      <div className="shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-2.5 shadow-sm backdrop-blur">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button onClick={() => setExpanded(false)} aria-label="Back to home">
@@ -293,7 +296,7 @@ export function Home({
           <div className="space-y-2 rounded-xl bg-slate-50 p-3">
             <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} availability on arrival</span> · Blue P: parking areas · numbered groups: zoom in</p>
             {!usa && <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>}
-            {india && <p>Chennai, Bengaluru and Hyderabad: mapped bays and areas from OpenStreetMap. Published operator prices appear where matched. Coverage is partial; live occupancy is not connected.</p>}
+            {india && <p>Parking areas are mapped from reviewed local and map sources. Prices appear only where a source provides them. Live availability is shown only when a current source is connected.</p>}
             {usa && <p>Blue P pins are parking areas. In San Francisco, M pins are SFMTA mapped meter locations. Neither confirms a free space or the current price; check the meter and street signs on arrival.</p>}
             <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
           </div>

@@ -23,10 +23,14 @@ def verify(country):
         assert row.get('pricing_source_url') and row.get('pricing_checked_at')
         assert math.isfinite(tariff['amount']) and tariff['amount']>=0 and tariff['period']
   assert len(rows)==index['records']
-  states={r['state'] for r in rows}; assert states==set(index['states'])
+  states={r['state'] for r in rows}
+  declared=index.get('states', {})
+  assert states <= set(declared), 'record state missing from index'
+  assert states == {state for state, count in declared.items() if count > 0}, 'state counts do not match populated boundaries'
+  assert all(isinstance(count, int) and count >= 0 for count in declared.values()), 'invalid state count'
   manifest=read(next((ROOT/f'datasets/{country}').glob('*/'+country+'-coverage-manifest.json')))
   assert manifest['records']==len(rows) and manifest['country_code']==expected
-  return {'country':country,'records_checked':len(rows),'tiles_checked':len(index['tiles']),'states_or_territories':len(states),'priced_records':sum(bool(r.get('tariffs')) for r in rows),'status':'passed'}
+  return {'country':country,'records_checked':len(rows),'tiles_checked':len(index['tiles']),'populated_states_or_territories':len(states),'declared_state_or_territory_boundaries':len(declared),'zero_record_boundaries':sorted(state for state, count in declared.items() if count == 0),'priced_records':sum(bool(r.get('tariffs')) for r in rows),'status':'passed'}
 if __name__=='__main__':
  parser=argparse.ArgumentParser();parser.add_argument('--country',choices=sorted(EXPECTED));args=parser.parse_args()
  print(json.dumps(verify(args.country),indent=2))

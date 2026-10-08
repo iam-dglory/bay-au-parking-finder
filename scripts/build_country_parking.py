@@ -24,6 +24,7 @@ import re
 import shutil
 import subprocess
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any
 
@@ -127,12 +128,17 @@ def contains(point: tuple[float, float], polygon: list[list[float]]) -> bool:
     return inside
 
 
+def normalise_state_name(value: str) -> str:
+    """Keep the published state labels readable while retaining the source
+    boundary file unchanged for provenance."""
+    return ''.join(char for char in unicodedata.normalize('NFKD', value) if not unicodedata.combining(char))
+
 def load_states(path: Path):
     collection = json.loads(path.read_text())
     states = []
     for feature in collection['features']:
         geometry = shape(feature['geometry'])
-        states.append((feature['properties']['shapeName'], geometry.bounds, prep(geometry)))
+        states.append((normalise_state_name(feature['properties']['shapeName']), geometry.bounds, prep(geometry)))
     return states
 
 
@@ -369,8 +375,9 @@ def build(country: str, local_pbf: Path | None) -> None:
         shutil.rmtree(public_dir)
     for key, rows in tiles.items():
         write_json_gz(public_dir / f'{key}.json.gz', rows)
+    state_counts = {name: by_state.get(name, 0) for name, _, _ in states}
     index = {'schema_version': 1, 'tile_size': TILE_SIZE, 'country': config['code'], 'collected_at': DATE,
-             'tiles': sorted(tiles), 'states': dict(sorted(by_state.items())), 'records': sum(map(len, tiles.values())),
+             'tiles': sorted(tiles), 'states': dict(sorted(state_counts.items())), 'records': sum(map(len, tiles.values())),
              'license': 'OpenStreetMap © contributors, ODbL 1.0',
              'coverage_note': 'Mapped parking locations only. This is not a complete inventory, a legal sign record, price guarantee, or live occupancy feed.'}
     write_json(public_dir / 'index.json', index)
@@ -379,7 +386,7 @@ def build(country: str, local_pbf: Path | None) -> None:
                 'source_pbf_bytes': raw_pbf.stat().st_size, 'source_pbf_sha256': sha256(raw_pbf),
                 'boundary_url': config['boundary_url'], 'boundary_path': str(boundary.relative_to(ROOT)), 'boundary_license': config['boundary_license'],
                 'parking_archive': str(archive.relative_to(ROOT)), 'parking_archive_bytes': archive.stat().st_size, 'parking_archive_sha256': sha256(archive),
-                'records': index['records'], 'tiles': len(tiles), 'states_or_territories': dict(sorted(by_state.items())),
+                'records': index['records'], 'tiles': len(tiles), 'states_or_territories': dict(sorted(state_counts.items())),
                 'counts': dict(counts), 'priced_records': sum(bool(row.get('tariffs')) for row in records),
                 'license': 'OpenStreetMap © contributors, ODbL 1.0'}
     write_json(source_dir / f'{country}-coverage-manifest.json', manifest)
