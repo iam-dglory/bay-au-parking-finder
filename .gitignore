@@ -50,3 +50,6 @@ ios/App/App.xcworkspace/xcuserdata
 ios/App/App.xcodeproj/xcuserdata
 ios/App/App.xcodeproj/project.xcworkspace/xcuserdata
 .env
+# Country-scale Geofabrik source snapshots are retained locally; filtered archives are versioned.
+datasets/india/raw-pbf/
+datasets/australia/raw-pbf/

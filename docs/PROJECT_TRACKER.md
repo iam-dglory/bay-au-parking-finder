@@ -154,3 +154,11 @@ Pricing is attached only to exact matched operator facilities. Capacity is never
 - Database migration: applied successfully on 25 September 2026.
 - Waitlist v2 write: HTTP 201 with a reserved QA address, excluded from invitations and notifications.
 - Remaining dependency: connect a server-side email sender to process `waitlist_notifications`.
+
+## National parking coverage — 8 October 2026
+
+| ID | Status | Change | Evidence |
+| --- | --- | --- | --- |
+| N01 | In progress — source download throttled | Country-wide India and Australia mapped-parking archives use the current Geofabrik PBFs, state/territory attribution and on-demand geographic tiles. Existing reviewed India coverage remains as a runtime fallback until each national index is published. | `scripts/build_country_parking.py`; source manifests record hashes and source URLs. No partial country catalog is published. |
+| N02 | Complete | Added the national source-ledger archive for the current data.gov.au parking catalog search. | `datasets/research-2026-10-08/australia-national-parking-catalog*.json` retains the raw result and normalized resources. |
+| N03 | Complete | Added country-tile runtime support and extended the India guard from three city boxes to country/state-backed records. | `src/lib/nationalParking.ts`, `src/lib/indiaParking.ts`; tests keep live availability unclaimed. |

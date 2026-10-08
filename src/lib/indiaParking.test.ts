@@ -21,10 +21,10 @@ describe('India parking catalog',()=>{
     expect(rows.map(r=>r.id)).toEqual(['market','queen-street'])
     expect(child.parent_area_id).toBe('market')
   })
-  it('keeps only sourced, publicly usable records in their declared city bounds',()=>{
-    const valid={...row('source',13.08,80.27),city:'Chennai',country:'IN',access:'yes',source_name:'OpenStreetMap',source_url:'https://example.test/source'}
+  it('keeps only sourced, publicly usable records in India',()=>{
+    const valid={...row('source',13.08,80.27),city:'Chennai',country:'IN',state:'Tamil Nadu',access:'yes',source_name:'OpenStreetMap',source_url:'https://example.test/source'}
     expect(isUsableIndiaRecord(valid)).toBe(true)
-    expect(isUsableIndiaRecord({...valid,lat:17.38})).toBe(false)
+    expect(isUsableIndiaRecord({...valid,lat:42})).toBe(false)
     expect(isUsableIndiaRecord({...valid,access:'private'})).toBe(false)
     expect(isUsableIndiaRecord({...valid,tariffs:[{vehicle:'Car',period:'hour',amount:10}],pricing_source_url:undefined,pricing_checked_at:undefined})).toBe(false)
   })

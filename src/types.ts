@@ -122,6 +122,7 @@ export interface CarPark {
   boundary?: [number, number][]
   census_aliases?: string[]
   city?: string
+  state?: string
   country?: string
   access?: string
   fee?: string | null

@@ -8,6 +8,7 @@ import { regionalNearby, mergeMappedBays } from './regionalParking'
 import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from './melbourneSensors'
 import { isUSSearch } from './usaParking'
 import { isIndiaSearch } from './indiaParking'
+import { isAustraliaSearch } from './nationalParking'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
@@ -24,7 +25,7 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setError(null)
     try {
       const remoteDeadline = AbortSignal.timeout(15000)
-      const regionalOnly = isUSSearch(lat, lng) || isIndiaSearch(lat, lng)
+      const regionalOnly = isUSSearch(lat, lng) || isIndiaSearch(lat, lng) || isAustraliaSearch(lat, lng)
       const [remote, local, council] = await Promise.allSettled([regionalOnly ? Promise.resolve([] as ParkingSpot[]) : loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })
