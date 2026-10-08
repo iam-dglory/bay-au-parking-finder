@@ -21,6 +21,7 @@ Last updated: 8 October 2026 (Australia/Melbourne)
 - Reworked the driving flow so the map opens directly after a location is resolved. The previous welcome is now an optional back screen. The map header and collapsed filters consume less vertical space; destination search, saved Home/Work, price/source detail and directions stay available without obstructing the map.
 - Validation: `verify_country_parking.py` passed India (12,992 records, 2,010 tiles, 36 declared boundaries / 35 with records) and Australia (138,187 records, 6,869 tiles, 9 boundaries); sample 5 km searches returned nearby records in Kochi, Ahmedabad, Lucknow, Sydney, Perth and Hobart. All 82 frontend tests, lint and the production build pass.
 - Local source PBF snapshots remain under `datasets/india/raw-pbf/` and `datasets/australia/raw-pbf/` and are intentionally excluded from Git because they are multi-gigabyte upstream files. Filtered archives, boundary snapshots, checksummed manifests and published map tiles are versioned in the repository.
+- Added a state and city-label coverage report for India: `docs/india-state-coverage-2026-10-08.md` and `docs/india-city-coverage-2026-10-08.csv`. It preserves missing upstream city labels instead of guessing locality names.
 
 ## Android closed test — 1 October 2026
 
