@@ -9,6 +9,7 @@ import { formatMaxStay } from '../lib/formatDuration'
 import { formatChangesAt } from '../lib/parkingStatus'
 import { availability, SENSOR_MAX_AGE_MINUTES } from '../lib/availability'
 import { MELBOURNE_SENSOR_SOURCE } from '../lib/melbourneSensors'
+import { directionsUrl } from '../lib/directions'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -64,7 +65,7 @@ export function SpotDetailSheet({
 }) {
   if (!spot) return null
   if (spot.catalog) return <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}><div role="dialog" aria-label="Parking bay details" className="max-h-[80dvh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5" onClick={e=>e.stopPropagation()}><button onClick={onClose} className="mb-3 rounded-full bg-slate-100 px-4 py-2 text-sm">Done</button><ParkingAreaDetails area={spot.catalog} /></div></div>
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`
+  const directions = directionsUrl(spot.lat, spot.lng)
   return (
     <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
       <div
@@ -87,8 +88,8 @@ export function SpotDetailSheet({
           </button>
         </div>
 
-        <a
-          href={directionsUrl}
+        {directions && <a
+          href={directions}
           target="_blank"
           rel="noreferrer"
           onClick={() => { if (spot.created_by !== 'council') logVisit(spot.id, spot.address_text, spot.country) }}
@@ -96,7 +97,7 @@ export function SpotDetailSheet({
         >
           <Navigation className="h-4 w-4" strokeWidth={2} />
           Get directions
-        </a>
+        </a>}
 
         {spot.moderation_status !== 'approved' && (
           <p className="mt-3 flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">

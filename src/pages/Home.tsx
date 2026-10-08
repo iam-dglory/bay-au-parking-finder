@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { MapPin, Pencil, Search, Loader2, X, LocateFixed, ParkingSquare } from 'lucide-react'
-import { MapView } from '../components/MapView'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { MapPin, Pencil, Search, Loader2, X, LocateFixed, ParkingSquare, HomeIcon, BriefcaseBusiness, BookmarkPlus } from 'lucide-react'
 import { zoomForRadius } from '../lib/mapZoom'
 import { SpotCard } from '../components/SpotCard'
 import { ParkingAreaDetails } from '../components/ParkingAreaDetails'
@@ -16,12 +15,18 @@ import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
 import { LOGO_URL } from '../lib/assets'
 import type { ParkingSpot, SpotStatus, SignType } from '../types'
+import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
+
+const MapView = lazy(() => import('../components/MapView').then((module) => ({ default: module.MapView })))
 
 export function Home({
   center,
   myLocation,
   locationLabel,
   onChangeLocation,
+  savedLocations,
+  onSavePlace,
+  onSelectSavedPlace,
 }: {
   center: { lat: number; lng: number }
   /** Live GPS position, updated continuously while driving. Distinct from
@@ -29,6 +34,9 @@ export function Home({
   myLocation?: { lat: number; lng: number }
   locationLabel: string
   onChangeLocation: () => void
+  savedLocations: SavedLocations
+  onSavePlace: (kind: SavedPlaceKind) => void
+  onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
   const [expanded, setExpanded] = useState(false)
   const [radiusM, setRadiusM] = useState(1000)
@@ -151,8 +159,10 @@ export function Home({
             <p className="mt-2 text-sm leading-relaxed text-slate-500">Explore nearby parking, check availability and understand the rules before you arrive.</p>
           </div>
 
-          <div className="h-44 shrink-0 w-full max-w-sm overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200/80">
-            <MapView center={center} myLocation={myLocation} spots={[]} glowMe />
+          <div className="flex h-36 shrink-0 w-full max-w-sm flex-col items-center justify-center rounded-3xl border border-slate-200 bg-gradient-to-br from-blue-50 to-white p-5 shadow-xl shadow-slate-200/80">
+            <MapPin className="h-7 w-7 text-blue-600" strokeWidth={1.8} />
+            <p className="mt-2 text-sm font-semibold text-slate-800">Parking map ready</p>
+            <p className="mt-1 text-xs text-slate-500">Open it when you are ready to search.</p>
           </div>
 
           <div>
@@ -177,7 +187,7 @@ export function Home({
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto overscroll-y-contain">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden overscroll-y-contain">
       <div className="shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -256,13 +266,24 @@ export function Home({
             </button>
           </div>
         ) : (
-          <button onClick={onChangeLocation} className="mt-3 flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-900" aria-label="Change location">
-            <MapPin className="h-3.5 w-3.5 text-slate-400" strokeWidth={2} />
-            {locationLabel}
-            <Pencil className="h-3 w-3 text-slate-400" strokeWidth={2} />
-          </button>
+          <div className="mt-2 flex min-w-0 items-center gap-1.5">
+            <button onClick={onChangeLocation} className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-900" aria-label="Change location">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" strokeWidth={2} />
+              <span className="truncate">{locationLabel}</span>
+              <Pencil className="h-3 w-3 shrink-0 text-slate-400" strokeWidth={2} />
+            </button>
+            <details className="relative ml-auto shrink-0">
+              <summary className="list-none cursor-pointer rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"><BookmarkPlus className="inline h-3.5 w-3.5" /> Saved</summary>
+              <div className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                <button onClick={() => onSavePlace('home')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><HomeIcon className="h-3.5 w-3.5 text-blue-600" /> Save current as home</button>
+                <button onClick={() => onSavePlace('work')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><BriefcaseBusiness className="h-3.5 w-3.5 text-blue-600" /> Save current as work</button>
+                {savedLocations.home && <button onClick={() => onSelectSavedPlace('home')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><HomeIcon className="h-3.5 w-3.5 text-slate-500" /> Home</button>}
+                {savedLocations.work && <button onClick={() => onSelectSavedPlace('work')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><BriefcaseBusiness className="h-3.5 w-3.5 text-slate-500" /> Work</button>}
+              </div>
+            </details>
+          </div>
         )}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <span className="text-sm font-semibold text-slate-900">{(loading || areasLoading) && !updatedAt && ranked.length + carParks.length === 0 ? 'Finding parking…' : (error || areaError) && ranked.length + carParks.length === 0 ? 'Parking data unavailable' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
@@ -305,18 +326,20 @@ export function Home({
         </div>
       )}
 
-      <div className="min-h-[340px] flex-1 shrink-0 overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
         {view === 'map' ? (
-          <MapView
-            center={effectiveCenter}
-            myLocation={myLocation}
-            spots={ranked}
-            carParks={carParks}
-            onSelectSpot={setSelectedSpot}
-            zoom={zoomForRadius(radiusM)}
-            glowMe
-            radiusM={radiusM}
-          />
+          <Suspense fallback={<div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">Loading map…</div>}>
+            <MapView
+              center={effectiveCenter}
+              myLocation={myLocation}
+              spots={ranked}
+              carParks={carParks}
+              onSelectSpot={setSelectedSpot}
+              zoom={zoomForRadius(radiusM)}
+              glowMe
+              radiusM={radiusM}
+            />
+          </Suspense>
         ) : (
           <div className="h-full space-y-2 overflow-y-auto p-4">
             {(loading || areasLoading) && <p className="text-center text-sm text-slate-400">Loading…</p>}

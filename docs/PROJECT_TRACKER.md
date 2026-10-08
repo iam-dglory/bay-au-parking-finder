@@ -1,6 +1,17 @@
 # Bay project tracker
 
-Last updated: 3 October 2026 (Australia/Melbourne)
+Last updated: 8 October 2026 (Australia/Melbourne)
+
+## Phase 1 hardening — 8 October 2026
+
+- Added a versioned device-local location store. Bay now restores the most recent chosen area on launch, makes the first confirmed choice the Home location, and lets a driver save or switch between Home and Work from the map header. A saved choice takes precedence over a new GPS attempt, so a slow or denied location request cannot send an India user back to Melbourne.
+- Reworked the first-use location screen: it has neutral product wording, no Melbourne/India/United States banner, and chooses the device's country when the browser reports one. The selected country/city remains available as a saved Home location on later launches.
+- Unified parking directions behind one validated coordinate-only driving URL. Parking areas and bays now navigate to the exact Bay marker, rather than allowing a source-supplied directions query to substitute a potentially ambiguous location. Added unit coverage for Indian coordinates and invalid coordinate rejection.
+- India searches no longer wait for an unused remote parking RPC. Chennai, Bengaluru and Hyderabad use the stored regional catalog directly; client-side catalog guards require a recognized city, in-city coordinates, a source, allowed access and source-backed tariff metadata before a record is shown.
+- Rebalanced the mobile map: the map now fills the remaining viewport, filters remain collapsed until requested, and Home, Map, Add sign, Guide and My activity load on demand. The production main JavaScript bundle reduced from 1.44 MB to 295.5 kB.
+- Created the maintained delivery tracker: `outputs/phase-1-2026-10-08/phase-1-delivery-tracker.xlsx`. It records 15 complete implementation items, India data counts, validation evidence and the one remaining Melbourne rule-import accuracy item.
+- Validation: a local browser smoke test selected India → Chennai, loaded seven nearby parking areas and restored Chennai after reload; 80 unit tests, lint, TypeScript/production build and `scripts/verify_regional_catalogs.py` all pass. The catalog verifier checked 73,413 published records, 1,015 Melbourne tiles and 37,586 manifest files. India has 2,618 checked records: Chennai 721, Bengaluru 1,481, Hyderabad 416; 112 have source-backed prices.
+- Accuracy boundary retained from `docs/test-1-findings.md`: the mixed Queen Street segment-rule import remains open. It is recorded as an accuracy blocker for that rule source, not marked complete or represented as a bay-specific fix.
 
 ## Android closed test — 1 October 2026
 

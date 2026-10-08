@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { MapPin, Plus, ClipboardList, BookOpen } from 'lucide-react'
-import { Home } from './pages/Home'
-import { AddSpot } from './pages/AddSpot'
-import { MyActivity } from './pages/MyActivity'
-import { Guide } from './pages/Guide'
 import { FeedbackForm } from './components/FeedbackForm'
 import { LocationPicker } from './components/LocationPicker'
 import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
+import { loadSavedLocations, rememberLocation, savedStartupLocation, type SavedLocation, type SavedPlaceKind } from './lib/savedLocations'
+
+const Home = lazy(() => import('./pages/Home').then((module) => ({ default: module.Home })))
+const AddSpot = lazy(() => import('./pages/AddSpot').then((module) => ({ default: module.AddSpot })))
+const MyActivity = lazy(() => import('./pages/MyActivity').then((module) => ({ default: module.MyActivity })))
+const Guide = lazy(() => import('./pages/Guide').then((module) => ({ default: module.Guide })))
 
 type Tab = 'home' | 'addSign' | 'mine' | 'guide'
-type Location = { lat: number; lng: number; label: string; country?: string }
+type Location = SavedLocation
 type LocationStatus = 'detecting' | 'resolved' | 'manual'
 
 const LOCATION_DETECT_TIMEOUT_MS = 6000
@@ -19,11 +21,13 @@ const LOCATION_DETECT_TIMEOUT_MS = 6000
 export default function App() {
   const gpsEpoch = useRef(0)
   const needsRefinement = useRef(false)
+  const initialSaved = useRef(loadSavedLocations())
   const [authReady, setAuthReady] = useState(false)
-  const [location, setLocation] = useState<Location | null>(null)
+  const [location, setLocation] = useState<Location | null>(() => savedStartupLocation(initialSaved.current))
+  const [savedLocations, setSavedLocations] = useState(() => initialSaved.current)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [trackLive, setTrackLive] = useState(false)
-  const [locationStatus, setLocationStatus] = useState<LocationStatus>('detecting')
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => savedStartupLocation(initialSaved.current) ? 'resolved' : 'detecting')
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
   const [showFeedback, setShowFeedback] = useState(() => new URLSearchParams(window.location.search).get('feedback') === '1')
@@ -50,7 +54,7 @@ export default function App() {
       setLiveLocation({ lat, lng })
       setTrackLive(true)
       reverseGeocodeLabel(lat, lng).then((label) => {
-        if (label && epoch === gpsEpoch.current) setLocation((prev) => (prev && prev.lat === lat && prev.lng === lng ? { ...prev, label } : prev))
+        if (label && epoch === gpsEpoch.current) setCurrentLocation({ lat, lng, label })
       })
     })
   }
@@ -66,16 +70,25 @@ export default function App() {
       setLiveLocation(point)
       if (needsRefinement.current && (pos.accuracy ?? Infinity) <= 200) {
         needsRefinement.current = false
-        setLocation({ ...point, label: 'Current location' })
+        setCurrentLocation({ ...point, label: 'Current location' })
         const epoch = gpsEpoch.current
         void reverseGeocodeLabel(point.lat, point.lng).then(label => {
-          if (label && epoch === gpsEpoch.current) setLocation(prev => prev && prev.lat === point.lat && prev.lng === point.lng ? {...prev, label} : prev)
+          if (label && epoch === gpsEpoch.current) setCurrentLocation({ ...point, label })
         })
       }
     })
   }, [trackLive])
 
+  function setCurrentLocation(next: Location, saveAs?: SavedPlaceKind) {
+    setLocation(next)
+    setSavedLocations(rememberLocation(next, saveAs))
+    setLocationStatus('resolved')
+  }
+
   useEffect(() => {
+    // A deliberate home or last-search choice wins over a new GPS lookup.
+    // It avoids a denied/slow Indian fix reopening Melbourne on every launch.
+    if (savedStartupLocation(initialSaved.current)) return
     let settled = false
     const startupEpoch = gpsEpoch.current + 1
     const timeout = setTimeout(() => {
@@ -90,8 +103,7 @@ export default function App() {
       if (settled) return
       settled = true
       clearTimeout(timeout)
-      setLocation(resolved)
-      setLocationStatus('resolved')
+      setCurrentLocation(resolved)
     }).catch(() => {
       if (settled || gpsEpoch.current !== startupEpoch) return
       settled = true
@@ -102,6 +114,9 @@ export default function App() {
     // This ref is a cancellation token, not a DOM node.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     return () => { clearTimeout(timeout); gpsEpoch.current++ }
+  // Startup state is intentionally read once. Location changes below are
+  // user actions and must not restart the native permission request.
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
@@ -128,13 +143,11 @@ export default function App() {
             needsRefinement.current = false
             setTrackLive(false)
             setLiveLocation(null)
-            setLocation({ lat, lng, label, country })
-            setLocationStatus('resolved')
+            setCurrentLocation({ lat, lng, label, country })
           }}
           onUseGps={() =>
             resolveGpsThenRefineLabel((resolved) => {
-              setLocation(resolved)
-              setLocationStatus('resolved')
+              setCurrentLocation(resolved)
             })
           }
         />
@@ -151,17 +164,30 @@ export default function App() {
   return (
     <div className="flex h-full flex-col bg-[#f6f8fc]">
       <div className="min-h-0 flex-1">
+        <Suspense fallback={<div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">Opening Bay…</div>}>
         {tab === 'home' && (
           <Home
             center={location}
             myLocation={liveLocation ?? undefined}
             locationLabel={location.label}
+            savedLocations={savedLocations}
+            onSavePlace={(kind) => setSavedLocations(rememberLocation(location, kind))}
+            onSelectSavedPlace={(kind) => {
+              const place = savedLocations[kind]
+              if (!place) return
+              gpsEpoch.current++
+              needsRefinement.current = false
+              setTrackLive(false)
+              setLiveLocation(null)
+              setCurrentLocation(place)
+            }}
             onChangeLocation={() => { gpsEpoch.current++; setTrackLive(false); setLocationStatus('manual') }}
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
         {tab === 'mine' && <MyActivity center={location} onOpenFeedback={() => setShowFeedback(true)} />}
         {tab === 'guide' && <Guide location={location} />}
+        </Suspense>
       </div>
 
       <nav className="mx-2 mb-1 flex shrink-0 rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(30,64,175,0.10)] backdrop-blur sm:mx-5 sm:mb-3">

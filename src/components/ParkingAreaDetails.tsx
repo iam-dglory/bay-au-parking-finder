@@ -1,13 +1,15 @@
 import type { CarPark } from '../types'
 import { formatMoney } from '../lib/money'
+import { directionsUrl } from '../lib/directions'
 
 export function ParkingAreaDetails({ area, compact=false }: { area: CarPark; compact?: boolean }) {
   const access=area.access==='customers' ? 'Customers only' : area.access==='permissive' ? 'Access at operator’s discretion' : area.access==='yes' ? 'Public access listed' : 'Entry conditions apply'
   const sfMeter = area.source_name === 'SFMTA meter inventory'
+  const directions = directionsUrl(area.lat, area.lng)
   return <div className="space-y-2 text-sm text-slate-700">
     <h3 className="font-bold text-slate-950">{area.address_text}</h3>
     {area.facility_type && <p className="font-semibold text-blue-700">{area.facility_type}{!sfMeter && (area.fee === 'yes' || area.price_summary) ? ' · Paid parking' : ''}</p>}
-    <a className="inline-block rounded-xl bg-blue-600 px-4 py-2 font-semibold !text-white" href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(area.directions_query ?? `${area.lat},${area.lng}`)}`} target="_blank" rel="noreferrer">Get directions</a>
+    {directions && <a className="inline-block rounded-xl bg-blue-600 px-4 py-2 font-semibold !text-white" href={directions} target="_blank" rel="noreferrer">Get directions</a>}
     {area.entrance_summary && <p className="text-xs font-medium">{area.entrance_summary}</p>}
     {area.opening_hours_summary && <p className="text-xs">{area.opening_hours_summary}</p>}
     <p className="text-xs">{Math.round(area.distance_m)} m away{area.capacity ? ` · ${area.capacity} total spaces` : ''} · Availability on arrival</p>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isIndiaSearch, nearbyCatalog } from './indiaParking'
+import { isIndiaSearch, isUsableIndiaRecord, nearbyCatalog } from './indiaParking'
 import type { CarPark } from '../types'
 
 const row=(id:string,lat:number,lng:number):CarPark=>({id,address_text:id,suburb:null,lat,lng,distance_m:0,capacity:null,census_year:null})
@@ -20,5 +20,12 @@ describe('India parking catalog',()=>{
     const rows=nearbyCatalog([child,area,street],area.lat,area.lng,1000)
     expect(rows.map(r=>r.id)).toEqual(['market','queen-street'])
     expect(child.parent_area_id).toBe('market')
+  })
+  it('keeps only sourced, publicly usable records in their declared city bounds',()=>{
+    const valid={...row('source',13.08,80.27),city:'Chennai',country:'IN',access:'yes',source_name:'OpenStreetMap',source_url:'https://example.test/source'}
+    expect(isUsableIndiaRecord(valid)).toBe(true)
+    expect(isUsableIndiaRecord({...valid,lat:17.38})).toBe(false)
+    expect(isUsableIndiaRecord({...valid,access:'private'})).toBe(false)
+    expect(isUsableIndiaRecord({...valid,tariffs:[{vehicle:'Car',period:'hour',amount:10}],pricing_source_url:undefined,pricing_checked_at:undefined})).toBe(false)
   })
 })
