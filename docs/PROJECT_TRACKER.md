@@ -1,6 +1,12 @@
 # Bay project tracker
 
-Last updated: 8 October 2026 (Australia/Melbourne)
+Last updated: 11 October 2026 (Australia/Melbourne)
+
+## iOS App Store preparation — 11 October 2026
+
+- Prepared the existing Capacitor iOS target for the next Bay build: camera and photo-library purpose text now describes the optional sign-photo feature, the Camera and Geolocation native packages are linked, and the latest web build is synchronised into `ios/App/App/public/`.
+- The map-first UI, saved Home/Work locations, compressed phone layout and country-aware catalogue flow are part of this next iOS build. Web validation remains green: 82 tests, lint and production build.
+- App Store Connect and a full Xcode archive are still prerequisites. The current browser session is not authenticated and this Mac only has Apple Command Line Tools; see `docs/ios-app-store-readiness-2026-10-11.md`.
 
 ## Phase 1 hardening — 8 October 2026
 
