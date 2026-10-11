@@ -102,19 +102,14 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
 
   return (
     <main className="flex h-full flex-col overflow-y-auto bg-[#f5f7fb] text-slate-900">
-      <section className="relative shrink-0 overflow-hidden bg-[#071227] px-5 pb-9 pt-7 text-white">
-        <div className="pointer-events-none absolute -right-14 -top-20 h-56 w-56 rounded-full bg-blue-500/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-indigo-500/20 blur-3xl" />
+      <section className="relative shrink-0 overflow-hidden bg-[#07152f] px-5 pb-7 pt-6 text-white">
+        <div className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 rounded-full bg-blue-500/30 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-[15%] h-16 w-72 -rotate-6 rounded-[50%] border-[10px] border-blue-400/20" />
         <div className="relative mx-auto max-w-sm">
-          <div className="inline-flex rounded-2xl bg-white px-5 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
-            <img src={WORDMARK_URL} alt="Bay" className="h-auto w-40" />
-          </div>
-          <p className="mt-7 text-2xl font-semibold leading-tight tracking-tight">Park closer. Know more before you arrive.</p>
-          <p className="mt-2 max-w-xs text-sm leading-6 text-slate-300">Find nearby parking areas, clearer restrictions and published prices in one place.</p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-slate-200">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><MapPinned className="h-3.5 w-3.5 text-cyan-300" /> Nearby first</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="h-3.5 w-3.5 text-cyan-300" /> Check signs on arrival</span>
-          </div>
+          <div className="flex items-center justify-between"><img src={WORDMARK_URL} alt="Bay" className="h-auto w-28 rounded-xl bg-white px-3 py-2" /><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.12em] text-cyan-100">Parking, clearer</span></div>
+          <p className="mt-6 max-w-sm text-2xl font-bold leading-tight tracking-[-.04em]">Find the nearest place to park.</p>
+          <p className="mt-2 max-w-sm text-sm leading-6 text-slate-300">See mapped areas, restrictions and source-listed prices before you arrive.</p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-slate-200"><span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><MapPinned className="h-3.5 w-3.5 text-cyan-300" /> Nearby first</span><span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="h-3.5 w-3.5 text-cyan-300" /> Verify on arrival</span></div>
         </div>
       </section>
 

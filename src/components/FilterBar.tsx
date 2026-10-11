@@ -15,7 +15,7 @@ export function FilterBar({ vacantOnly, onVacantOnlyChange, radiusM, onRadiusCha
   freeOnly: boolean; onFreeOnlyChange: (v: boolean) => void; category: SignType | 'all'; onCategoryChange: (v: SignType | 'all') => void
   showCarParks: boolean; onShowCarParksChange: (v: boolean) => void; mappedOnly?: boolean; onClose?: () => void
 }) {
-  const reset = () => { onRadiusChange(1000); onVacantOnlyChange(false); onFreeOnlyChange(false); onCategoryChange('all'); onShowCarParksChange(true) }
+  const reset = () => { onRadiusChange(500); onVacantOnlyChange(false); onFreeOnlyChange(false); onCategoryChange('all'); onShowCarParksChange(true) }
   return <section aria-label="Parking filters" className="max-h-[82dvh] overflow-y-auto rounded-t-[28px] bg-white px-5 pb-6 pt-3 sm:rounded-[28px]">
     <div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" />
     <div className="mt-3 flex items-center justify-between">
