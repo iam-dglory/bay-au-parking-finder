@@ -148,6 +148,10 @@ export interface CarPark {
   currency?: string | null
   pricing_notes?: string | null
   pricing_source_url?: string | null
+  /** Optional image supplied by the original parking source or a reviewed
+   * contribution. It is absent unless the image can be tied to this facility. */
+  photo_url?: string | null
+  photo_attribution?: string | null
 }
 
 export interface SpotVisit {

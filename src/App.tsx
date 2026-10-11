@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { MapPin, Plus, ClipboardList, BookOpen } from 'lucide-react'
+import { BookOpen, Clock3, Map as MapIcon, MapPin, MapPinPlus } from 'lucide-react'
 import { FeedbackForm } from './components/FeedbackForm'
 import { LocationPicker } from './components/LocationPicker'
 import { WelcomeScreen } from './components/WelcomeScreen'
@@ -147,6 +147,7 @@ export default function App() {
     return (
       <>
         <LocationPicker
+          savedLocations={savedLocations}
           onPick={(lat, lng, label, country) => {
             gpsEpoch.current++
             needsRefinement.current = false
@@ -204,7 +205,7 @@ export default function App() {
           onClick={() => setTab('home')}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
-          <MapPin className="h-5 w-5" strokeWidth={1.75} />
+          <MapIcon className="h-5 w-5" strokeWidth={1.75} />
           Find parking
         </button>
         <button
@@ -214,14 +215,14 @@ export default function App() {
           }}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
-          <Plus className="h-5 w-5" strokeWidth={1.75} />
+          <MapPinPlus className="h-5 w-5" strokeWidth={1.75} />
           Add a sign
         </button>
         <button
           onClick={() => setTab('mine')}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
-          <ClipboardList className="h-5 w-5" strokeWidth={1.75} />
+          <Clock3 className="h-5 w-5" strokeWidth={1.75} />
           My activity
         </button>
         <button

@@ -7,15 +7,20 @@ import { availability } from '../lib/availability'
 import { MapOrientation } from './MapOrientation'
 
 
+function pinMarkup(color: string, label: string, content: string) {
+  return `<div title="${label}" aria-label="${label}" style="position:relative;width:40px;height:48px;filter:drop-shadow(0 3px 5px rgba(15,23,42,.22))"><div style="position:absolute;left:4px;top:1px;width:32px;height:32px;border-radius:50% 50% 50% 0;background:${color};border:3px solid white;transform:rotate(-45deg)"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:rotate(45deg);color:white;font:800 12px/1 sans-serif">${content}</span></div></div>`
+}
+
 function pinIcon(color: string, state: string) {
   const label = state === 'unknown' || state === 'uncertain' ? 'Availability on arrival' : state === 'vacant' ? 'Vacant' : 'Occupied'
-  const ring = state === 'uncertain' || state === 'unknown' ? 'box-shadow:0 0 0 3px rgba(100,116,139,.18), 0 2px 8px rgba(15,23,42,.24);' : 'box-shadow:0 2px 8px rgba(15,23,42,.24);'
+  // Unknown means no live reading, not a grey “disabled” point. Blue keeps
+  // it discoverable while the accessible title explains the evidence level.
+  const visualColor = state === 'unknown' || state === 'uncertain' ? '#1769ff' : color
   return L.divIcon({
     className: '',
-    // Colour and the accessible title carry the state; glyphs are ambiguous at phone scale.
-    html: `<div title="${label}" aria-label="${label}" style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;${ring}display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:50%;background:white;opacity:.92"></span></div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    html: pinMarkup(visualColor, label, 'P'),
+    iconSize: [40, 48],
+    iconAnchor: [20, 40],
   })
 }
 
@@ -40,31 +45,31 @@ function meIcon(glow?: boolean) {
 function carParkIcon() {
   return L.divIcon({
     className: '',
-    html: `<div title="Parking area" style="width:30px;height:30px;border-radius:9px;background:#2563eb;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;font-family:sans-serif;">P</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    html: pinMarkup('#1769ff', 'Parking area', 'P'),
+    iconSize: [40, 48],
+    iconAnchor: [20, 40],
   })
 }
 
 function meterIcon() {
   return L.divIcon({
     className: '',
-    html: `<div title="Mapped SFMTA parking meter · availability on arrival" aria-label="Mapped SFMTA parking meter" style="width:30px;height:30px;border-radius:9px;background:#475569;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;font-family:sans-serif">M</div>`,
-    iconSize: [30, 30], iconAnchor: [15, 15],
+    html: pinMarkup('#1769ff', 'Mapped SFMTA parking meter · availability on arrival', 'P'),
+    iconSize: [40, 48], iconAnchor: [20, 40],
   })
 }
 
 function meterGroupIcon(count: number) {
   const label = `${count} SFMTA meter locations · zoom in for details`
-  return L.divIcon({className: '', iconSize: [44, 44], iconAnchor: [22, 22],
-    html: `<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:12px;background:#475569;color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;align-items:center;justify-content:center;gap:2px;font:700 11px/1 sans-serif"><span>M</span><span>${count}</span></div>`})
+  return L.divIcon({className: '', iconSize: [40, 48], iconAnchor: [20, 40], html: pinMarkup('#1769ff', label, String(count))})
 }
 
 function clusterIcon(cluster: { getChildCount(): number }, areas = false) {
   const count = cluster.getChildCount()
   const label = `${count} ${areas ? 'parking areas' : 'mapped parking spots'} · zoom in for details`
-  // Cluster colour describes the layer, not its size or presumed vacancy.
-  return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:${areas ? '12px' : '50%'};background:${areas ? '#2563eb' : '#475569'};color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px/1.1 sans-serif">${areas ? '<span style="font-size:10px">P</span>' : ''}${count}</div>`})
+  // A cluster is a navigation control, not a status. It uses the same blue
+  // parking pin language and always opens into its individual locations.
+  return L.divIcon({className: '', iconSize: [40, 48], iconAnchor: [20, 40], html: pinMarkup('#1769ff', label, String(count))})
 }
 
 /** Clusters are a visual-performance aid only. Tapping one must always move
@@ -86,7 +91,7 @@ function SfMeterMarkers({spots, onSelectSpot}: {
   const markers = useMemo(() => {
     const bounds = view.bounds.pad(.3)
     const visible = spots.filter(spot => bounds.contains([spot.lat, spot.lng]))
-    if (view.zoom >= 19) return visible.map(spot => ({lat: spot.lat, lng: spot.lng, spot, count: 1}))
+    if (view.zoom >= 17) return visible.map(spot => ({lat: spot.lat, lng: spot.lng, spot, count: 1}))
     const cell = view.zoom <= 15 ? .003 : view.zoom === 16 ? .002 : view.zoom === 17 ? .0012 : .00035
     const bins = new Map<string, typeof visible>()
     for (const spot of visible) {
@@ -101,7 +106,7 @@ function SfMeterMarkers({spots, onSelectSpot}: {
   }, [spots, view])
   return <>{markers.map((marker, i) => <Marker key={marker.spot?.id ?? `meter-group-${i}`}
     position={[marker.lat, marker.lng]} icon={marker.spot ? meterIcon() : meterGroupIcon(marker.count)}
-    eventHandlers={{click: () => marker.spot ? onSelectSpot?.(marker.spot) : map.flyTo([marker.lat, marker.lng], Math.min(19, view.zoom + 2))}} />)}</>
+    eventHandlers={{click: () => marker.spot ? onSelectSpot?.(marker.spot) : map.flyTo([marker.lat, marker.lng], Math.min(18, view.zoom + 2))}} />)}</>
 }
 
 function pickIcon() {
@@ -200,7 +205,7 @@ export function MapView({
   const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
   const otherSpots = spots.filter(spot => spot.catalog?.source_name !== 'SFMTA meter inventory')
   return (
-    <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={18} className="h-full w-full" zoomControl={false} scrollWheelZoom doubleClickZoom dragging touchZoom rotate touchRotate rotateControl={false}>
+    <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={19} className="h-full w-full" zoomControl={false} scrollWheelZoom doubleClickZoom dragging touchZoom rotate touchRotate rotateControl={false}>
       <ResizeMap />
       <ParkingPanes />
       <MapOrientation />
@@ -222,7 +227,7 @@ export function MapView({
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
       <SfMeterMarkers spots={meterSpots} onSelectSpot={onSelectSpot} />
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} clusterPane="bay-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={50} zoomToBoundsOnClick spiderfyOnMaxZoom>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} clusterPane="bay-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={42} disableClusteringAtZoom={17} zoomToBoundsOnClick spiderfyOnMaxZoom>
         {otherSpots.map((spot) => (
           <Marker
             key={spot.id}
@@ -234,7 +239,7 @@ export function MapView({
         ))}
       </MarkerClusterGroup>
       {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#1769ff', weight:2, fillOpacity:.10}} eventHandlers={{ click: () => onSelectCarPark?.(area) }} />)}
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} clusterPane="area-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={35} zoomToBoundsOnClick spiderfyOnMaxZoom>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} clusterPane="area-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17} zoomToBoundsOnClick spiderfyOnMaxZoom>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} pane="area-marker-pane" icon={carParkIcon()} eventHandlers={{ click: () => onSelectCarPark?.(cp) }} />
       ))}
