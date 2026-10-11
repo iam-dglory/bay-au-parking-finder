@@ -2,6 +2,20 @@
 
 Last updated: 11 October 2026 (Australia/Melbourne)
 
+## Illustrated parking-sign guide — 11 October 2026
+
+- Rebuilt the Guide into a mobile-first illustrated parking-sign reference. It includes country selection for Australia, India, the United States, the United Kingdom and a generic fallback; a physical-sign safety reminder; clear usable/restricted labels; expandable sign cards; and a privacy-policy entry point.
+- Each illustration is a clearly educational rendering of the sign category rather than a claimed photograph of a local sign. The card copy keeps country-specific terminology and tells drivers to read every displayed plate, arrow, time and payment instruction at the location.
+- Validation: 87 unit tests, lint, production build and `git diff --check` passed.
+
+## Safe booking entry point and activity redesign — 11 October 2026
+
+- Replaced the bottom-navigation **Add a sign** entry with **Book a spot**. Bay now exposes reservations only through an exact, verified external operator registry for source-backed off-street facilities. The registry is intentionally empty: no verified provider URL, facility mapping, availability integration, payment flow, deposit policy or confirmation webhook exists yet. The screen states that checkout is unavailable instead of inventing a reservable space, price, deposit or booking confirmation.
+- Audited the legacy peer-to-peer `public.bookings` table and added a migration that removes browser write policies and client insert/update/delete grants. The migration is retained for authenticated Supabase deployment; it was not applied from this workspace because no authenticated Supabase deployment connection was available.
+- Rebuilt My activity around real saved Home/Work locations, actual direction history and reported signs. Sign reporting remains available from the page even though it is no longer a primary navigation tab.
+- Increased list content clearance beneath the floating map controls, so the first parking card is no longer covered by the header.
+- Validation: 87 unit tests, lint, production build and `git diff --check` passed. See `docs/book-a-spot-readiness-2026-10-11.md` for the integration gates before direct reservations can be enabled.
+
 ## Parking-data reliability and map accessibility — 11 October 2026
 
 - Made the geographic catalog loader fault-tolerant. A failed nearby static tile or optional San Francisco meter layer no longer discards source-backed parking areas that arrived successfully from the same search. The app still reports an empty map only when no requested catalog tile can be read; it does not invent records to fill a gap.

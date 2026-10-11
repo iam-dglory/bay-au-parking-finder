@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { BookOpen, Clock3, Map as MapIcon, MapPin, MapPinPlus } from 'lucide-react'
+import { BookOpen, CalendarCheck2, Clock3, Map as MapIcon, MapPin } from 'lucide-react'
 import { FeedbackForm } from './components/FeedbackForm'
 import { LocationPicker } from './components/LocationPicker'
 import { WelcomeScreen } from './components/WelcomeScreen'
@@ -10,10 +10,11 @@ import { loadSavedLocations, rememberLocation, savedStartupLocation, type SavedL
 
 const Home = lazy(() => import('./pages/Home').then((module) => ({ default: module.Home })))
 const AddSpot = lazy(() => import('./pages/AddSpot').then((module) => ({ default: module.AddSpot })))
+const BookSpot = lazy(() => import('./pages/BookSpot').then((module) => ({ default: module.BookSpot })))
 const MyActivity = lazy(() => import('./pages/MyActivity').then((module) => ({ default: module.MyActivity })))
 const Guide = lazy(() => import('./pages/Guide').then((module) => ({ default: module.Guide })))
 
-type Tab = 'home' | 'addSign' | 'mine' | 'guide'
+type Tab = 'home' | 'book' | 'addSign' | 'mine' | 'guide'
 type Location = SavedLocation
 type LocationStatus = 'detecting' | 'resolved' | 'manual'
 
@@ -195,7 +196,8 @@ export default function App() {
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
-        {tab === 'mine' && <MyActivity center={location} savedLocations={savedLocations} onOpenFeedback={() => setShowFeedback(true)} />}
+        {tab === 'book' && <BookSpot center={location} onFindParking={() => setTab('home')} />}
+        {tab === 'mine' && <MyActivity center={location} savedLocations={savedLocations} onOpenFeedback={() => setShowFeedback(true)} onAddSign={() => { setAddKey((k) => k + 1); setTab('addSign') }} />}
         {tab === 'guide' && <Guide location={location} />}
         </Suspense>
       </div>
@@ -210,13 +212,12 @@ export default function App() {
         </button>
         <button
           onClick={() => {
-            setAddKey((k) => k + 1)
-            setTab('addSign')
+            setTab('book')
           }}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'book' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
-          <MapPinPlus className="h-5 w-5" strokeWidth={1.75} />
-          Add a sign
+          <CalendarCheck2 className="h-5 w-5" strokeWidth={1.75} />
+          Book a spot
         </button>
         <button
           onClick={() => setTab('mine')}
