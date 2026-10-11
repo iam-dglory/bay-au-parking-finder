@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DhroI1JZ.js";var t=`./logo/bay-wordmark.png`,n=e();function r({className:e=`w-24`,label:r=`Bay`}){return(0,n.jsx)(`img`,{src:t,alt:r,className:`h-auto object-contain ${e}`})}export{r as t};
