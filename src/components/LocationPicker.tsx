@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Country from 'country-state-city/lib/country'
-import { LocateFixed, ChevronDown, Search, Loader2, TriangleAlert } from 'lucide-react'
+import { LocateFixed, ChevronDown, Search, Loader2, TriangleAlert, MapPinned, ShieldCheck } from 'lucide-react'
 import { searchCities, type CitySearchResult } from '../lib/geocoding'
 import { LocationError } from '../lib/geolocation'
-import { LOGO_URL } from '../lib/assets'
+import { WORDMARK_URL } from '../lib/assets'
 
 const ALL_COUNTRIES = Country.getAllCountries()
 const DEFAULT_COUNTRY = ''
@@ -33,8 +33,14 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     }
     setSearching(true)
     debounceRef.current = setTimeout(async () => {
-      const found = await searchCities(citySearch, countryCode)
-      if (active) { setResults(found); setSearching(false) }
+      try {
+        const found = await searchCities(citySearch, countryCode)
+        if (active) setResults(found)
+      } catch {
+        if (active) setResults([])
+      } finally {
+        if (active) setSearching(false)
+      }
     }, SEARCH_DEBOUNCE_MS)
     return () => {
       active = false
@@ -65,10 +71,14 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   async function searchOnline() {
     if (!citySearch.trim() || !countryCode) return
     setSearching(true)
-    const found = await searchCities(citySearch, countryCode, undefined, true)
-    setResults(found)
-    setSearching(false)
-    setShowSuggestions(true)
+    try {
+      setResults(await searchCities(citySearch, countryCode, undefined, true))
+    } catch {
+      setResults([])
+    } finally {
+      setSearching(false)
+      setShowSuggestions(true)
+    }
   }
 
   async function handleUseGps() {
@@ -79,13 +89,11 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
     } catch (err) {
       const reason = err instanceof LocationError ? err.reason : undefined
       if (reason === 'permission_denied') {
-        setGpsError(
-          "Location access is turned off for Bay. Open your phone's Settings → Apps → Bay → Permissions → Location, allow it, then try again, or search for your city below.",
-        )
+        setGpsError("Location access is off for Bay. Enable it in Settings → Apps → Bay → Permissions, or search for a city below.")
       } else if (reason === 'timeout') {
-        setGpsError("Location took too long to respond. You may be indoors or have a weak GPS signal. Try again, or search for your city below.")
+        setGpsError('Location took too long. Try again, or search for a city below.')
       } else {
-        setGpsError("Couldn't get your location. Check that location access is allowed for this app, or search for your city below.")
+        setGpsError("Bay couldn't get your location. Check permission or search for a city below.")
       }
     } finally {
       setLocating(false)
@@ -93,108 +101,89 @@ export function LocationPicker({ onPick, onUseGps }: { onPick: (lat: number, lng
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-slate-50 text-center">
-      <div className="flex shrink-0 flex-col items-center gap-2 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-6">
-        <div className="flex items-center gap-2">
-          <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl" />
-          <span className="text-2xl font-semibold tracking-tight text-white">Bay</span>
+    <main className="flex h-full flex-col overflow-y-auto bg-[#f5f7fb] text-slate-900">
+      <section className="relative shrink-0 overflow-hidden bg-[#071227] px-5 pb-9 pt-7 text-white">
+        <div className="pointer-events-none absolute -right-14 -top-20 h-56 w-56 rounded-full bg-blue-500/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="relative mx-auto max-w-sm">
+          <div className="inline-flex rounded-2xl bg-white px-5 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
+            <img src={WORDMARK_URL} alt="Bay" className="h-auto w-40" />
+          </div>
+          <p className="mt-7 text-2xl font-semibold leading-tight tracking-tight">Park closer. Know more before you arrive.</p>
+          <p className="mt-2 max-w-xs text-sm leading-6 text-slate-300">Find nearby parking areas, clearer restrictions and published prices in one place.</p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-slate-200">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><MapPinned className="h-3.5 w-3.5 text-cyan-300" /> Nearby first</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="h-3.5 w-3.5 text-cyan-300" /> Check signs on arrival</span>
+          </div>
         </div>
-        <p className="text-sm text-slate-300">Find nearby parking with clear details.</p>
-      </div>
+      </section>
 
-      <div className="flex flex-1 flex-col items-center px-5 py-7">
-      <div className="flex w-full max-w-sm flex-col gap-6 pt-2">
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="text-xl font-semibold text-slate-900">Where are you parking?</h1>
-          <p className="text-sm text-slate-500">Your choice is saved as home so it is ready next time.</p>
-        </div>
-
-        <div>
-          <button
-            onClick={handleUseGps}
-            disabled={locating}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 py-3.5 font-medium text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60"
-          >
-            {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2} />}
-            {locating ? 'Locating…' : 'Use my current location'}
-          </button>
-          {gpsError && (
-            <p className="mt-2 flex items-start gap-1.5 text-left text-xs text-rose-600">
-              <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-              {gpsError}
-            </p>
-          )}
+      <section className="mx-auto flex w-full max-w-sm flex-1 flex-col px-5 py-6">
+        <div className="mb-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Start a search</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Where are you parking?</h1>
+          <p className="mt-1 text-sm leading-5 text-slate-500">Use your location or choose a city. Bay remembers your last choice for next time.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <button
+          onClick={handleUseGps}
+          disabled={locating}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.24)] transition hover:bg-blue-700 disabled:opacity-60"
+        >
+          {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <LocateFixed className="h-5 w-5" strokeWidth={2} />}
+          {locating ? 'Finding your location…' : 'Use my current location'}
+        </button>
+        {gpsError && (
+          <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-rose-50 px-3 py-2.5 text-left text-xs leading-5 text-rose-700">
+            <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+            {gpsError}
+          </p>
+        )}
+
+        <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200" />
-          <span className="text-xs font-medium uppercase tracking-wide text-slate-400">or choose manually</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400">or choose a place</span>
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
-        <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="text-xs font-medium text-slate-500">Country</label>
-              <div className="relative mt-1">
-                <select
-                  value={countryCode}
-                  onChange={(e) => handleCountryChange(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-3 pr-8 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                >
-                  <option value="" disabled>Choose country</option>
-                  {ALL_COUNTRIES.map((c) => (
-                    <option key={c.isoCode} value={c.isoCode}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              </div>
-            </div>
-
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
+          <label className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Country</label>
+          <div className="relative mt-2">
+            <select
+              value={countryCode}
+              onChange={(e) => handleCountryChange(e.target.value)}
+              className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-3.5 pr-10 text-base font-medium text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="" disabled>Choose country</option>
+              {ALL_COUNTRIES.map((c) => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           </div>
 
-          <div ref={boxRef} className="relative">
-            <label className="text-xs font-medium text-slate-500">City</label>
-            <div className="relative mt-1">
-              {searching ? (
-                <Loader2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
-              ) : (
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              )}
+          <div ref={boxRef} className="relative mt-4">
+            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">City or suburb</label>
+            <div className="relative mt-2">
+              {searching ? <Loader2 className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-slate-400" /> : <Search className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />}
               <input
                 value={citySearch}
-                onChange={(e) => {
-                  setCitySearch(e.target.value)
-                  setShowSuggestions(true)
-                }}
+                onChange={(e) => { setCitySearch(e.target.value); setShowSuggestions(true) }}
                 onFocus={() => setShowSuggestions(true)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); void searchOnline() } }}
                 placeholder={countryCode ? 'Search for a city or suburb' : 'Choose country first'}
                 disabled={!countryCode}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-24 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100"
               />
+              <button type="button" disabled={!countryCode || searching} onClick={() => void searchOnline()} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700 disabled:opacity-40">Search</button>
             </div>
-            <button type="button" disabled={!countryCode} onClick={() => void searchOnline()} className="mt-2 text-xs font-semibold text-blue-700 disabled:text-slate-400">Search city</button>
             {showSuggestions && citySearch.trim() && (
-              <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-                {!searching && results.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">Press Search city to look up this place.</p>}
-                {results.map((c, i) => (
-                  <button
-                    key={`${c.name}-${c.lat}-${c.lng}-${i}`}
-                    onClick={() => selectCity(c)}
-                    className="block w-full px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
-                  >
-                    {c.name} {c.stateName && <span className="text-slate-400">· {c.stateName}</span>}
-                  </button>
-                ))}
+              <div className="absolute z-10 mt-2 max-h-56 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
+                {!searching && results.length === 0 && <p className="px-3 py-3 text-sm text-slate-500">No city found yet. Try a fuller name or press Search.</p>}
+                {results.map((c, i) => <button key={`${c.name}-${c.lat}-${c.lng}-${i}`} onClick={() => selectCity(c)} className="block w-full rounded-xl px-3 py-3 text-left text-sm text-slate-700 hover:bg-blue-50"><span className="font-semibold">{c.name}</span>{c.stateName && <span className="text-slate-400"> · {c.stateName}</span>}</button>)}
               </div>
             )}
           </div>
         </div>
-      </div>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }

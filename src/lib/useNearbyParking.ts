@@ -40,10 +40,12 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
         // Legacy coordinate matches from the database must not colour another bay.
         rows = rows.map(row => ({...row, sensor_status: row.sensor_status?.match_method === 'kerbside_id' ? row.sensor_status : null}))
         if (council.status === 'fulfilled') rows = mergeMelbourneSensors(rows, council.value, {lat,lng}, new Date().toISOString())
-        else setError('Council availability could not refresh. Parking locations remain available; try Refresh.')
       }
-      if (remote.status === 'rejected') setError('Parking schedules could not refresh. Saved map locations remain available.')
-      if (local.status === 'rejected') setError('Mapped parking locations could not load. Please refresh.')
+      // Each source is independently useful. Do not turn a partial refresh
+      // failure into a broken-map warning while verified rows are available.
+      setError(rows.length === 0 && remote.status === 'rejected' && local.status === 'rejected'
+        ? 'Parking data is unavailable right now.'
+        : null)
       setSpots(rows)
       setUpdatedAt(new Date())
       if (recordSearch) logSearchEvent({ lat, lng }, radiusM, rows.length)

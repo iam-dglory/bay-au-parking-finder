@@ -28,3 +28,24 @@ summary { touch-action: manipulation; }
 @media (max-width: 640px) {
   input, select, textarea { font-size: 16px; }
 }
+
+
+@keyframes bay-logo-reveal {
+  from { opacity: 0; transform: scale(.72) translateY(18px); filter: blur(10px); }
+  65% { opacity: 1; transform: scale(1.035) translateY(0); filter: blur(0); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes bay-copy-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bay-progress {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(210%); }
+}
+.bay-logo-reveal { animation: bay-logo-reveal 720ms cubic-bezier(.2,.8,.2,1) both; }
+.bay-copy-reveal { animation: bay-copy-reveal 540ms 300ms ease-out both; }
+.bay-progress > span { display:block; height:100%; width:50%; border-radius:9999px; background:linear-gradient(90deg,#22d3ee,#2563eb); animation:bay-progress 1.3s 300ms ease-in-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .bay-logo-reveal, .bay-copy-reveal, .bay-progress > span { animation: none; }
+}

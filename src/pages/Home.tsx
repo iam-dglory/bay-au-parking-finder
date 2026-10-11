@@ -13,7 +13,7 @@ import { rankSpots, evaluateSpotStatus } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
-import { LOGO_URL } from '../lib/assets'
+import { WORDMARK_URL } from '../lib/assets'
 import type { ParkingSpot, SpotStatus, SignType } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 
@@ -64,8 +64,8 @@ export function Home({
   const effectiveCenter = destination ?? center
 
   const now = useClock()
-  const { spots, loading, error, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
-  const { carParks, error: areaError, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks && !vacantOnly)
+  const { spots, loading, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
+  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks && !vacantOnly)
   const india = isIndiaSearch(effectiveCenter.lat,effectiveCenter.lng)
   const usa = isUSSearch(effectiveCenter.lat,effectiveCenter.lng)
 
@@ -151,8 +151,7 @@ export function Home({
     return (
       <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc] text-slate-900">
         <div className="flex items-center gap-2 border-b border-slate-100 bg-white px-5 py-4">
-          <img src={LOGO_URL} alt="Bay" className="h-9 w-9 rounded-xl shadow-sm" />
-          <span className="text-lg font-bold tracking-tight text-slate-900">Bay</span>
+          <img src={WORDMARK_URL} alt="Bay" className="h-auto w-24" />
         </div>
 
         <div className="flex flex-1 flex-col items-center gap-5 px-6 py-7 text-center">
@@ -195,9 +194,8 @@ export function Home({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button onClick={() => setExpanded(false)} aria-label="Back to home">
-              <img src={LOGO_URL} alt="Bay" className="h-8 w-8 rounded-xl" />
+              <img src={WORDMARK_URL} alt="Bay" className="h-auto w-24" />
             </button>
-            <span className="text-lg font-bold tracking-tight text-slate-900">Bay</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -287,7 +285,7 @@ export function Home({
           </div>
         )}
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-slate-900">{(loading || areasLoading) && !updatedAt && ranked.length + carParks.length === 0 ? 'Finding parking…' : (error || areaError) && ranked.length + carParks.length === 0 ? 'Parking data unavailable' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
+          <span className="text-sm font-semibold text-slate-900">{(loading || areasLoading) && !updatedAt && ranked.length + carParks.length === 0 ? 'Finding parking…' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
           <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
           {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
         </div>
@@ -298,7 +296,7 @@ export function Home({
             {!usa && <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>}
             {india && <p>Parking areas are mapped from reviewed local and map sources. Prices appear only where a source provides them. Live availability is shown only when a current source is connected.</p>}
             {usa && <p>Blue P pins are parking areas. In San Francisco, M pins are SFMTA mapped meter locations. Neither confirms a free space or the current price; check the meter and street signs on arrival.</p>}
-            <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={refresh} disabled={loading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
+            <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={() => { refresh(); refreshAreas() }} disabled={loading || areasLoading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
           </div>
         </details>
       </div>
@@ -320,15 +318,6 @@ export function Home({
       />
       </details>
 
-      {(error || areaError) && (
-        <div className="mx-4 mb-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-700">
-          {error || areaError}{' '}
-          <button onClick={()=>{refresh();refreshAreas()}} className="underline">
-            retry
-          </button>
-        </div>
-      )}
-
       <div className="min-h-0 flex-1 overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
         {view === 'map' ? (
           <Suspense fallback={<div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">Loading map…</div>}>
@@ -346,7 +335,7 @@ export function Home({
         ) : (
           <div className="h-full space-y-2 overflow-y-auto p-4">
             {(loading || areasLoading) && <p className="text-center text-sm text-slate-400">Loading…</p>}
-            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{error || areaError ? 'Parking data could not load. Use Retry above.' : vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking in this search. Try a wider radius in Filters.'}</p>}
+            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking is available for this search yet. Try a wider radius in Filters.'}</p>}
             {usa ? <>{spotList}{areaList}</> : <>{areaList}{spotList}</>}
           </div>
         )}

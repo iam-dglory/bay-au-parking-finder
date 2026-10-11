@@ -30,8 +30,14 @@ export function useNearbyCarParks(center: { lat: number; lng: number } | null, r
     ])
     if(request!==sequence.current)return
     const rpcOk=remote.status==='fulfilled' && !remote.value.error
-    setCarParks(mergeParkingAreas(rpcOk ? (remote.value.data ?? []) as CarPark[] : [],local.status==='fulfilled' ? local.value : []))
-    if(!rpcOk || local.status==='rejected')setError('Some parking area sources could not load. Refresh to try again.')
+    const rows = mergeParkingAreas(
+      rpcOk ? (remote.value.data ?? []) as CarPark[] : [],
+      local.status==='fulfilled' ? local.value : [],
+    )
+    setCarParks(rows)
+    // Regional catalogs and the legacy database are independent fallbacks. A
+    // failed optional request must never mark an already usable map as broken.
+    setError(rows.length === 0 && !rpcOk && local.status === 'rejected' ? 'Parking areas are unavailable right now.' : null)
     setLoading(false)
   }, [lat, lng, radiusM, enabled])
 

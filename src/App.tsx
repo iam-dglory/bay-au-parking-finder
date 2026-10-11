@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { MapPin, Plus, ClipboardList, BookOpen } from 'lucide-react'
 import { FeedbackForm } from './components/FeedbackForm'
 import { LocationPicker } from './components/LocationPicker'
+import { WelcomeScreen } from './components/WelcomeScreen'
 import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
@@ -23,6 +24,7 @@ export default function App() {
   const needsRefinement = useRef(false)
   const initialSaved = useRef(loadSavedLocations())
   const [authReady, setAuthReady] = useState(false)
+  const [introComplete, setIntroComplete] = useState(false)
   const [location, setLocation] = useState<Location | null>(() => savedStartupLocation(initialSaved.current))
   const [savedLocations, setSavedLocations] = useState(() => initialSaved.current)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
@@ -38,6 +40,12 @@ export default function App() {
       .finally(() => setAuthReady(true))
   }, [])
 
+  // Keep the welcome moment brief. Location and saved-place restoration continue
+  // in parallel, so the logo reveal does not add a second loading step.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIntroComplete(true), 1650)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   /** Shows the dashboard the moment GPS resolves, with a plain fallback
    * label, then fills in the real street address a moment later once
@@ -118,6 +126,8 @@ export default function App() {
   // user actions and must not restart the native permission request.
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (!introComplete) return <WelcomeScreen />
 
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
 
