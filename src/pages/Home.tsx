@@ -1,57 +1,41 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { MapPin, Pencil, Search, Loader2, X, LocateFixed, ParkingSquare, HomeIcon, BriefcaseBusiness, BookmarkPlus } from 'lucide-react'
+import { Bookmark, BriefcaseBusiness, ChevronRight, CircleHelp, HomeIcon, MapPin, ParkingSquare, Search, SlidersHorizontal, X } from 'lucide-react'
 import { zoomForRadius } from '../lib/mapZoom'
 import { SpotCard } from '../components/SpotCard'
 import { ParkingAreaDetails } from '../components/ParkingAreaDetails'
+import { ParkingAreaSheet } from '../components/ParkingAreaSheet'
 import { isIndiaSearch } from '../lib/indiaParking'
 import { isUSSearch } from '../lib/usaParking'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
 import { FilterBar } from '../components/FilterBar'
+import { BrandMark } from '../components/BrandMark'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { useNearbyCarParks } from '../lib/useNearbyCarParks'
 import { rankSpots, evaluateSpotStatus } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
-import { WORDMARK_URL } from '../lib/assets'
-import type { ParkingSpot, SpotStatus, SignType } from '../types'
+import type { CarPark, ParkingSpot, SpotStatus, SignType } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 
-const MapView = lazy(() => import('../components/MapView').then((module) => ({ default: module.MapView })))
+const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
+const RADII = [{ label: '500 m', value: 500 }, { label: '1 km', value: 1000 }, { label: '2 km', value: 2000 }, { label: '5 km', value: 5000 }]
 
-export function Home({
-  center,
-  myLocation,
-  locationLabel,
-  onChangeLocation,
-  savedLocations,
-  onSavePlace,
-  onSelectSavedPlace,
-}: {
-  center: { lat: number; lng: number }
-  /** Live GPS position, updated continuously while driving. Distinct from
-   * `center` (where the current search is anchored) -- see MapView. */
-  myLocation?: { lat: number; lng: number }
-  locationLabel: string
-  onChangeLocation: () => void
-  savedLocations: SavedLocations
-  onSavePlace: (kind: SavedPlaceKind) => void
-  onSelectSavedPlace: (kind: SavedPlaceKind) => void
+export function Home({ center, myLocation, locationLabel, onChangeLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
+  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onChangeLocation: () => void
+  savedLocations: SavedLocations; onSavePlace: (kind: SavedPlaceKind) => void; onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
-  // The map is the home screen: drivers should not need an extra tap before
-  // seeing nearby parking. The lightweight welcome panel remains available via
-  // the Bay mark in the map header.
-  const [expanded, setExpanded] = useState(true)
   const [radiusM, setRadiusM] = useState(1000)
   const [vacantOnly, setVacantOnly] = useState(false)
   const [freeOnly, setFreeOnly] = useState(false)
   const [category, setCategory] = useState<SignType | 'all'>('all')
   const [showCarParks, setShowCarParks] = useState(true)
   const [view, setView] = useState<'map' | 'list'>('map')
-  const [areaLimit, setAreaLimit] = useState(20)
-  const [spotLimit, setSpotLimit] = useState(30)
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [savedOpen, setSavedOpen] = useState(false)
+  const [infoOpen, setInfoOpen] = useState(false)
   const [selectedSpot, setSelectedSpot] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
-
+  const [selectedArea, setSelectedArea] = useState<CarPark | null>(null)
   const [destination, setDestination] = useState<{ lat: number; lng: number; label: string } | null>(null)
   const [showDestSearch, setShowDestSearch] = useState(false)
   const [destQuery, setDestQuery] = useState('')
@@ -60,288 +44,69 @@ export function Home({
   const [showDestSuggestions, setShowDestSuggestions] = useState(false)
   const destBoxRef = useRef<HTMLDivElement>(null)
   const destRequest = useRef(0)
-
   const effectiveCenter = destination ?? center
-
   const now = useClock()
-  const { spots, loading, updatedAt, refresh } = useNearbyParking(expanded ? effectiveCenter : null, radiusM)
-  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(expanded ? effectiveCenter : null, radiusM, showCarParks && !vacantOnly)
-  const india = isIndiaSearch(effectiveCenter.lat,effectiveCenter.lng)
-  const usa = isUSSearch(effectiveCenter.lat,effectiveCenter.lng)
+  const { spots, loading, updatedAt, refresh } = useNearbyParking(effectiveCenter, radiusM)
+  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(effectiveCenter, radiusM, showCarParks && !vacantOnly)
+  const usa = isUSSearch(effectiveCenter.lat, effectiveCenter.lng)
+  const india = isIndiaSearch(effectiveCenter.lat, effectiveCenter.lng)
 
-  useEffect(() => {
-    if (usa) {
-      setVacantOnly(false)
-      setFreeOnly(false)
-      setCategory('all')
-    }
-  }, [usa])
-
-  useEffect(() => {
-    setAreaLimit(20)
-    setSpotLimit(30)
-  }, [effectiveCenter.lat, effectiveCenter.lng, radiusM, freeOnly, vacantOnly, category])
+  useEffect(() => { if (usa) { setVacantOnly(false); setFreeOnly(false); setCategory('all') } }, [usa])
+  useEffect(() => { setSelectedSpot(null); setSelectedArea(null) }, [effectiveCenter.lat, effectiveCenter.lng, radiusM])
+  useEffect(() => { const close = (e: MouseEvent) => { if (destBoxRef.current && !destBoxRef.current.contains(e.target as Node)) setShowDestSuggestions(false) }; document.addEventListener('mousedown', close); return () => document.removeEventListener('mousedown', close) }, [])
 
   const ranked = useMemo(() => {
-    let all = rankSpots(spots, now)
-    if (vacantOnly) all = all.filter(s => availability(s, now).state === 'vacant')
-    if (freeOnly) all = all.filter((s) => s.status.status === 'free')
-    if (category !== 'all') all = all.filter((s) => s.rules.some((r) => r.sign_type === category))
-    return all
-  }, [spots, freeOnly, vacantOnly, category, now])
-
-  // Filters must not freeze an open sheet on a formerly-vacant reading.
-  // Use the latest unfiltered row; a removed/displaced source row closes it.
-  const selectedRow = selectedSpot ? spots.find(s => s.id === selectedSpot.id) : undefined
+    let list = rankSpots(spots, now)
+    if (vacantOnly) list = list.filter(s => availability(s, now).state === 'vacant')
+    if (freeOnly) list = list.filter(s => s.status.status === 'free')
+    if (category !== 'all') list = list.filter(s => s.rules.some(r => r.sign_type === category))
+    return list
+  }, [spots, now, vacantOnly, freeOnly, category])
+  const selectedRow = selectedSpot ? spots.find(s => s.id === selectedSpot.id) : null
   const selected = selectedRow ? { ...selectedRow, status: evaluateSpotStatus(selectedRow.rules, selectedRow.lat, selectedRow.lng, now) } : null
-  const occupancySummary = useMemo(() => {
-    const summary = { vacant: 0, occupied: 0, uncertain: 0, unknown: 0 }
-    ranked.forEach((spot) => { summary[availability(spot, now).state] += 1 })
-    return summary
-  }, [ranked, now])
+  const total = ranked.length + carParks.length
+  const availabilitySummary = useMemo(() => ranked.reduce((summary, spot) => { summary[availability(spot, now).state] += 1; return summary }, { vacant: 0, occupied: 0, uncertain: 0, unknown: 0 }), [ranked, now])
 
   async function searchDestination() {
     if (destQuery.trim().length < 3) return
-    const request = ++destRequest.current
-    setDestSearching(true)
+    const request = ++destRequest.current; setDestSearching(true)
     const found = await searchPlaces(destQuery, center)
-    if (request === destRequest.current) {
-      setDestResults(found)
-      setDestSearching(false)
-      setShowDestSuggestions(true)
-    }
+    if (request === destRequest.current) { setDestResults(found); setDestSearching(false); setShowDestSuggestions(true) }
   }
+  function selectDestination(place: PlaceSearchResult) { setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setDestQuery(''); setDestResults([]); setShowDestSuggestions(false); setShowDestSearch(false) }
+  function clearDestination() { setDestination(null); setDestQuery(''); setDestResults([]) }
+  const resetRefresh = () => { refresh(); refreshAreas() }
+  const filterCount = Number(vacantOnly) + Number(freeOnly) + Number(category !== 'all') + Number(!showCarParks)
 
-  useEffect(() => {
-    function onClickOutside(e: MouseEvent) {
-      if (destBoxRef.current && !destBoxRef.current.contains(e.target as Node)) setShowDestSuggestions(false)
-    }
-    document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
-  }, [])
+  return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[#f7f9fc]">
+    <div className="relative min-h-0 flex-1">
+      {view === 'map' ? <Suspense fallback={<MapLoading />}><MapView center={effectiveCenter} myLocation={myLocation} spots={ranked} carParks={carParks} onSelectSpot={setSelectedSpot} onSelectCarPark={setSelectedArea} zoom={zoomForRadius(radiusM)} glowMe radiusM={radiusM} /></Suspense> : <ParkingList loading={loading || areasLoading} ranked={ranked} areas={carParks} usa={usa} vacantOnly={vacantOnly} filtered={freeOnly || category !== 'all'} onSpot={setSelectedSpot} onArea={setSelectedArea} />}
 
-  function selectDestination(p: PlaceSearchResult) {
-    setDestination({ lat: p.lat, lng: p.lng, label: p.name })
-    setDestQuery('')
-    setDestResults([])
-    setShowDestSuggestions(false)
-    setShowDestSearch(false)
-  }
-
-  function clearDestination() {
-    setDestination(null)
-    setDestQuery('')
-    setDestResults([])
-  }
-
-  const areaList = <>
-    {carParks.length>0 && <p className="text-xs font-semibold text-slate-500">Parking areas · {Math.min(areaLimit,carParks.length)} of {carParks.length} · spot filters apply to individual bays</p>}
-    {carParks.slice(0,areaLimit).map(area=><article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-4"><ParkingAreaDetails area={area} compact /></article>)}
-    {carParks.length > areaLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setAreaLimit(n=>n+20)}>Show more parking areas</button>}
-  </>
-  const spotList = <>
-    {ranked.length>0 && <p className="pt-3 text-xs font-semibold text-slate-500">{usa ? 'Mapped street parking' : 'Parking spots'} · {Math.min(spotLimit,ranked.length)} of {ranked.length}</p>}
-    {ranked.slice(0,spotLimit).map((spot) => (
-      <SpotCard key={spot.id} spot={spot} onClick={() => setSelectedSpot(spot)} />
-    ))}
-    {ranked.length > spotLimit && <button className="w-full rounded-xl bg-blue-50 py-3 font-semibold text-blue-700" onClick={()=>setSpotLimit(n=>n+30)}>Show more parking spots</button>}
-  </>
-
-  if (!expanded) {
-    return (
-      <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc] text-slate-900">
-        <div className="flex items-center gap-2 border-b border-slate-100 bg-white px-5 py-4">
-          <img src={WORDMARK_URL} alt="Bay" className="h-auto w-24" />
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] p-3 sm:p-4">
+        <div className="pointer-events-auto mx-auto max-w-3xl">
+          <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-[0_12px_30px_rgba(15,23,42,.14)] backdrop-blur">
+            <button onClick={onChangeLocation} className="flex min-w-0 flex-1 items-center gap-2 rounded-xl px-2 py-1.5 text-left hover:bg-slate-50" aria-label="Change search location"><BrandMark className="w-[54px] shrink-0" /><span className="min-w-0 border-l border-[#e3eaf3] pl-2"><span className="flex items-center gap-1 text-xs font-bold text-[#0b1730]"><MapPin className="h-3.5 w-3.5 text-[#1769ff]" /><span className="truncate">{destination ? `Near ${destination.label}` : locationLabel}</span></span><span className="block truncate text-[11px] text-[#64748b]">Tap to change location</span></span></button>
+            <button onClick={() => setShowDestSearch(v => !v)} className={`bay-icon-button h-10 w-10 shrink-0 ${showDestSearch ? '!bg-[#07152f] !text-white' : ''}`} aria-label="Search another destination"><Search className="h-4.5 w-4.5" /></button>
+            <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-bold"><button onClick={() => setView('map')} className={`rounded-lg px-3 py-2 ${view === 'map' ? 'bg-[#07152f] text-white shadow-sm' : 'text-[#64748b]'}`}>Map</button><button onClick={() => setView('list')} className={`rounded-lg px-3 py-2 ${view === 'list' ? 'bg-[#07152f] text-white shadow-sm' : 'text-[#64748b]'}`}>List</button></div>
+          </div>
+          {showDestSearch && <div ref={destBoxRef} className="relative mt-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-xl backdrop-blur"><div className="flex items-center gap-2"><Search className="ml-2 h-4 w-4 shrink-0 text-[#64748b]" /><input autoFocus value={destQuery} onChange={e => { destRequest.current++; setDestQuery(e.target.value); setDestResults([]); setShowDestSuggestions(true) }} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void searchDestination() } }} className="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-slate-400" placeholder="Search a destination" /><button onClick={() => void searchDestination()} disabled={destSearching || destQuery.trim().length < 3} className="rounded-xl bg-[#1769ff] px-3 py-2 text-xs font-bold text-white disabled:opacity-50">{destSearching ? 'Searching' : 'Search'}</button><button onClick={() => setShowDestSearch(false)} className="p-2 text-slate-400"><X className="h-4 w-4" /></button></div>{showDestSuggestions && destQuery.trim() && <div className="mt-1 max-h-48 overflow-y-auto border-t border-[#e3eaf3] pt-1">{!destSearching && destResults.length === 0 && <p className="px-3 py-3 text-sm text-[#64748b]">Press Search to find a destination.</p>}{destResults.map((place, index) => <button key={`${place.name}-${index}`} onClick={() => selectDestination(place)} className="block w-full rounded-xl px-3 py-2.5 text-left hover:bg-blue-50"><span className="block text-sm font-semibold text-[#0b1730]">{place.name}</span>{place.address && <span className="block truncate text-xs text-[#64748b]">{place.address}</span>}</button>)}</div>}</div>}
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">{RADII.map(option => <button key={option.value} onClick={() => setRadiusM(option.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-bold shadow-sm ${radiusM === option.value ? 'border-[#1769ff] bg-[#1769ff] text-white' : 'border-white/80 bg-white/95 text-[#40516d]'}`}>{option.label}</button>)}<button onClick={() => setFiltersOpen(true)} className={`flex shrink-0 items-center gap-1.5 rounded-xl border border-white/80 bg-white/95 px-3 py-2 text-xs font-bold text-[#40516d] shadow-sm ${filterCount ? 'text-[#1769ff]' : ''}`}><SlidersHorizontal className="h-3.5 w-3.5" />Filters{filterCount ? ` · ${filterCount}` : ''}</button><button onClick={() => setShowCarParks(v => !v)} className={`flex shrink-0 items-center gap-1.5 rounded-xl border border-white/80 bg-white/95 px-3 py-2 text-xs font-bold shadow-sm ${showCarParks ? 'text-[#1769ff]' : 'text-[#64748b]'}`}><ParkingSquare className="h-3.5 w-3.5" />Areas</button></div>
         </div>
+      </header>
 
-        <div className="flex flex-1 flex-col items-center gap-5 px-6 py-7 text-center">
-          <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Ready when you are</div>
-            <p className="text-2xl font-semibold tracking-tight text-slate-950">Find parking without the circling.</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500">Start nearby, search a destination, or jump to a saved place.</p>
-          </div>
-
-          <div className="flex h-36 shrink-0 w-full max-w-sm flex-col items-center justify-center rounded-3xl border border-slate-200 bg-gradient-to-br from-blue-50 to-white p-5 shadow-xl shadow-slate-200/80">
-            <MapPin className="h-7 w-7 text-blue-600" strokeWidth={1.8} />
-            <p className="mt-2 text-sm font-semibold text-slate-800">Parking map</p>
-            <p className="mt-1 text-xs text-slate-500">Areas, prices and live availability where a source provides it.</p>
-          </div>
-
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-blue-600">You're near</p>
-            <p className="mt-1 text-base font-semibold text-slate-900">{locationLabel}</p>
-          </div>
-
-          <button
-            onClick={() => setExpanded(true)}
-            className="flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 font-semibold text-white shadow-xl shadow-blue-600/20 transition hover:bg-blue-700"
-          >
-            <LocateFixed className="h-4 w-4" strokeWidth={2} />
-            Open parking map
-          </button>
-          <button onClick={onChangeLocation} className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-blue-700">
-            <Pencil className="h-3.5 w-3.5 text-slate-400" strokeWidth={2} />
-            Change location
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden overscroll-y-contain">
-      <div className="shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-2.5 shadow-sm backdrop-blur">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button onClick={() => setExpanded(false)} aria-label="Back to home">
-              <img src={WORDMARK_URL} alt="Bay" className="h-auto w-24" />
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowDestSearch((v) => !v)}
-              aria-label="Search parking near a destination"
-              className={`rounded-full p-1.5 ${showDestSearch ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
-            >
-              <Search className="h-4 w-4" strokeWidth={2} />
-            </button>
-            <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-0.5 text-sm font-semibold">
-              <button onClick={() => setView('map')} className={`px-3 py-1.5 ${view === 'map' ? 'rounded-lg bg-slate-900 text-white shadow-sm' : 'text-slate-600'}`}>
-                Map
-              </button>
-              <button onClick={() => setView('list')} className={`px-3 py-1.5 ${view === 'list' ? 'rounded-lg bg-slate-900 text-white shadow-sm' : 'text-slate-600'}`}>
-                List
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {showDestSearch && (
-          <div ref={destBoxRef} className="relative mt-3">
-            <p className="mb-1.5 text-xs text-slate-500">Check parking near a shopping centre, restaurant, or address before you head out.</p>
-            <div className="relative">
-              {destSearching ? (
-                <Loader2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
-              ) : (
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              )}
-              <input
-                autoFocus
-                value={destQuery}
-                onChange={(e) => {
-                  destRequest.current++
-                  setDestQuery(e.target.value)
-                  setDestResults([])
-                  setDestSearching(false)
-                  setShowDestSuggestions(true)
-                }}
-                onFocus={() => setShowDestSuggestions(true)}
-                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); void searchDestination() } }}
-                placeholder="e.g. Westfield Bondi Junction"
-                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-20 text-sm text-slate-900 focus:border-slate-500 focus:outline-none"
-              />
-              <button type="button" onClick={() => void searchDestination()} disabled={destSearching || destQuery.trim().length < 3} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50">Search</button>
-            </div>
-            {showDestSuggestions && destQuery.trim() && (
-              <div className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-                {!destSearching && destResults.length === 0 && <p className="px-3 py-2.5 text-sm text-slate-400">Press Search to find places.</p>}
-                {destResults.map((p, i) => (
-                  <button key={i} onClick={() => selectDestination(p)} className="block w-full px-3 py-2.5 text-left hover:bg-slate-50">
-                    <p className="text-sm font-medium text-slate-800">{p.name}</p>
-                    {p.address && <p className="text-xs text-slate-400">{p.address}</p>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {destination ? (
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <span className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-slate-700">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-indigo-500" strokeWidth={2} />
-              <span className="truncate">Near {destination.label}</span>
-            </span>
-            <button onClick={clearDestination} className="flex shrink-0 items-center gap-1 text-xs text-slate-400 hover:text-slate-600">
-              <X className="h-3 w-3" strokeWidth={2} /> Back to {locationLabel}
-            </button>
-          </div>
-        ) : (
-          <div className="mt-2 flex min-w-0 items-center gap-1.5">
-            <button onClick={onChangeLocation} className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-900" aria-label="Change location">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" strokeWidth={2} />
-              <span className="truncate">{locationLabel}</span>
-              <Pencil className="h-3 w-3 shrink-0 text-slate-400" strokeWidth={2} />
-            </button>
-            <details className="relative ml-auto shrink-0">
-              <summary className="list-none cursor-pointer rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"><BookmarkPlus className="inline h-3.5 w-3.5" /> Saved</summary>
-              <div className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
-                <button onClick={() => onSavePlace('home')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><HomeIcon className="h-3.5 w-3.5 text-blue-600" /> Save current as home</button>
-                <button onClick={() => onSavePlace('work')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><BriefcaseBusiness className="h-3.5 w-3.5 text-blue-600" /> Save current as work</button>
-                {savedLocations.home && <button onClick={() => onSelectSavedPlace('home')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><HomeIcon className="h-3.5 w-3.5 text-slate-500" /> Home</button>}
-                {savedLocations.work && <button onClick={() => onSelectSavedPlace('work')} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs font-medium hover:bg-slate-50"><BriefcaseBusiness className="h-3.5 w-3.5 text-slate-500" /> Work</button>}
-              </div>
-            </details>
-          </div>
-        )}
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-slate-900">{(loading || areasLoading) && !updatedAt && ranked.length + carParks.length === 0 ? 'Finding parking…' : usa ? `${(ranked.length + carParks.length).toLocaleString()} mapped parking places` : `${ranked.length.toLocaleString()} parking spots`}</span>
-          <span className="text-xs text-slate-400">within {radiusM >= 1000 ? `${radiusM / 1000} km` : `${radiusM} m`}</span>
-          {carParks.length > 0 && <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"><ParkingSquare className="h-3.5 w-3.5" /> {carParks.length} parking areas</span>}
-        </div>
-        <details className="mt-2 text-xs text-slate-600">
-          <summary className="cursor-pointer py-2 font-medium">{loading && !updatedAt ? 'Loading availability' : india || occupancySummary.vacant + occupancySummary.occupied === 0 ? 'Mapped parking · availability on arrival' : <><span className="text-emerald-700">{occupancySummary.vacant} vacant</span> · <span className="text-rose-700">{occupancySummary.occupied} occupied</span></>} · Details</summary>
-          <div className="space-y-2 rounded-xl bg-slate-50 p-3">
-            <p><span className="text-slate-600">{occupancySummary.uncertain + occupancySummary.unknown} availability on arrival</span> · Blue P: parking areas · numbered groups: zoom in</p>
-            {!usa && <p>Vacancy describes the latest available reading. Parking permission and paid hours come from the schedule shown when you open a spot.</p>}
-            {india && <p>Parking areas are mapped from reviewed local and map sources. Prices appear only where a source provides them. Live availability is shown only when a current source is connected.</p>}
-            {usa && <p>Blue P pins are parking areas. In San Francisco, M pins are SFMTA mapped meter locations. Neither confirms a free space or the current price; check the meter and street signs on arrival.</p>}
-            <div className="flex items-center justify-between gap-3"><span>{loading ? 'Loading nearby bays…' : updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not updated yet'}</span><button onClick={() => { refresh(); refreshAreas() }} disabled={loading || areasLoading} className="min-h-11 px-2 font-semibold text-blue-700">Refresh</button></div>
-          </div>
-        </details>
-      </div>
-
-      <details className="shrink-0 border-b border-slate-200 bg-white">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-blue-700">Filters · {radiusM / 1000} km{vacantOnly ? ' · Vacant now' : ''}{freeOnly ? ' · No fee' : ''}{category !== 'all' ? ' · Zone selected' : ''}{showCarParks && !vacantOnly ? ' · Parking areas on' : ''}</summary>
-      <FilterBar
-        vacantOnly={vacantOnly}
-        onVacantOnlyChange={setVacantOnly}
-        radiusM={radiusM}
-        onRadiusChange={setRadiusM}
-        freeOnly={freeOnly}
-        onFreeOnlyChange={setFreeOnly}
-        category={category}
-        onCategoryChange={setCategory}
-        showCarParks={showCarParks}
-        onShowCarParksChange={setShowCarParks}
-        mappedOnly={usa}
-      />
-      </details>
-
-      <div className="min-h-0 flex-1 overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-[0_-8px_30px_rgba(30,64,175,0.06)]">
-        {view === 'map' ? (
-          <Suspense fallback={<div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">Loading map…</div>}>
-            <MapView
-              center={effectiveCenter}
-              myLocation={myLocation}
-              spots={ranked}
-              carParks={carParks}
-              onSelectSpot={setSelectedSpot}
-              zoom={zoomForRadius(radiusM)}
-              glowMe
-              radiusM={radiusM}
-            />
-          </Suspense>
-        ) : (
-          <div className="h-full space-y-2 overflow-y-auto p-4">
-            {(loading || areasLoading) && <p className="text-center text-sm text-slate-400">Loading…</p>}
-            {!loading && !areasLoading && ranked.length === 0 && carParks.length===0 && <p className="text-center text-sm text-slate-500">{vacantOnly ? 'No fresh vacant bays in this search. Turn off Vacant now to see mapped parking, or try a wider radius.' : freeOnly || category !== 'all' ? 'No spots match these parking terms. Clear the filters or try a wider radius.' : 'No mapped parking is available for this search yet. Try a wider radius in Filters.'}</p>}
-            {usa ? <>{spotList}{areaList}</> : <>{areaList}{spotList}</>}
-          </div>
-        )}
-      </div>
-
-      <SpotDetailSheet spot={selected} onClose={() => setSelectedSpot(null)} onUpdated={refresh} />
+      {view === 'map' && <div className="absolute inset-x-3 bottom-3 z-[450] mx-auto flex max-w-lg items-end justify-between gap-2 sm:bottom-4"><div className="rounded-2xl border border-white/80 bg-white/95 px-3 py-2 shadow-lg backdrop-blur"><p className="text-xs font-bold text-[#0b1730]">{loading || areasLoading ? 'Updating map…' : `${total.toLocaleString()} nearby places`}</p><p className="mt-0.5 text-[11px] text-[#64748b]">{usa || india || availabilitySummary.vacant + availabilitySummary.occupied === 0 ? 'Availability on arrival' : `${availabilitySummary.vacant} fresh vacant · ${availabilitySummary.occupied} occupied`}</p></div><div className="relative"><button onClick={() => setSavedOpen(v => !v)} className="bay-icon-button" aria-label="Saved locations"><Bookmark className="h-4.5 w-4.5" /></button>{savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onClose={() => setSavedOpen(false)} />}</div><button onClick={() => setInfoOpen(v => !v)} className="bay-icon-button" aria-label="About map data"><CircleHelp className="h-4.5 w-4.5" /></button>{infoOpen && <div className="absolute bottom-14 right-0 w-[min(330px,calc(100vw-24px))] rounded-2xl border border-[#e3eaf3] bg-white p-3 text-xs leading-5 text-[#64748b] shadow-xl"><button onClick={resetRefresh} className="float-right ml-2 font-bold text-[#1769ff]">Refresh</button><p className="font-bold text-[#0b1730]">Map data</p><p className="mt-1">{usa ? 'Mapped street parking and parking areas. Check street signs and meters on arrival.' : india ? 'Mapped parking areas and source-listed terms. Live vacancy appears only where a current provider publishes it.' : 'Availability is only shown where a connected source provides a fresh reading. Physical signs control parking.'}</p>{updatedAt && <p className="mt-1 text-[11px]">Last map update {updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>}</div>}</div>}
     </div>
-  )
+    {destination && <button onClick={clearDestination} className="absolute bottom-2 left-1/2 z-[600] -translate-x-1/2 rounded-full bg-[#07152f] px-4 py-2 text-xs font-bold text-white shadow-lg">Back to {locationLabel}</button>}
+    {filtersOpen && <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/30 sm:items-center sm:p-5" onClick={() => setFiltersOpen(false)}><div className="w-full max-w-lg" onClick={e => e.stopPropagation()}><FilterBar vacantOnly={vacantOnly} onVacantOnlyChange={setVacantOnly} radiusM={radiusM} onRadiusChange={setRadiusM} freeOnly={freeOnly} onFreeOnlyChange={setFreeOnly} category={category} onCategoryChange={setCategory} showCarParks={showCarParks} onShowCarParksChange={setShowCarParks} mappedOnly={usa} onClose={() => setFiltersOpen(false)} /></div></div>}
+    <SpotDetailSheet spot={selected} onClose={() => setSelectedSpot(null)} onUpdated={refresh} />
+    <ParkingAreaSheet area={selectedArea} onClose={() => setSelectedArea(null)} />
+  </main>
 }
+
+function MapLoading() { return <div className="flex h-full items-center justify-center bg-[#eef4ff] text-sm font-semibold text-[#64748b]">Loading map…</div> }
+function ParkingList({ loading, ranked, areas, usa, vacantOnly, filtered, onSpot, onArea }: { loading: boolean; ranked: (ParkingSpot & { status: SpotStatus })[]; areas: CarPark[]; usa: boolean; vacantOnly: boolean; filtered: boolean; onSpot: (spot: ParkingSpot & { status: SpotStatus }) => void; onArea: (area: CarPark) => void }) {
+ const empty = vacantOnly ? 'No fresh vacant bays in this search. Turn off the vacancy filter to see mapped parking.' : filtered ? 'No places match these filters. Try a wider radius or reset filters.' : 'No mapped parking is available for this search yet. Try a wider radius.'
+ return <div className="h-full overflow-y-auto bg-[#f7f9fc] px-3 pb-6 pt-28 sm:px-5"><div className="mx-auto max-w-3xl">{loading && <p className="py-8 text-center text-sm text-[#64748b]">Updating nearby parking…</p>}{!loading && ranked.length === 0 && areas.length === 0 && <p className="rounded-2xl bg-white p-5 text-center text-sm text-[#64748b]">{empty}</p>}{!usa && <AreaList areas={areas} onArea={onArea} />}{ranked.length > 0 && <section className="mt-4"><p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">{usa ? 'Mapped street parking' : 'Parking spots'} · {ranked.length}</p><div className="space-y-2">{ranked.map(spot => <SpotCard key={spot.id} spot={spot} onClick={() => onSpot(spot)} />)}</div></section>}{usa && <AreaList areas={areas} onArea={onArea} />}</div></div>
+}
+function AreaList({ areas, onArea }: { areas: CarPark[]; onArea: (area: CarPark) => void }) { if (!areas.length) return null; return <section><p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">Parking areas · {areas.length}</p><div className="space-y-2">{areas.map(area => <article key={area.id} className="bay-card rounded-2xl p-4"><div className="flex justify-end"><button onClick={() => onArea(area)} className="-mt-1 -mr-1 flex items-center gap-1 text-xs font-bold text-[#1769ff]">View <ChevronRight className="h-3.5 w-3.5" /></button></div><ParkingAreaDetails area={area} compact /></article>)}</div></section> }
+function SavedMenu({ saved, onSave, onSelect, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onClose: () => void }) { const act = (fn: () => void) => { fn(); onClose() }; return <div className="absolute bottom-12 right-0 z-[700] w-56 rounded-2xl border border-[#e3eaf3] bg-white p-1.5 shadow-xl"><button onClick={() => act(() => onSave('home'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-slate-50"><HomeIcon className="h-4 w-4 text-[#1769ff]" />Save current as home</button><button onClick={() => act(() => onSave('work'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-slate-50"><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Save current as work</button>{saved.home && <button onClick={() => act(() => onSelect('home'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-blue-50"><HomeIcon className="h-4 w-4 text-slate-500" />Go to home</button>}{saved.work && <button onClick={() => act(() => onSelect('work'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-blue-50"><BriefcaseBusiness className="h-4 w-4 text-slate-500" />Go to work</button>}</div> }

@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Circle, Polygon, Popup, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Circle, Polygon, useMap, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import { availability } from '../lib/availability'
 import { MapOrientation } from './MapOrientation'
-import { ParkingAreaDetails } from './ParkingAreaDetails'
 
 
 function pinIcon(color: string, state: string) {
@@ -148,6 +147,7 @@ export function MapView({
   radiusM,
   myLocation,
   carParks = [],
+  onSelectCarPark,
 }: {
   center: { lat: number; lng: number }
   spots: (ParkingSpot & { status: SpotStatus })[]
@@ -168,9 +168,10 @@ export function MapView({
    * when live tracking isn't available. */
   myLocation?: { lat: number; lng: number }
   /** Off-street car parks (multi-storey buildings/lots), shown as distinct
-   * square "P" markers with a lightweight tap-to-view popup rather than the
-   * full spot detail sheet, since they carry capacity, not legal rules. */
+   * square "P" markers that open an area sheet rather than a bay
+   * detail sheet, since they carry capacity rather than legal rules. */
   carParks?: CarPark[]
+  onSelectCarPark?: (area: CarPark) => void
 }) {
   const mePosition = myLocation ?? center
   const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
@@ -206,18 +207,10 @@ export function MapView({
           />
         ))}
       </MarkerClusterGroup>
-      {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#2563eb', weight:2, fillOpacity:.12}}>
-        <Popup><div style={{maxWidth:280,maxHeight:'50vh',overflowY:'auto'}}><ParkingAreaDetails area={area} /></div></Popup>
-      </Polygon>)}
+      {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#1769ff', weight:2, fillOpacity:.10}} eventHandlers={{ click: () => onSelectCarPark?.(area) }} />)}
       <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} spiderfyOnMaxZoom={false}>
       {carParks.map((cp) => (
-        <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()}>
-          <Popup>
-            <div style={{ maxWidth: 280, maxHeight: '50vh', overflowY:'auto' }}>
-              <ParkingAreaDetails area={cp} />
-            </div>
-          </Popup>
-        </Marker>
+        <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()} eventHandlers={{ click: () => onSelectCarPark?.(cp) }} />
       ))}
       </MarkerClusterGroup>
       {pickMode && <ClickCatcher onPick={(lat, lng) => onPickLocation?.(lat, lng)} />}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Clock3, CircleCheck, Image, MessageSquarePlus } from 'lucide-react'
+import { Clock3, CircleCheck, Image, MessageSquarePlus, Home, BriefcaseBusiness } from 'lucide-react'
+import type { SavedLocations } from '../lib/savedLocations'
 import { supabase } from '../lib/supabaseClient'
 import { SpotCard } from '../components/SpotCard'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
@@ -16,7 +17,7 @@ const MODERATION_BADGE = {
   rejected: { icon: Image, text: 'Update the photo to match the sign', className: 'bg-amber-100 text-amber-700' },
 } as const
 
-export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; lng: number }; onOpenFeedback: () => void }) {
+export function MyActivity({ center, savedLocations, onOpenFeedback }: { center: { lat: number; lng: number }; savedLocations: SavedLocations; onOpenFeedback: () => void }) {
   const [visits, setVisits] = useState<SpotVisit[]>([])
   const [signs, setSigns] = useState<(ParkingSpot & { status: SpotStatus })[]>([])
   const [loading, setLoading] = useState(true)
@@ -76,11 +77,8 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
 
   return (
     <div className="h-full overflow-y-auto bg-[#f6f8fc]">
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Your Bay history</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight">My activity</h1>
-        <p className="mt-1 text-sm text-slate-300">Your saved directions and contributed signs</p>
-      </div>
+      <header className="border-b border-[#e3eaf3] bg-white px-5 py-5"><p className="text-xs font-bold uppercase tracking-[.14em] text-[#1769ff]">Your Bay</p><h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0b1730]">My activity</h1><p className="mt-1 text-sm text-[#64748b]">Directions you opened and signs you contributed.</p></header>
+      {(savedLocations.home || savedLocations.work) && <section className="m-4 mb-0 rounded-2xl border border-[#e3eaf3] bg-white p-4 shadow-sm"><p className="text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">Saved places</p><div className="mt-3 grid gap-2">{savedLocations.home && <SavedPlace icon={<Home className="h-4 w-4" />} label="Home" value={savedLocations.home.label} />}{savedLocations.work && <SavedPlace icon={<BriefcaseBusiness className="h-4 w-4" />} label="Work" value={savedLocations.work.label} />}</div></section>}
 
       <section className="m-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="mb-2 text-sm font-semibold text-slate-700">Parking history</h2>
@@ -132,3 +130,5 @@ export function MyActivity({ center, onOpenFeedback }: { center: { lat: number; 
     </div>
   )
 }
+
+function SavedPlace({ icon, label, value }: { icon: import('react').ReactNode; label: string; value: string }) { return <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5"><span className="text-[#1769ff]">{icon}</span><span className="min-w-0 flex-1"><span className="block text-xs font-bold text-[#0b1730]">{label}</span><span className="block truncate text-xs text-[#64748b]">{value}</span></span></div> }

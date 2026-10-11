@@ -40,12 +40,11 @@ export default function App() {
       .finally(() => setAuthReady(true))
   }, [])
 
-  // Keep the welcome moment brief. Location and saved-place restoration continue
-  // in parallel, so the logo reveal does not add a second loading step.
+  // The opening screen follows actual startup work. It is dismissed as soon as
+  // the session and either a saved/GPS location or manual fallback are ready.
   useEffect(() => {
-    const timer = window.setTimeout(() => setIntroComplete(true), 1650)
-    return () => window.clearTimeout(timer)
-  }, [])
+    if (authReady && locationStatus !== 'detecting') setIntroComplete(true)
+  }, [authReady, locationStatus])
 
   /** Shows the dashboard the moment GPS resolves, with a plain fallback
    * label, then fills in the real street address a moment later once
@@ -127,7 +126,7 @@ export default function App() {
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (!introComplete) return <WelcomeScreen />
+  if (!introComplete) return <WelcomeScreen phase={!authReady ? 'connecting' : locationStatus === 'detecting' ? 'locating' : 'ready'} onChooseLocation={() => { gpsEpoch.current++; setLocationStatus('manual') }} />
 
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
 
@@ -195,15 +194,15 @@ export default function App() {
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
-        {tab === 'mine' && <MyActivity center={location} onOpenFeedback={() => setShowFeedback(true)} />}
+        {tab === 'mine' && <MyActivity center={location} savedLocations={savedLocations} onOpenFeedback={() => setShowFeedback(true)} />}
         {tab === 'guide' && <Guide location={location} />}
         </Suspense>
       </div>
 
-      <nav className="mx-2 mb-1 flex shrink-0 rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(30,64,175,0.10)] backdrop-blur sm:mx-5 sm:mb-3">
+      <nav aria-label="Main navigation" className="mx-2 mb-1 flex shrink-0 border-t border-[#e3eaf3] bg-white/95 px-1 py-1.5 shadow-[0_-10px_24px_rgba(15,23,42,.05)] backdrop-blur sm:mx-5 sm:mb-3 sm:rounded-2xl sm:border">
         <button
           onClick={() => setTab('home')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <MapPin className="h-5 w-5" strokeWidth={1.75} />
           Find parking
@@ -213,21 +212,21 @@ export default function App() {
             setAddKey((k) => k + 1)
             setTab('addSign')
           }}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'addSign' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <Plus className="h-5 w-5" strokeWidth={1.75} />
           Add a sign
         </button>
         <button
           onClick={() => setTab('mine')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <ClipboardList className="h-5 w-5" strokeWidth={1.75} />
           My activity
         </button>
         <button
           onClick={() => setTab('guide')}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'guide' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'guide' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
           <BookOpen className="h-5 w-5" strokeWidth={1.75} />
           Guide

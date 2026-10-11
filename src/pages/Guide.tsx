@@ -40,11 +40,7 @@ export function Guide({ location }: { location: { lat: number; lng: number; coun
 
   return (
     <div className="h-full overflow-y-auto bg-[#f6f8fc]">
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-5 py-5 text-white">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-200">Bay guide</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight">Understand the sign before you park</h1>
-        <p className="mt-1 text-sm text-slate-300">Rules shown for {country}. Always confirm the physical sign.</p>
-      </div>
+      <header className="border-b border-[#e3eaf3] bg-white px-5 py-5"><p className="text-xs font-bold uppercase tracking-[.14em] text-[#1769ff]">Bay guide</p><h1 className="mt-1 text-2xl font-bold tracking-tight text-[#0b1730]">Understand the sign</h1><p className="mt-1 text-sm text-[#64748b]">Rules shown for {country}. The physical sign always controls.</p></header>
 
       <div className="flex gap-1.5 overflow-x-auto px-4 pt-4 pb-1">
         {[...GUIDE_COUNTRIES, 'Other'].map((c) => (
