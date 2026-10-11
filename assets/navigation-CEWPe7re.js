@@ -1,0 +1,1 @@
+import{n as e}from"./jsx-runtime-DhroI1JZ.js";var t={name:`clock-3`,size:24,node:[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`M12 6v6h4`,key:`135r8i`}]]};t.node;var n=e(t),r={name:`navigation`,size:24,node:[[`polygon`,{points:`3 11 22 2 13 21 11 13 3 11`,key:`1ltx0t`}]]};r.node;var i=e(r);export{n,i as t};
