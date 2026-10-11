@@ -176,12 +176,15 @@ export function MapView({
   const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
   const otherSpots = spots.filter(spot => spot.catalog?.source_name !== 'SFMTA meter inventory')
   return (
-    <MapContainer center={[center.lat, center.lng]} zoom={zoom} maxZoom={19} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
+    <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={18} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
       <ResizeMap />
       <MapOrientation />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        maxNativeZoom={18}
+        maxZoom={18}
+        updateWhenZooming={false}
       />
       <Recenter center={[center.lat, center.lng]} zoom={zoom} />
       {radiusM && (
@@ -193,7 +196,7 @@ export function MapView({
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
       <SfMeterMarkers spots={meterSpots} onSelectSpot={onSelectSpot} />
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false} disableClusteringAtZoom={18}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false}>
         {otherSpots.map((spot) => (
           <Marker
             key={spot.id}
@@ -206,7 +209,7 @@ export function MapView({
       {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#2563eb', weight:2, fillOpacity:.12}}>
         <Popup><div style={{maxWidth:280,maxHeight:'50vh',overflowY:'auto'}}><ParkingAreaDetails area={area} /></div></Popup>
       </Polygon>)}
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} disableClusteringAtZoom={17}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} spiderfyOnMaxZoom={false}>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()}>
           <Popup>
