@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Circle, Polygon, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Circle, Polygon, ZoomControl, useMap, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
@@ -65,6 +65,12 @@ function clusterIcon(cluster: { getChildCount(): number }, areas = false) {
   const label = `${count} ${areas ? 'parking areas' : 'mapped parking spots'} · zoom in for details`
   // Cluster colour describes the layer, not its size or presumed vacancy.
   return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div title="${label}" aria-label="${label}" style="width:44px;height:44px;border-radius:${areas ? '12px' : '50%'};background:${areas ? '#2563eb' : '#475569'};color:white;border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px/1.1 sans-serif">${areas ? '<span style="font-size:10px">P</span>' : ''}${count}</div>`})
+}
+
+/** Clusters are a visual-performance aid only. Tapping one must always move
+ * into its actual points, never leave a driver with an inert count badge. */
+function openCluster(event: { layer?: { zoomToBounds?: () => void } }) {
+  event.layer?.zoomToBounds?.()
 }
 
 /** Aggregate dense meter inventory before making Leaflet markers. At street
@@ -177,9 +183,10 @@ export function MapView({
   const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
   const otherSpots = spots.filter(spot => spot.catalog?.source_name !== 'SFMTA meter inventory')
   return (
-    <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={18} className="h-full w-full" zoomControl={false} rotate touchRotate rotateControl={false}>
+    <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={18} className="h-full w-full" zoomControl={false} scrollWheelZoom doubleClickZoom dragging touchZoom rotate touchRotate rotateControl={false}>
       <ResizeMap />
       <MapOrientation />
+      <ZoomControl position="bottomleft" />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -197,7 +204,7 @@ export function MapView({
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
       <SfMeterMarkers spots={meterSpots} onSelectSpot={onSelectSpot} />
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} chunkedLoading maxClusterRadius={50} spiderfyOnMaxZoom={false}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={50} zoomToBoundsOnClick spiderfyOnMaxZoom>
         {otherSpots.map((spot) => (
           <Marker
             key={spot.id}
@@ -208,7 +215,7 @@ export function MapView({
         ))}
       </MarkerClusterGroup>
       {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#1769ff', weight:2, fillOpacity:.10}} eventHandlers={{ click: () => onSelectCarPark?.(area) }} />)}
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} chunkedLoading maxClusterRadius={35} spiderfyOnMaxZoom={false}>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={35} zoomToBoundsOnClick spiderfyOnMaxZoom>
       {carParks.map((cp) => (
         <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()} eventHandlers={{ click: () => onSelectCarPark?.(cp) }} />
       ))}
