@@ -68,7 +68,7 @@ describe('US mapped parking', () => {
     expect(results.every(row => row.occupancy === 'not_provided')).toBe(true)
   })
 
-  it('surfaces a missing SF meter layer instead of silently showing incomplete coverage', async () => {
+  it('keeps mapped areas available when the additive SF meter layer is unavailable', async () => {
     vi.resetModules()
     const lat = 37.7749, lng = -122.4194
     vi.stubGlobal('fetch', vi.fn(async (url: string) => {
@@ -77,6 +77,6 @@ describe('US mapped parking', () => {
       throw new Error(`Unexpected tile: ${url}`)
     }))
     const { usaNearby } = await import('./usaParking')
-    await expect(usaNearby(lat, lng, 500)).rejects.toThrow('San Francisco meter locations could not load')
+    await expect(usaNearby(lat, lng, 500)).resolves.toEqual([])
   })
 })

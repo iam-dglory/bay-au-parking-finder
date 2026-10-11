@@ -90,16 +90,26 @@ export async function usaNearby(lat: number, lng: number, radius: number): Promi
       for (const state of byTile.get(key) ?? []) wanted.push(`${state}/${key}`)
     }
   }
-  const rows = await Promise.all(wanted.map(key => {
+  // State-border searches may need several tiles. Preserve records from the
+  // tiles that did arrive instead of discarding the complete result because a
+  // neighbouring tile was temporarily unavailable.
+  const results = await Promise.allSettled(wanted.map(key => {
     if (!loaded.has(key)) loaded.set(key, readCompressedTile(`usa/${key}.json.gz`)
       .catch(error => { loaded.delete(key); throw error }))
     return loaded.get(key)!
   }))
   for (const key of loaded.keys()) if (!wanted.includes(key)) loaded.delete(key)
+  const rows = results.flatMap(result => result.status === 'fulfilled' ? result.value : [])
+  if (wanted.length && rows.length === 0 && results.every(result => result.status === 'rejected')) {
+    throw new Error('Mapped US parking locations could not load. Please refresh.')
+  }
   const unique = new Map<string, CarPark>()
-  for (const row of rows.flat()) unique.set(row.id, row)
+  for (const row of rows) unique.set(row.id, row)
   const mapped = nearbyCatalog([...unique.values()], lat, lng, radius)
   // SFMTA publishes exact meter locations, but not a live vacancy or the full
   // sign/rate schedule. Keep those records distinct from OSM parking areas.
-  return [...mapped, ...await sfMeterNearby(lat, lng, radius)].sort((a, b) => a.distance_m - b.distance_m)
+  // Meter inventory is an additive layer. A provider outage must not hide
+  // parking areas that loaded successfully from the national catalog.
+  const meters = await sfMeterNearby(lat, lng, radius).catch(() => [] as CarPark[])
+  return [...mapped, ...meters].sort((a, b) => a.distance_m - b.distance_m)
 }

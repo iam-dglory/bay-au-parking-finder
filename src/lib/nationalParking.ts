@@ -52,13 +52,20 @@ export async function nationalNearby(country: 'india' | 'australia', lat: number
       if (known.has(tile)) wanted.push(tile)
     }
   }
-  const rows = await Promise.all(wanted.map(tile => {
+  // A geographic search can span more than one tile. Keep the usable tiles
+  // when a CDN or connection fails for one of them, rather than presenting an
+  // empty map despite the other source-backed facilities being available.
+  const results = await Promise.allSettled(wanted.map(tile => {
     const key = `${country}/${tile}`
     if (!tiles.has(key)) tiles.set(key, readTile(`${country}/${tile}.json.gz`).catch(error => { tiles.delete(key); throw error }))
     return tiles.get(key)!
   }))
   for (const key of tiles.keys()) if (key.startsWith(`${country}/`) && !wanted.includes(key.slice(country.length + 1))) tiles.delete(key)
-  return rows.flat().filter(row => !row.parent_area_id)
+  const rows = results.flatMap(result => result.status === 'fulfilled' ? result.value : [])
+  if (wanted.length && rows.length === 0 && results.every(result => result.status === 'rejected')) {
+    throw new Error('Mapped parking locations could not load. Please refresh.')
+  }
+  return rows.filter(row => !row.parent_area_id)
     .map(row => ({ ...row, distance_m: haversineMeters({ lat, lng }, row) }))
     .filter(row => row.distance_m <= radius)
     .sort((a, b) => a.distance_m - b.distance_m)

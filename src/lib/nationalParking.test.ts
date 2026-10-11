@@ -22,4 +22,17 @@ describe('national parking tiles', () => {
     expect(result).toHaveLength(1)
     expect(result[0].occupancy).toBe('not_provided')
   })
+
+  it('keeps available tiles when a neighbouring tile fails to load', async () => {
+    vi.resetModules()
+    const lat = 28.6139, lng = 77.209
+    const key = `${Math.floor(lat / .1)}_${Math.floor(lng / .1)}`
+    const failed = `${Math.floor((lat - .02) / .1)}_${Math.floor(lng / .1)}`
+    const row = { id: 'osm:node:partial', kind: 'area', country: 'IN', address_text: 'Mapped parking', suburb: null, lat, lng, distance_m: 0, capacity: null, census_year: null }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.endsWith('index.json')
+      ? Response.json({ tile_size: .1, country: 'IN', tiles: [key, failed] })
+      : url.includes(`${failed}.json.gz`) ? new Response(null, { status: 503 }) : Response.json([row])))
+    const { nationalNearby: nearby } = await import('./nationalParking')
+    expect((await nearby('india', lat, lng, 3000)).map(item => item.id)).toEqual([row.id])
+  })
 })

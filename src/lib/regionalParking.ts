@@ -28,13 +28,20 @@ export async function regionalNearby(lat: number, lng: number, radius: number): 
       if (known.has(key)) wanted.push(key)
     }
   }
-  const rows = await Promise.all(wanted.map(key => {
+  // A single missing static tile must not make every nearby Melbourne area
+  // disappear. Return all successfully loaded tiles and only fail if none of
+  // the requested coverage could be read.
+  const results = await Promise.allSettled(wanted.map(key => {
     if (!tiles.has(key)) tiles.set(key,json<CarPark[]>(`melbourne/${key}.json`).catch(error => { tiles.delete(key); throw error }))
     return tiles.get(key)!
   }))
   // Retain only nearby tiles while navigating, rather than growing an unbounded mobile cache.
   for (const key of tiles.keys()) if (!wanted.includes(key)) tiles.delete(key)
-  return nearbyCatalog(rows.flat(),lat,lng,radius)
+  const rows = results.flatMap(result => result.status === 'fulfilled' ? result.value : [])
+  if (wanted.length && rows.length === 0 && results.every(result => result.status === 'rejected')) {
+    throw new Error('Mapped parking locations could not load. Please refresh.')
+  }
+  return nearbyCatalog(rows,lat,lng,radius)
 }
 /** Remove only co-located catalog bays. This is visual deduplication, never
  * a sensor or sign assignment: council evidence remains attached to its ID. */

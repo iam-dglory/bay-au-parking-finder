@@ -123,6 +123,23 @@ function ResizeMap() {
   return null
 }
 
+/** Keep off-street facilities above dense bay clusters. They are a separate
+ * destination type and must remain tappable even in a busy CBD. */
+function ParkingPanes() {
+  const map = useMap()
+  useEffect(() => {
+    const ensurePane = (name: string, zIndex: number) => {
+      const pane = map.getPane(name) ?? map.createPane(name)
+      pane.style.zIndex = String(zIndex)
+    }
+    ensurePane('bay-marker-pane', 610)
+    ensurePane('bay-cluster-pane', 620)
+    ensurePane('area-marker-pane', 640)
+    ensurePane('area-cluster-pane', 645)
+  }, [map])
+  return null
+}
+
 function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap()
   const [lat, lng] = center
@@ -185,6 +202,7 @@ export function MapView({
   return (
     <MapContainer center={[center.lat, center.lng]} zoom={Math.min(zoom, 18)} maxZoom={18} className="h-full w-full" zoomControl={false} scrollWheelZoom doubleClickZoom dragging touchZoom rotate touchRotate rotateControl={false}>
       <ResizeMap />
+      <ParkingPanes />
       <MapOrientation />
       <ZoomControl position="bottomleft" />
       <TileLayer
@@ -204,20 +222,21 @@ export function MapView({
       )}
       <Marker position={[mePosition.lat, mePosition.lng]} icon={meIcon(glowMe)} />
       <SfMeterMarkers spots={meterSpots} onSelectSpot={onSelectSpot} />
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={50} zoomToBoundsOnClick spiderfyOnMaxZoom>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster)} clusterPane="bay-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={50} zoomToBoundsOnClick spiderfyOnMaxZoom>
         {otherSpots.map((spot) => (
           <Marker
             key={spot.id}
             position={[spot.lat, spot.lng]}
+            pane="bay-marker-pane"
             icon={pinIcon(availability(spot).color, availability(spot).state)}
             eventHandlers={{ click: () => onSelectSpot?.(spot) }}
           />
         ))}
       </MarkerClusterGroup>
       {carParks.filter(area => area.boundary?.length).map(area => <Polygon key={`boundary:${area.id}`} positions={area.boundary!} pathOptions={{color:'#1769ff', weight:2, fillOpacity:.10}} eventHandlers={{ click: () => onSelectCarPark?.(area) }} />)}
-      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={35} zoomToBoundsOnClick spiderfyOnMaxZoom>
+      <MarkerClusterGroup iconCreateFunction={(cluster: {getChildCount():number})=>clusterIcon(cluster,true)} clusterPane="area-cluster-pane" eventHandlers={{ clusterclick: openCluster }} chunkedLoading maxClusterRadius={35} zoomToBoundsOnClick spiderfyOnMaxZoom>
       {carParks.map((cp) => (
-        <Marker key={cp.id} position={[cp.lat, cp.lng]} icon={carParkIcon()} eventHandlers={{ click: () => onSelectCarPark?.(cp) }} />
+        <Marker key={cp.id} position={[cp.lat, cp.lng]} pane="area-marker-pane" icon={carParkIcon()} eventHandlers={{ click: () => onSelectCarPark?.(cp) }} />
       ))}
       </MarkerClusterGroup>
       {pickMode && <ClickCatcher onPick={(lat, lng) => onPickLocation?.(lat, lng)} />}

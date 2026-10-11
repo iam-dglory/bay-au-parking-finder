@@ -2,6 +2,13 @@
 
 Last updated: 11 October 2026 (Australia/Melbourne)
 
+## Parking-data reliability and map accessibility — 11 October 2026
+
+- Made the geographic catalog loader fault-tolerant. A failed nearby static tile or optional San Francisco meter layer no longer discards source-backed parking areas that arrived successfully from the same search. The app still reports an empty map only when no requested catalog tile can be read; it does not invent records to fill a gap.
+- Separated the map layers so parking-area markers and their blue clusters sit above dense grey on-street clusters. Areas remain tappable in central Melbourne and other dense locations. Tapping a cluster zooms to its actual source records; at the closest zoom, the markers fan out for individual inspection.
+- Rechecked 500 m source-backed searches against the published catalogs: Melbourne CBD (74 records / 71 areas), Bengaluru (10 / 10), Chennai (3 / 3), Mumbai (2 / 2), Sydney (13 / 8), Brisbane (17 / 17), San Francisco (78 / 78) and New York (65 / 65). These are catalog records, never a claim that every legal space or live vacancy is known.
+- Validation: 83 unit tests, lint, TypeScript/production build, Android and iOS Capacitor web-asset sync, and HTTP 200 checks for the live Melbourne, India, Australia and US catalog indexes and representative tiles.
+
 ## iOS App Store preparation — 11 October 2026
 
 - Prepared the existing Capacitor iOS target for the next Bay build: camera and photo-library purpose text now describes the optional sign-photo feature, the Camera and Geolocation native packages are linked, and the latest web build is synchronised into `ios/App/App/public/`.
