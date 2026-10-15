@@ -205,3 +205,10 @@ Pricing is attached only to exact matched operator facilities. Capacity is never
 | N01 | Complete | Published the current country-wide India and Australia mapped-parking baselines with state/territory attribution and on-demand geographic tiles. Reviewed city/operator sources remain layered over the baseline. | `datasets/india/2026-10-08/india-coverage-manifest.json`, `datasets/australia/2026-10-08/australia-coverage-manifest.json`, `public/data/india/index.json`, `public/data/australia/index.json`; both country verifiers passed. |
 | N02 | Complete | Added the national source-ledger archive for the current data.gov.au parking catalog search. | `datasets/research-2026-10-08/australia-national-parking-catalog*.json` retains the raw result and normalized resources. |
 | N03 | Complete | Added country-tile runtime support and extended the India guard from three city boxes to country/state-backed records. | `src/lib/nationalParking.ts`, `src/lib/indiaParking.ts`; tests keep live availability unclaimed. |
+
+## iOS preparation — 15 October 2026
+
+- Set the iOS target to Bay 1.2.0 (build 3) with bundle identifier `au.com.bayparking.app` and iOS 15 minimum deployment.
+- Synced the current production web bundle and pinned Capacitor 8.5.2 plus the Camera 2.0.0 and Geolocation 2.1.1 Swift packages in `Package.resolved`.
+- Xcode resolved all iOS packages and completed a debug build/run against the iPhone 18 Pro simulator destination. Browser-facing validation remains: 87 automated tests, lint and the production web build pass.
+- Distribution archive is blocked only until an Apple Developer Team is selected in Xcode Signing & Capabilities. Automatic signing is already enabled; Apple will then create the matching App ID, certificate and provisioning profile.
