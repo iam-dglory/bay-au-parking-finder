@@ -2,6 +2,12 @@
 
 Last updated: 11 October 2026 (Australia/Melbourne)
 
+## Android closed-test release 1.2.0 — 15 October 2026
+
+- Built Bay 1.2.0 (Android version code 3) from the current map, Guide, activity and safe Book a spot source. The signed release AAB is stored outside Git at `/Users/gopika/Documents/Codex/2026-09-24/c/outputs/android/bay-1.2.0-code3-2026-10-15.aab`; SHA-256 `a9ff0be50f866865e4a5186dfc1719b9df4f975c83d9bda2e294eff724d4baae`.
+- Validation before Play upload: 87 unit tests, lint, TypeScript/Vite production build, Capacitor Android asset sync, Android release bundle, release signing verification and `git diff --check` passed. The environment did not have an ADB-connected device available for installation smoke testing.
+- Play Console status before upload: Alpha closed test remains active with 12 testers continuously opted in for 10 days; the production-access requirement becomes eligible after 14 uninterrupted days, subject to Google’s application review.
+
 ## Illustrated parking-sign guide — 11 October 2026
 
 - Rebuilt the Guide into a mobile-first illustrated parking-sign reference. It includes country selection for Australia, India, the United States, the United Kingdom and a generic fallback; a physical-sign safety reminder; clear usable/restricted labels; expandable sign cards; and a privacy-policy entry point.
