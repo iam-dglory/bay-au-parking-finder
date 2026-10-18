@@ -14,7 +14,7 @@ describe('responsive location detection',()=>{
   mocks.native.mockReturnValue(false)
   const getCurrentPosition=vi.fn((success:(p:object)=>void,_error:unknown,_options:unknown)=>success({coords:{latitude:13,longitude:80,accuracy:20}}));vi.stubGlobal('navigator',{geolocation:{getCurrentPosition}})
   expect((await getBrowserLocation()).coords.accuracy).toBe(20)
-  expect(getCurrentPosition.mock.calls[0][2]).toMatchObject({enableHighAccuracy:false,timeout:5000,maximumAge:15000})
+  expect(getCurrentPosition.mock.calls[0][2]).toMatchObject({enableHighAccuracy:false,timeout:5000,maximumAge:15_000})
  })
  it('distinguishes a permission denial',async()=>{
   mocks.native.mockReturnValue(false);vi.stubGlobal('navigator',{geolocation:{getCurrentPosition:(_s:unknown,e:(x:object)=>void)=>e({code:1,PERMISSION_DENIED:1,TIMEOUT:3,message:'denied'})}})

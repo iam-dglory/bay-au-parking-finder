@@ -23,6 +23,8 @@ const LOCATION_DETECT_TIMEOUT_MS = 6000
 export default function App() {
   const gpsEpoch = useRef(0)
   const needsRefinement = useRef(false)
+  const refreshOnReturn = useRef(true)
+  const lastLocationAttempt = useRef(0)
   const initialSaved = useRef(loadSavedLocations())
   const [authReady, setAuthReady] = useState(false)
   const [introComplete, setIntroComplete] = useState(false)
@@ -93,30 +95,42 @@ export default function App() {
     setLocationStatus('resolved')
   }
 
+  /**
+   * Reacquire a fresh device position after returning from Maps or unlocking
+   * the phone. A stored home/last place is kept as the immediate fallback,
+   * while a deliberate manual city search opts out until the person presses
+   * the locate button again.
+   */
+  function refreshCurrentLocation() {
+    refreshOnReturn.current = true
+    lastLocationAttempt.current = Date.now()
+    return resolveGpsThenRefineLabel(setCurrentLocation)
+  }
+
   useEffect(() => {
-    // A deliberate home or last-search choice wins over a new GPS lookup.
-    // It avoids a denied/slow Indian fix reopening Melbourne on every launch.
-    if (savedStartupLocation(initialSaved.current)) return
     let settled = false
     const startupEpoch = gpsEpoch.current + 1
     const timeout = setTimeout(() => {
       if (!settled && gpsEpoch.current === startupEpoch) {
         settled = true
         gpsEpoch.current++
-        setLocationStatus('manual')
+        // Keep a saved place on screen if GPS is slow. It is a usable
+        // fallback, unlike a blank first launch where the picker is needed.
+        if (!savedStartupLocation(initialSaved.current)) setLocationStatus('manual')
       }
     }, LOCATION_DETECT_TIMEOUT_MS)
 
-    resolveGpsThenRefineLabel((resolved) => {
+    refreshCurrentLocation().then(() => {
       if (settled) return
       settled = true
       clearTimeout(timeout)
-      setCurrentLocation(resolved)
     }).catch(() => {
       if (settled || gpsEpoch.current !== startupEpoch) return
       settled = true
       clearTimeout(timeout)
-      setLocationStatus('manual')
+        // A saved home/last search is already visible. Only open the picker
+        // when neither saved location nor device location is available.
+        if (!savedStartupLocation(initialSaved.current)) setLocationStatus('manual')
     })
 
     // This ref is a cancellation token, not a DOM node.
@@ -125,6 +139,22 @@ export default function App() {
   // Startup state is intentionally read once. Location changes below are
   // user actions and must not restart the native permission request.
   // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const refreshAfterReturn = () => {
+      if (document.visibilityState === 'hidden' || !refreshOnReturn.current) return
+      // Focus and visibility often arrive together. One location read is
+      // enough, while a later return from Maps will still refresh normally.
+      if (Date.now() - lastLocationAttempt.current < 4_000) return
+      void refreshCurrentLocation().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', refreshAfterReturn)
+    window.addEventListener('focus', refreshAfterReturn)
+    return () => {
+      document.removeEventListener('visibilitychange', refreshAfterReturn)
+      window.removeEventListener('focus', refreshAfterReturn)
+    }
   }, [])
 
   if (!introComplete) return <WelcomeScreen phase={!authReady ? 'connecting' : locationStatus === 'detecting' ? 'locating' : 'ready'} onChooseLocation={() => { gpsEpoch.current++; setLocationStatus('manual') }} />
@@ -152,15 +182,12 @@ export default function App() {
           onPick={(lat, lng, label, country) => {
             gpsEpoch.current++
             needsRefinement.current = false
+            refreshOnReturn.current = false
             setTrackLive(false)
             setLiveLocation(null)
             setCurrentLocation({ lat, lng, label, country })
           }}
-          onUseGps={() =>
-            resolveGpsThenRefineLabel((resolved) => {
-              setCurrentLocation(resolved)
-            })
-          }
+          onUseGps={() => refreshCurrentLocation()}
         />
         {feedbackOverlay}
       </>
@@ -188,11 +215,13 @@ export default function App() {
               if (!place) return
               gpsEpoch.current++
               needsRefinement.current = false
+              refreshOnReturn.current = false
               setTrackLive(false)
               setLiveLocation(null)
               setCurrentLocation(place)
             }}
             onChangeLocation={() => { gpsEpoch.current++; setTrackLive(false); setLocationStatus('manual') }}
+            onUseCurrentLocation={() => { void refreshCurrentLocation().catch(() => {}) }}
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}

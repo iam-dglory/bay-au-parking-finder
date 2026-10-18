@@ -154,6 +154,14 @@ function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) 
   return null
 }
 
+/** Reports only meaningful zoom changes. This lets the search layer fetch
+ * nearby areas as someone zooms out, without reloading on every map pan. */
+function CoverageZoom({ onChange }: { onChange?: (zoom: number) => void }) {
+  const map = useMap()
+  useMapEvents({ zoomend: () => onChange?.(map.getZoom()) })
+  return null
+}
+
 function ClickCatcher({ onPick }: { onPick: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
@@ -176,6 +184,7 @@ export function MapView({
   myLocation,
   carParks = [],
   onSelectCarPark,
+  onZoomChange,
 }: {
   center: { lat: number; lng: number }
   spots: (ParkingSpot & { status: SpotStatus })[]
@@ -200,6 +209,7 @@ export function MapView({
    * detail sheet, since they carry capacity rather than legal rules. */
   carParks?: CarPark[]
   onSelectCarPark?: (area: CarPark) => void
+  onZoomChange?: (zoom: number) => void
 }) {
   const mePosition = myLocation ?? center
   const meterSpots = spots.filter(spot => spot.catalog?.source_name === 'SFMTA meter inventory')
@@ -209,12 +219,13 @@ export function MapView({
       <ResizeMap />
       <ParkingPanes />
       <MapOrientation />
+      <CoverageZoom onChange={onZoomChange} />
       <ZoomControl position="bottomleft" />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         maxNativeZoom={18}
-        maxZoom={18}
+        maxZoom={19}
         updateWhenZooming={false}
       />
       <Recenter center={[center.lat, center.lng]} zoom={zoom} />

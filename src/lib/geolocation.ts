@@ -43,7 +43,7 @@ export async function getBrowserLocation(): Promise<{ coords: { latitude: number
         else if (err.code === err.TIMEOUT) reject(new LocationError('timeout', err.message))
         else reject(new LocationError('unavailable', err.message))
       },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 15000 },
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 15_000 },
     )
   })
 }

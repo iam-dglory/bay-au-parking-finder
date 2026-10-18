@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Bookmark, BriefcaseBusiness, CarFront, ChevronRight, CircleHelp, HomeIcon, List, Map as MapIcon, MapPin, Navigation, Search, SlidersHorizontal, X } from 'lucide-react'
-import { zoomForRadius } from '../lib/mapZoom'
+import { Bookmark, BriefcaseBusiness, CarFront, ChevronRight, CircleHelp, HomeIcon, List, LocateFixed, Map as MapIcon, MapPin, Navigation, Search, SlidersHorizontal, X } from 'lucide-react'
+import { coverageRadiusForZoom, zoomForRadius } from '../lib/mapZoom'
 import { SpotCard } from '../components/SpotCard'
 import { ParkingAreaDetails } from '../components/ParkingAreaDetails'
 import { ParkingAreaSheet } from '../components/ParkingAreaSheet'
@@ -15,14 +15,15 @@ import { rankSpots, evaluateSpotStatus } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
+import { directionsUrl } from '../lib/directions'
 import type { CarPark, ParkingSpot, SpotStatus, SignType } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
 const RADII = [{ label: '500 m', value: 500 }, { label: '1 km', value: 1000 }, { label: '2 km', value: 2000 }, { label: '5 km', value: 5000 }]
 
-export function Home({ center, myLocation, locationLabel, onChangeLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
-  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onChangeLocation: () => void
+export function Home({ center, myLocation, locationLabel, onChangeLocation, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
+  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onChangeLocation: () => void; onUseCurrentLocation: () => void
   savedLocations: SavedLocations; onSavePlace: (kind: SavedPlaceKind) => void; onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
   const [radiusM, setRadiusM] = useState(500)
@@ -42,12 +43,14 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, save
   const [destResults, setDestResults] = useState<PlaceSearchResult[]>([])
   const [destSearching, setDestSearching] = useState(false)
   const [showDestSuggestions, setShowDestSuggestions] = useState(false)
+  const [coverageRadiusM, setCoverageRadiusM] = useState(500)
   const destBoxRef = useRef<HTMLDivElement>(null)
   const destRequest = useRef(0)
   const effectiveCenter = destination ?? center
+  const dataRadiusM = Math.max(radiusM, coverageRadiusM)
   const now = useClock()
-  const { spots, loading, updatedAt, refresh } = useNearbyParking(effectiveCenter, radiusM)
-  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(effectiveCenter, radiusM, showCarParks && !vacantOnly)
+  const { spots, loading, updatedAt, refresh } = useNearbyParking(effectiveCenter, dataRadiusM)
+  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(effectiveCenter, dataRadiusM, showCarParks && !vacantOnly)
   const usa = isUSSearch(effectiveCenter.lat, effectiveCenter.lng)
   const india = isIndiaSearch(effectiveCenter.lat, effectiveCenter.lng)
 
@@ -80,10 +83,12 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, save
 
   const previewArea = carParks[0] ?? null
   const previewSpot = previewArea ? null : ranked[0] ?? null
+  const closestPlace = previewArea ?? previewSpot
+  const closestDirections = closestPlace ? directionsUrl(closestPlace.lat, closestPlace.lng) : null
 
   return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[#f7faff]">
     <div className="relative min-h-0 flex-1">
-      {view === 'map' ? <Suspense fallback={<MapLoading />}><MapView center={effectiveCenter} myLocation={myLocation} spots={ranked} carParks={carParks} onSelectSpot={setSelectedSpot} onSelectCarPark={setSelectedArea} zoom={zoomForRadius(radiusM)} glowMe radiusM={radiusM} /></Suspense> : <ParkingList loading={loading || areasLoading} ranked={ranked} areas={carParks} usa={usa} vacantOnly={vacantOnly} filtered={freeOnly || category !== 'all'} onSpot={setSelectedSpot} onArea={setSelectedArea} />}
+      {view === 'map' ? <Suspense fallback={<MapLoading />}><MapView center={effectiveCenter} myLocation={myLocation} spots={ranked} carParks={carParks} onSelectSpot={setSelectedSpot} onSelectCarPark={setSelectedArea} onZoomChange={(zoom) => setCoverageRadiusM(coverageRadiusForZoom(zoom))} zoom={zoomForRadius(radiusM)} glowMe radiusM={radiusM} /></Suspense> : <ParkingList loading={loading || areasLoading} ranked={ranked} areas={carParks} usa={usa} vacantOnly={vacantOnly} filtered={freeOnly || category !== 'all'} onSpot={setSelectedSpot} onArea={setSelectedArea} />}
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] sm:px-4">
         <div className="pointer-events-auto mx-auto max-w-3xl">
@@ -93,6 +98,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, save
               <button onClick={() => setView('map')} className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-sm font-bold transition ${view === 'map' ? 'bg-[#1769ff] text-white shadow-lg shadow-blue-500/25' : 'text-[#64748b]'}`}><MapIcon className="h-4 w-4" />Map</button>
               <button onClick={() => setView('list')} className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-sm font-bold transition ${view === 'list' ? 'bg-[#1769ff] text-white shadow-lg shadow-blue-500/25' : 'text-[#64748b]'}`}><List className="h-4 w-4" />List</button>
             </div>
+            <button onClick={() => { clearDestination(); onUseCurrentLocation() }} className="bay-icon-button !h-11 !w-11 !rounded-2xl !border-white/80 !bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur" aria-label="Use my current location" title="Use my current location"><LocateFixed className="h-5 w-5" /></button>
             <div className="relative"><button onClick={() => setSavedOpen(v => !v)} className="bay-icon-button !h-11 !w-11 !rounded-2xl !border-white/80 !bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur" aria-label="Saved locations"><Bookmark className="h-5 w-5" /></button>{savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onClose={() => setSavedOpen(false)} />}</div>
           </div>
 
@@ -106,6 +112,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, save
       </header>
 
       {view === 'map' && <div className="absolute inset-x-3 bottom-3 z-[450] mx-auto max-w-lg space-y-2 sm:bottom-4">
+        {closestDirections && <a href={closestDirections} target="_blank" rel="noreferrer" className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[20px] bg-[#1769ff] px-4 py-3 text-sm font-bold text-white shadow-[0_14px_30px_rgba(23,105,255,.30)] transition hover:bg-blue-700"><Navigation className="h-4.5 w-4.5" />Navigate to closest parking</a>}
         <button onClick={() => setView('list')} className="flex w-full items-center gap-3 rounded-[24px] border border-white/85 bg-white/95 p-2.5 text-left shadow-[0_14px_30px_rgba(15,23,42,.14)] backdrop-blur transition hover:bg-white">
           <ResultThumb area={previewArea} spot={previewSpot} />
           <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0b1730]">{loading || areasLoading ? 'Updating nearby places…' : `${total.toLocaleString()} nearby places`}</span><span className="mt-0.5 block truncate text-xs text-[#64748b]">{showCarParks && carParks.length ? `${carParks.length} parking areas · ` : ''}{usa || india || availabilitySummary.vacant + availabilitySummary.occupied === 0 ? 'availability on arrival' : `${availabilitySummary.vacant} fresh vacant · ${availabilitySummary.occupied} occupied`}</span></span><ChevronRight className="h-5 w-5 shrink-0 text-[#40516d]" />
