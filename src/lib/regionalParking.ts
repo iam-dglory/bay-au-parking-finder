@@ -4,12 +4,13 @@ import { indiaNearby, nearbyCatalog } from './indiaParking'
 import { isAustraliaSearch, nationalNearby } from './nationalParking'
 import { isMelbourneSearch } from './melbourneSensors'
 import { usaNearby } from './usaParking'
+import { publicAssetUrl } from './publicAssets'
 
 interface TileIndex { tile_size: number; tiles: string[] }
 let index: Promise<TileIndex> | undefined
 const tiles = new Map<string, Promise<CarPark[]>>()
 async function json<T>(path: string): Promise<T> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/${path}`, {signal: AbortSignal.timeout(12000)})
+  const response = await fetch(publicAssetUrl(`data/${path}`), {signal: AbortSignal.timeout(12000)})
   if (!response.ok) throw new Error('Mapped parking locations could not load. Please refresh.')
   return response.json() as Promise<T>
 }

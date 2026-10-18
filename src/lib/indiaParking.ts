@@ -1,6 +1,7 @@
 import type { CarPark, ParkingSpot } from '../types'
 import { haversineMeters } from './distance'
 import { nationalNearby } from './nationalParking'
+import { publicAssetUrl } from './publicAssets'
 
 interface IndiaCatalog { records: CarPark[] }
 let legacyCatalog: Promise<IndiaCatalog> | undefined
@@ -23,7 +24,7 @@ export function isUsableIndiaRecord(row: CarPark): boolean {
   return true
 }
 async function legacyIndiaNearby(lat: number, lng: number, radius: number) {
-  legacyCatalog ??= fetch(`${import.meta.env.BASE_URL}data/india-parking.json`, { signal: AbortSignal.timeout(12000) }).then(async response => {
+  legacyCatalog ??= fetch(publicAssetUrl('data/india-parking.json'), { signal: AbortSignal.timeout(12000) }).then(async response => {
     if (!response.ok) throw new Error('India parking locations could not be loaded. Please refresh.')
     return response.json() as Promise<IndiaCatalog>
   }).catch(error => { legacyCatalog = undefined; throw error })

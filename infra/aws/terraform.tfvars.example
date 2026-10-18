@@ -1,0 +1,7 @@
+environment        = "staging"
+aws_region         = "ap-southeast-2"
+github_repository  = "iam-dglory/bay-au-parking-finder"
+production_branch  = "main"
+# Provide an inbox only when ready to confirm the SNS subscription.
+alert_email        = null
+monthly_budget_usd = 30

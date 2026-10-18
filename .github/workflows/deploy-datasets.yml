@@ -1,0 +1,35 @@
+name: Deploy parking datasets
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment. Production requires GitHub environment approval.'
+        required: true
+        type: choice
+        options: [staging, production]
+      prefix:
+        description: 'Changed public prefix, for example data/india or data/usa'
+        required: true
+        type: string
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - run: node scripts/aws/generate-dataset-manifest.mjs "public/${{ inputs.prefix }}" --output .deployment/dataset-manifest.json
+      - run: |
+          aws s3 sync "public/${{ inputs.prefix }}" "s3://${{ vars.AWS_WEB_BUCKET }}/${{ inputs.prefix }}" --delete \
+            --cache-control 'public,max-age=86400' --no-progress
+          aws s3 cp .deployment/dataset-manifest.json "s3://${{ vars.AWS_WEB_BUCKET }}/manifests/${{ inputs.prefix }}-${{ github.sha }}.json" \
+            --cache-control 'public,max-age=31536000,immutable' --content-type 'application/json' --no-progress
+      - run: aws cloudfront create-invalidation --distribution-id "${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" --paths "/${{ inputs.prefix }}/*"

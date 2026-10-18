@@ -1,5 +1,6 @@
 import type { CarPark } from '../types'
 import { haversineMeters } from './distance'
+import { publicAssetUrl } from './publicAssets'
 
 interface NationalIndex {
   tile_size: number
@@ -11,7 +12,7 @@ const indexes = new Map<'india' | 'australia', Promise<NationalIndex>>()
 const tiles = new Map<string, Promise<CarPark[]>>()
 
 async function readTile(path: string): Promise<CarPark[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/${path}`, { signal: AbortSignal.timeout(12000) })
+  const response = await fetch(publicAssetUrl(`data/${path}`), { signal: AbortSignal.timeout(12000) })
   if (!response.ok) throw new Error('Mapped parking locations could not load. Please refresh.')
   const payload = await response.arrayBuffer()
   const bytes = new Uint8Array(payload)
@@ -25,7 +26,7 @@ async function readTile(path: string): Promise<CarPark[]> {
 
 function indexFor(country: 'india' | 'australia') {
   if (!indexes.has(country)) {
-    indexes.set(country, fetch(`${import.meta.env.BASE_URL}data/${country}/index.json`, { signal: AbortSignal.timeout(12000) })
+    indexes.set(country, fetch(publicAssetUrl(`data/${country}/index.json`), { signal: AbortSignal.timeout(12000) })
       .then(async response => {
         if (!response.ok) throw new Error('Parking coverage could not load. Please refresh.')
         const index = await response.json() as NationalIndex

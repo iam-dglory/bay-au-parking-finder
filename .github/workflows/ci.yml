@@ -1,0 +1,20 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main, data/coverage-20260926, infra/aws-migration-20261019]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc -b --pretty false
+      - run: npm test
+      # Runtime data is uploaded separately in AWS deploy workflows.
+      - run: VITE_SKIP_PUBLIC_COPY=true VITE_APP_BASE_PATH=/ npm run build

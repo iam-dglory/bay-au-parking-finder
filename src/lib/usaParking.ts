@@ -1,5 +1,6 @@
 import type { CarPark } from '../types'
 import { nearbyCatalog } from './indiaParking'
+import { publicAssetUrl } from './publicAssets'
 
 interface UsIndex { tile_size: number; states: Record<string, string[]> }
 interface SfMeterIndex { tile_size: number; tiles: string[] }
@@ -13,7 +14,7 @@ function isSanFrancisco(lat: number, lng: number) {
 }
 
 async function readCompressedTile(path: string): Promise<CarPark[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/${path}`, { signal: AbortSignal.timeout(12000) })
+  const response = await fetch(publicAssetUrl(`data/${path}`), { signal: AbortSignal.timeout(12000) })
   if (!response.ok) throw new Error('Mapped US parking locations could not load. Please refresh.')
   const payload = await response.arrayBuffer()
   const bytes = new Uint8Array(payload)
@@ -29,7 +30,7 @@ async function readCompressedTile(path: string): Promise<CarPark[]> {
 
 async function sfMeterNearby(lat: number, lng: number, radius: number): Promise<CarPark[]> {
   if (!isSanFrancisco(lat, lng)) return []
-  sfIndex ??= fetch(`${import.meta.env.BASE_URL}data/sf-meters/index.json`, { signal: AbortSignal.timeout(12000) })
+  sfIndex ??= fetch(publicAssetUrl('data/sf-meters/index.json'), { signal: AbortSignal.timeout(12000) })
     .then(async response => {
       if (!response.ok) throw new Error('San Francisco meter locations could not load.')
       return response.json() as Promise<SfMeterIndex>
@@ -64,7 +65,7 @@ export function isUSSearch(lat: number, lng: number) {
 }
 
 async function tileIndex() {
-  index ??= fetch(`${import.meta.env.BASE_URL}data/usa/index.json`, { signal: AbortSignal.timeout(12000) })
+  index ??= fetch(publicAssetUrl('data/usa/index.json'), { signal: AbortSignal.timeout(12000) })
     .then(async response => {
       if (!response.ok) throw new Error('US parking locations could not load. Please refresh.')
       const data = await response.json() as UsIndex
