@@ -9,12 +9,14 @@ A free, crowdsourced parking-sign finder, in pilot for Melbourne, Australia. Bui
 ## Repo layout
 
 ```
-app/          the actual application — see below, this is the repo root's src/, android/, etc.
-datasets/     raw source data snapshots used to seed the database (see datasets/README.md)
-marketing/    posters, video scripts, brand assets for promoting the pilot
-docs/         planning docs — feature tracker, store listing, privacy policy
-supabase/     Postgres migrations (schema, RLS policies, RPCs) for the Supabase backend
-scripts/      one-off/scheduled data-sync Python scripts (sensor sync, address backfill, etc.)
+src/          React + TypeScript app (pages/, components/, lib/)
+android/ ios/ Capacitor native projects
+public/       static web files; public/data/ holds the parking catalogs (served from the web, not bundled into native apps)
+datasets/     raw source data snapshots used to build the catalogs (see datasets/README.md)
+supabase/     Postgres migrations (schema, RLS policies, RPCs) and Edge Functions
+scripts/      data build/sync scripts (Python) and build helpers
+docs/         project tracker, coverage audits, store/privacy readiness notes
+marketing/    posters, video scripts, brand assets
 ```
 
 ## Stack
@@ -28,7 +30,8 @@ npm install
 npm run dev       # web dev server
 npm run build     # production build
 npm run test      # unit tests
-npx cap sync android && cd android && ./gradlew assembleDebug   # Android debug build
+npm run cap:android && cd android && ./gradlew bundleRelease   # Android build (data loads from the web copy)
+npm run cap:ios                                                # iOS sync, then archive in Xcode
 ```
 
 Needs a `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see Supabase project settings — never commit the service role key).
@@ -42,3 +45,16 @@ Needs a `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see Supaba
 ## Coverage
 
 Currently: City of Melbourne LGA (CBD, Docklands, Southbank, Carlton, North Melbourne, Kensington, Parkville, East Melbourne) plus Brisbane's CBD. See `datasets/README.md` for exactly what's imported from where, and `docs/feature-tracker.pdf` for the full pilot-v1-vs-update-v2 feature plan.
+
+## Moderating reported signs
+
+Open the app with `?moderate=1` (e.g. `https://iam-dglory.github.io/bay-au-parking-finder/?moderate=1`). The screen shows your anonymous account ID; add it once in the Supabase SQL editor:
+
+```sql
+insert into public.moderators (user_id, note) values ('<account id>', '<your name>');
+```
+
+## Rebuilding per-bay sign rules (Melbourne)
+
+`python3 -I scripts/build_melbourne_bay_zone_rules.py` regenerates `public/data/melbourne/bay-zone-rules.json` from the council datasets in `datasets/melbourne-city-of-melbourne/`.
+

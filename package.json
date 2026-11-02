@@ -1,14 +1,17 @@
 {
-  "name": "parking-app",
+  "name": "bay-parking",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:native": "tsc -b && VITE_ASSET_BASE_URL=${VITE_ASSET_BASE_URL:-https://iam-dglory.github.io/bay-au-parking-finder} vite build && node scripts/strip-native-data.mjs",
+    "cap:android": "npm run build:native && npx cap sync android",
+    "cap:ios": "npm run build:native && npx cap sync ios"
   },
   "dependencies": {
     "@capacitor/camera": "^8.2.4",
