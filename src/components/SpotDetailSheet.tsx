@@ -13,6 +13,7 @@ import { MELBOURNE_SENSOR_SOURCE } from '../lib/melbourneSensors'
 import { directionsUrl } from '../lib/directions'
 import { ParkingInformationReportForm } from './ParkingInformationReportForm'
 import { trackEvent } from '../lib/analytics'
+import { useSignPhoto } from '../lib/useSignPhoto'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -78,6 +79,7 @@ export function SpotDetailSheet({
     trackedSpotId.current = resultId
     trackEvent('parking_result_view', { result_type: spot.catalog ? 'parking_area' : 'parking_spot' })
   }, [spot])
+  const photoSrc = useSignPhoto(spot?.catalog ? null : spot?.photo_url)
   if (!spot) return null
   if (spot.catalog) return <><div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/30 sm:items-center" onClick={onClose}><div role="dialog" aria-label="Parking bay details" className="bay-sheet max-h-[84dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-7 pt-3 sm:rounded-[28px]" onClick={e=>e.stopPropagation()}><div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" /><div className="mt-3 flex justify-end"><button onClick={onClose} className="bay-icon-button h-10 w-10" aria-label="Close parking details"><X className="h-5 w-5" /></button></div><ParkingAreaDetails area={spot.catalog} onReport={() => setReportOpen(true)} /></div></div>{reportOpen && <ParkingInformationReportForm locationKind="area" locationId={spot.catalog.id} locationLabel={spot.catalog.address_text} onClose={() => setReportOpen(false)} />}</>
   const directions = directionsUrl(spot.lat, spot.lng)
@@ -124,8 +126,8 @@ export function SpotDetailSheet({
           </p>
         )}
 
-        {spot.photo_url && (
-          <img src={spot.photo_url} alt="Photo of the parking sign" className="mt-3 h-40 w-full rounded-lg object-cover" />
+        {photoSrc && (
+          <img src={photoSrc} alt="Photo of the parking sign" className="mt-3 h-40 w-full rounded-lg object-cover" />
         )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
