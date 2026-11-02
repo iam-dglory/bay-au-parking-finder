@@ -9,6 +9,7 @@ import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from 
 import { isUSSearch } from './usaParking'
 import { isIndiaSearch } from './indiaParking'
 import { isAustraliaSearch } from './nationalParking'
+import { applyBayZoneRules, loadBayZoneRules } from './melbourneZoneRules'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
@@ -40,6 +41,11 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
         // Legacy coordinate matches from the database must not colour another bay.
         rows = rows.map(row => ({...row, sensor_status: row.sensor_status?.match_method === 'kerbside_id' ? row.sensor_status : null}))
         if (council.status === 'fulfilled') rows = mergeMelbourneSensors(rows, council.value, {lat,lng}, new Date().toISOString())
+        // Each bay gets its own council zone's sign plates, not the whole road segment's.
+        // If the file is unavailable, bays keep the safe "read the sign" status.
+        const zoneRules = await loadBayZoneRules().catch(() => null)
+        if (request !== sequence.current) return
+        if (zoneRules) rows = applyBayZoneRules(rows, zoneRules)
       }
       // Each source is independently useful. Do not turn a partial refresh
       // failure into a broken-map warning while verified rows are available.
