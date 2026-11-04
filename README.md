@@ -58,3 +58,21 @@ insert into public.moderators (user_id, note) values ('<account id>', '<your nam
 
 `python3 -I scripts/build_melbourne_bay_zone_rules.py` regenerates `public/data/melbourne/bay-zone-rules.json` from the council datasets in `datasets/melbourne-city-of-melbourne/`.
 
+
+## CI/CD (GitHub Actions)
+
+| Workflow | Runs when | Does |
+| --- | --- | --- |
+| `ci.yml` | every PR and push to `main` | lint, type-check, tests, build |
+| `deploy-pages-production.yml` | by hand, with a reviewed commit SHA | builds and publishes the GitHub Pages site (also the data host for native builds) |
+| `deploy-aws-staging.yml` / `deploy-aws-production.yml` / `deploy-datasets.yml` | see each file | CloudFront/S3 app and data deploys |
+| `supabase.yml` | by hand only, needs approval in the `production` environment | `supabase db push` (dry run by default), optional `waitlist-notify` deploy |
+| `android-release.yml` | pushing a tag like `v1.2.2` | signed AAB + `mapping.txt` as a downloadable artifact |
+
+Settings for `supabase.yml` and `android-release.yml` (Settings → Secrets and variables → Actions):
+
+- **Variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (public anon key), `SUPABASE_PROJECT_REF` (`ezwiagssiuvmhayvsmbk`), optional `VITE_ASSET_BASE_URL` (defaults to the GitHub Pages site)
+- **Secrets:** `SUPABASE_ACCESS_TOKEN` (supabase.com → Account → Access tokens), `SUPABASE_DB_PASSWORD`, `ANDROID_KEYSTORE_BASE64` (`base64 -i upload.p12`), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`
+- **Environment:** create `production` (Settings → Environments) with a required reviewer.
+
+First Supabase run: keep `dry_run` on and check the list. If it wants to re-apply old migrations that were applied by hand, mark them as applied with `supabase migration repair --status applied <version>` instead of pushing them again.
