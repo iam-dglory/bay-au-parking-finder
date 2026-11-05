@@ -1,6 +1,6 @@
 -- Privacy and moderation hardening (issue list of 1 Nov 2026, items 3, 4, 5, 10).
--- Apply AFTER the marketplace migrations (20261102120000..20261104120000):
--- is_moderator() reuses public.marketplace_admins from 20261103120000.
+-- Works with or without the marketplace/analytics migrations
+-- (20261102120000..20261104120000): tables from those are used only if present.
 --
 -- 1. sign-photos becomes a private bucket. A photo is readable by the person
 --    who uploaded it, by moderators, and by anyone once the sign it belongs
@@ -26,9 +26,14 @@ comment on table public.moderators is
 
 -- Marketplace admins can also review signs, so there is one admin list to manage.
 create or replace function public.is_moderator()
-returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.moderators where user_id = auth.uid())
-      or exists (select 1 from public.marketplace_admins where user_id = auth.uid());
+returns boolean language plpgsql stable security definer set search_path = public as $$
+declare found boolean;
+begin
+  if exists (select 1 from public.moderators where user_id = auth.uid()) then return true; end if;
+  if to_regclass('public.marketplace_admins') is null then return false; end if;
+  execute 'select exists (select 1 from public.marketplace_admins where user_id = $1)' into found using auth.uid();
+  return found;
+end;
 $$;
 revoke all on function public.is_moderator() from public;
 grant execute on function public.is_moderator() to anon, authenticated;
@@ -97,8 +102,12 @@ begin
   delete from parking_rules where created_by = uid;
   delete from parking_spots where created_by = uid;   -- cascades to their rules and pings
   delete from moderators where user_id = uid;
-  delete from analytics_events where user_id = uid;
-  delete from parking_information_reports where reporter_id = uid;
+  if to_regclass('public.analytics_events') is not null then
+    execute 'delete from public.analytics_events where user_id = $1' using uid;
+  end if;
+  if to_regclass('public.parking_information_reports') is not null then
+    execute 'delete from public.parking_information_reports where reporter_id = $1' using uid;
+  end if;
   -- Deleting the account cascades to analytics events, parking-information
   -- reports, marketplace host profiles, listings and reservation holds.
   -- Marketplace bookings and payments reference the account with ON DELETE
