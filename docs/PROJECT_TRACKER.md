@@ -206,6 +206,17 @@ Pricing is attached only to exact matched operator facilities. Capacity is never
 | N02 | Complete | Added the national source-ledger archive for the current data.gov.au parking catalog search. | `datasets/research-2026-10-08/australia-national-parking-catalog*.json` retains the raw result and normalized resources. |
 | N03 | Complete | Added country-tile runtime support and extended the India guard from three city boxes to country/state-backed records. | `src/lib/nationalParking.ts`, `src/lib/indiaParking.ts`; tests keep live availability unclaimed. |
 
+## Marketplace V2 pricing and payments — 3 November 2026
+
+| ID | Status | Change | Evidence / next gate |
+| --- | --- | --- | --- |
+| MKT-V2-01 | Implemented locally | Versioned 5% fee policy, A$5 minimum, eight provisional zone bands, six type caps and year disabled. | `src/lib/marketplace.ts`, migration `20261103120000_marketplace_v2_pricing_booking_payments.sql`, unit tests. |
+| MKT-V2-02 | Implemented locally | Browser listing writes replaced by server zone assignment and integer-cent validation. | `marketplace_submit_listing_v2`, `HostSpaceForm.tsx`. |
+| MKT-V2-03 | Implemented locally, disabled | Hold/overlap rules, test-gated Connect onboarding/Checkout, verified webhook confirmation and cancellation/refund reconciliation. | `supabase/functions/marketplace-*`; disabled until staging secrets and architecture approval. |
+| MKT-V2-04 | Implemented locally | Restricted moderation, sourced GeoJSON and versioned policy dashboard. | `MarketplaceAdmin.tsx`; administrator must be provisioned directly. |
+| MKT-V2-05 | Blocked on external evidence | Verified Melbourne zone geometry and address validation provider. | Seeded zones intentionally remain inactive; no invented boundaries. |
+| MKT-V2-06 | Blocked on account/legal decisions | Stripe account capabilities, live fee allocation, GST/consumer terms, insurance and operational ownership. | See `MARKETPLACE_V2_IMPLEMENTATION.md`; no live deployment or live payment activation authorised. |
+
 ## iOS preparation — 15 October 2026
 
 - Set the iOS target to Bay 1.2.0 (build 3) with bundle identifier `au.com.bayparking.app` and iOS 15 minimum deployment.

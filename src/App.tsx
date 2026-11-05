@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { BookOpen, CalendarCheck2, Clock3, Map as MapIcon, MapPin } from 'lucide-react'
+import { BookOpen, Building2, Clock3, Map as MapIcon, MapPin } from 'lucide-react'
 import { FeedbackForm } from './components/FeedbackForm'
 import { LocationPicker } from './components/LocationPicker'
 import { WelcomeScreen } from './components/WelcomeScreen'
@@ -7,20 +7,25 @@ import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
 import { loadSavedLocations, rememberLocation, savedStartupLocation, type SavedLocation, type SavedPlaceKind } from './lib/savedLocations'
+import { marketplaceV2Enabled } from './lib/featureFlags'
+import { trackEvent, trackFirstOpen } from './lib/analytics'
 
 const Home = lazy(() => import('./pages/Home').then((module) => ({ default: module.Home })))
 const AddSpot = lazy(() => import('./pages/AddSpot').then((module) => ({ default: module.AddSpot })))
-const BookSpot = lazy(() => import('./pages/BookSpot').then((module) => ({ default: module.BookSpot })))
+const Marketplace = lazy(() => import('./pages/BookSpot').then((module) => ({ default: module.Marketplace })))
 const MyActivity = lazy(() => import('./pages/MyActivity').then((module) => ({ default: module.MyActivity })))
 const Guide = lazy(() => import('./pages/Guide').then((module) => ({ default: module.Guide })))
+const MarketplaceAdmin = lazy(() => import('./pages/MarketplaceAdmin').then((module) => ({ default: module.MarketplaceAdmin })))
 
-type Tab = 'home' | 'book' | 'addSign' | 'mine' | 'guide'
+type Tab = 'home' | 'marketplace' | 'addSign' | 'mine' | 'guide'
 type Location = SavedLocation
 type LocationStatus = 'detecting' | 'resolved' | 'manual'
 
 const LOCATION_DETECT_TIMEOUT_MS = 6000
 
 export default function App() {
+  const marketplaceEnabled = marketplaceV2Enabled()
+  const marketplaceAdminRequested = new URLSearchParams(window.location.search).get('marketplace-admin') === '1'
   const gpsEpoch = useRef(0)
   const needsRefinement = useRef(false)
   const refreshOnReturn = useRef(true)
@@ -39,6 +44,7 @@ export default function App() {
 
   useEffect(() => {
     ensureSession()
+      .then(() => trackFirstOpen())
       .catch(() => {})
       .finally(() => setAuthReady(true))
   }, [])
@@ -159,6 +165,8 @@ export default function App() {
 
   if (!introComplete) return <WelcomeScreen phase={!authReady ? 'connecting' : locationStatus === 'detecting' ? 'locating' : 'ready'} onChooseLocation={() => { gpsEpoch.current++; setLocationStatus('manual') }} />
 
+  if (marketplaceAdminRequested) return <Suspense fallback={<div className="flex h-full items-center justify-center text-sm text-slate-500">Opening marketplace controls…</div>}><MarketplaceAdmin /></Suspense>
+
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
 
   if (locationStatus === 'detecting') {
@@ -225,7 +233,7 @@ export default function App() {
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
-        {tab === 'book' && <BookSpot center={location} onFindParking={() => setTab('home')} />}
+        {marketplaceEnabled && tab === 'marketplace' && <Marketplace center={location} onFindParking={() => setTab('home')} />}
         {tab === 'mine' && <MyActivity center={location} savedLocations={savedLocations} onOpenFeedback={() => setShowFeedback(true)} onAddSign={() => { setAddKey((k) => k + 1); setTab('addSign') }} />}
         {tab === 'guide' && <Guide location={location} />}
         </Suspense>
@@ -239,15 +247,16 @@ export default function App() {
           <MapIcon className="h-5 w-5" strokeWidth={1.75} />
           Find parking
         </button>
-        <button
+        {marketplaceEnabled && <button
           onClick={() => {
-            setTab('book')
+            trackEvent('marketplace_view')
+            setTab('marketplace')
           }}
-          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'book' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+          className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'marketplace' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
         >
-          <CalendarCheck2 className="h-5 w-5" strokeWidth={1.75} />
-          Book a spot
-        </button>
+          <Building2 className="h-5 w-5" strokeWidth={1.75} />
+          Marketplace
+        </button>}
         <button
           onClick={() => setTab('mine')}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'mine' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}

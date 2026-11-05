@@ -1,4 +1,7 @@
-@import "tailwindcss";
+/* Restrict class detection to application source. The repository also holds
+ * tens of thousands of parking dataset files that contain no UI classes and
+ * otherwise make Tailwind builds appear to hang while scanning them. */
+@import "tailwindcss" source("./");
 
 @theme {
   --color-bay-blue: #1769ff;

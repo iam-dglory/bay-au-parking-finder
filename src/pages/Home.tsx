@@ -17,6 +17,7 @@ import { useClock } from '../lib/useClock'
 import { availability } from '../lib/availability'
 import type { CarPark, ParkingSpot, SpotStatus, SignType } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
+import { trackEvent } from '../lib/analytics'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
 const RADII = [{ label: '500 m', value: 500 }, { label: '1 km', value: 1000 }, { label: '2 km', value: 2000 }, { label: '5 km', value: 5000 }]
@@ -75,7 +76,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
     const found = await searchPlaces(destQuery, center)
     if (request === destRequest.current) { setDestResults(found); setDestSearching(false); setShowDestSuggestions(true) }
   }
-  function selectDestination(place: PlaceSearchResult) { setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setDestQuery(''); setDestResults([]); setShowDestSuggestions(false); setShowDestSearch(false) }
+  function selectDestination(place: PlaceSearchResult) { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setDestQuery(''); setDestResults([]); setShowDestSuggestions(false); setShowDestSearch(false) }
   function clearDestination() { setDestination(null); setDestQuery(''); setDestResults([]) }
   const resetRefresh = () => { refresh(); refreshAreas() }
   const filterCount = Number(vacantOnly) + Number(freeOnly) + Number(category !== 'all') + Number(!showCarParks)

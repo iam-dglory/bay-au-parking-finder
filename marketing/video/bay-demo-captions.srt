@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:03,000
+Driving somewhere? Check parking before you go.
+
+2
+00:00:03,000 --> 00:00:07,000
+Search your destination.
+
+3
+00:00:07,000 --> 00:00:12,000
+Compare nearby parking options.
+
+4
+00:00:12,000 --> 00:00:17,000
+Check access, prices and source details where published.
+
+5
+00:00:17,000 --> 00:00:21,000
+Refine the map for your trip.
+
+6
+00:00:21,000 --> 00:00:23,000
+Choose first. Navigate second.
+
+7
+00:00:23,000 --> 00:00:25,000
+Find BAY on Google Play.

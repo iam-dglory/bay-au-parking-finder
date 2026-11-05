@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Navigation, Clock3, Info, MapPin, X } from 'lucide-react'
 import type { ParkingSpot, SpotStatus } from '../types'
 import { AvailabilityBadge } from './AvailabilityBadge'
@@ -10,6 +11,8 @@ import { formatChangesAt } from '../lib/parkingStatus'
 import { availability, SENSOR_MAX_AGE_MINUTES } from '../lib/availability'
 import { MELBOURNE_SENSOR_SOURCE } from '../lib/melbourneSensors'
 import { directionsUrl } from '../lib/directions'
+import { ParkingInformationReportForm } from './ParkingInformationReportForm'
+import { trackEvent } from '../lib/analytics'
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -63,11 +66,23 @@ export function SpotDetailSheet({
   onClose: () => void
   onUpdated?: () => void
 }) {
+  const [reportOpen, setReportOpen] = useState(false)
+  const trackedSpotId = useRef<string | null>(null)
+  useEffect(() => {
+    if (!spot) {
+      trackedSpotId.current = null
+      return
+    }
+    const resultId = spot.catalog?.id ?? spot.id
+    if (trackedSpotId.current === resultId) return
+    trackedSpotId.current = resultId
+    trackEvent('parking_result_view', { result_type: spot.catalog ? 'parking_area' : 'parking_spot' })
+  }, [spot])
   if (!spot) return null
-  if (spot.catalog) return <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/30 sm:items-center" onClick={onClose}><div role="dialog" aria-label="Parking bay details" className="bay-sheet max-h-[84dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-7 pt-3 sm:rounded-[28px]" onClick={e=>e.stopPropagation()}><div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" /><div className="mt-3 flex justify-end"><button onClick={onClose} className="bay-icon-button h-10 w-10" aria-label="Close parking details"><X className="h-5 w-5" /></button></div><ParkingAreaDetails area={spot.catalog} /></div></div>
+  if (spot.catalog) return <><div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/30 sm:items-center" onClick={onClose}><div role="dialog" aria-label="Parking bay details" className="bay-sheet max-h-[84dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-7 pt-3 sm:rounded-[28px]" onClick={e=>e.stopPropagation()}><div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" /><div className="mt-3 flex justify-end"><button onClick={onClose} className="bay-icon-button h-10 w-10" aria-label="Close parking details"><X className="h-5 w-5" /></button></div><ParkingAreaDetails area={spot.catalog} onReport={() => setReportOpen(true)} /></div></div>{reportOpen && <ParkingInformationReportForm locationKind="area" locationId={spot.catalog.id} locationLabel={spot.catalog.address_text} onClose={() => setReportOpen(false)} />}</>
   const directions = directionsUrl(spot.lat, spot.lng)
   return (
-    <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
+    <><div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
       <div
         role="dialog" aria-label="Parking bay details"
         className="bay-sheet max-h-[84dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-7 pt-3 sm:rounded-[28px]"
@@ -93,7 +108,7 @@ export function SpotDetailSheet({
           href={directions}
           target="_blank"
           rel="noreferrer"
-          onClick={() => { if (spot.created_by !== 'council') logVisit(spot.id, spot.address_text, spot.country) }}
+          onClick={() => { trackEvent('directions_open', { result_type: 'parking_spot' }); if (spot.created_by !== 'council') logVisit(spot.id, spot.address_text, spot.country) }}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1769ff] py-3.5 text-center font-bold text-white shadow-lg shadow-blue-500/25 hover:bg-blue-700"
         >
           <Navigation className="h-4 w-4" strokeWidth={2} />
@@ -126,7 +141,7 @@ export function SpotDetailSheet({
           {formatChangesAt(spot.status) && <p className="mt-1 text-xs font-semibold text-slate-500">{formatChangesAt(spot.status)}</p>}
         </div>
 
-        <details className="mt-4 space-y-2">
+        <details className="mt-4 space-y-2" onToggle={event => { if (event.currentTarget.open) trackEvent('restriction_view', { result_type: 'parking_spot' }) }}>
           <summary className="cursor-pointer text-sm font-bold text-blue-700">Full parking times & prices</summary>
           <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-slate-800">Parking times</h3><span className="text-xs text-slate-400">{uniqueRules(spot.rules).length} time{uniqueRules(spot.rules).length === 1 ? '' : 's'}</span></div>
           {spot.rules.length === 0 && <p className="text-sm text-slate-500">The parking terms are not recorded. Read the sign at this bay.</p>}
@@ -147,7 +162,8 @@ export function SpotDetailSheet({
         </p>
 
         {spot.sensor_status && <details className="mt-3 text-xs text-slate-500"><summary className="cursor-pointer">About this reading</summary><p className="mt-1">The council last updated this sensor at {new Date(spot.sensor_status.last_confirmed_at).toLocaleString()}. Bay only shows its vacancy colour when that update and the feed refresh are within {SENSOR_MAX_AGE_MINUTES} minutes, with an exact council bay ID match. A sensor measures vehicle presence; it does not grant parking permission or reserve the bay.</p><a className="mt-1 inline-block text-blue-700 underline" href={MELBOURNE_SENSOR_SOURCE} target="_blank" rel="noreferrer">Council source</a></details>}
+        <button type="button" onClick={() => setReportOpen(true)} className="mt-4 w-full rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-700">Report incorrect parking information</button>
       </div>
-    </div>
+    </div>{reportOpen && <ParkingInformationReportForm locationKind="spot" locationId={spot.id} locationLabel={spot.address_text} onClose={() => setReportOpen(false)} />}</>
   )
 }

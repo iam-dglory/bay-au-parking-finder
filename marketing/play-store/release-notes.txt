@@ -1,0 +1,7 @@
+Clearer parking details, 500 m default search, improved filters and issue reporting.
+
+- Refined nearby parking map and list experience.
+- Clearer separation between mapped places and fresh live availability readings.
+- Source-listed prices and restrictions are shown when supplied.
+- Added structured reporting for incorrect location, restriction, price and navigation information.
+- Improved saved places, activity, parking guide and responsive layouts.

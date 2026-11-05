@@ -35,3 +35,21 @@ export async function uploadSignPhoto(photo: CapturedPhoto): Promise<string> {
   if (error) throw error
   return supabase.storage.from('sign-photos').getPublicUrl(path).data.publicUrl
 }
+
+/** Listing photos are private-host uploads with a user-scoped path. The
+ * storage policy added by the marketplace migration enforces the same path
+ * convention, so one host cannot overwrite another host's evidence. */
+export async function uploadListingPhotos(userId: string, files: File[]): Promise<string[]> {
+  const paths: string[] = []
+  for (const file of files) {
+    const extension = file.type === 'image/png' ? 'png' : 'jpg'
+    const path = `${userId}/${crypto.randomUUID()}.${extension}`
+    const { error } = await supabase.storage.from('listing-photos').upload(path, file, {
+      contentType: file.type || 'image/jpeg',
+      upsert: false,
+    })
+    if (error) throw error
+    paths.push(path)
+  }
+  return paths
+}

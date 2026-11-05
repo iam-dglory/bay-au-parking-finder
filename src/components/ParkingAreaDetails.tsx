@@ -1,6 +1,7 @@
 import type { CarPark } from '../types'
 import { formatMoney } from '../lib/money'
 import { directionsUrl } from '../lib/directions'
+import { trackEvent } from '../lib/analytics'
 
 function sourceListedRate(area: CarPark) {
   const terms = area.source_terms
@@ -10,7 +11,7 @@ function sourceListedRate(area: CarPark) {
   return typeof value === 'string' && value.trim() ? value.trim() : null
 }
 
-export function ParkingAreaDetails({ area, compact=false }: { area: CarPark; compact?: boolean }) {
+export function ParkingAreaDetails({ area, compact=false, onReport }: { area: CarPark; compact?: boolean; onReport?: () => void }) {
   const access=area.access==='customers' ? 'Customers only' : area.access==='permissive' ? 'Access at operator’s discretion' : area.access==='yes' ? 'Public access listed' : 'Entry conditions apply'
   const sfMeter = area.source_name === 'SFMTA meter inventory'
   const directions = directionsUrl(area.lat, area.lng)
@@ -18,7 +19,7 @@ export function ParkingAreaDetails({ area, compact=false }: { area: CarPark; com
   return <div className="space-y-2 text-sm text-slate-700">
     <h3 className="font-bold text-slate-950">{area.address_text}</h3>
     {area.facility_type && <p className="font-semibold text-blue-700">{area.facility_type}{!sfMeter && (area.fee === 'yes' || area.price_summary) ? ' · Paid parking' : ''}</p>}
-    {directions && <a className="inline-block rounded-xl bg-blue-600 px-4 py-2 font-semibold !text-white" href={directions} target="_blank" rel="noreferrer">Get directions</a>}
+    {directions && <a onClick={() => trackEvent('directions_open', { result_type: 'parking_area' })} className="inline-block rounded-xl bg-blue-600 px-4 py-2 font-semibold !text-white" href={directions} target="_blank" rel="noreferrer">Get directions</a>}
     {area.entrance_summary && <p className="text-xs font-medium">{area.entrance_summary}</p>}
     {area.opening_hours_summary && <p className="text-xs">{area.opening_hours_summary}</p>}
     <p className="text-xs">{Math.round(area.distance_m)} m away{area.capacity ? ` · ${area.capacity} total spaces` : ''} · Availability on arrival</p>
@@ -28,7 +29,7 @@ export function ParkingAreaDetails({ area, compact=false }: { area: CarPark; com
     {area.price_summary && <p className="rounded-xl bg-blue-50 px-3 py-2 font-semibold text-blue-900">{area.price_summary}</p>}
     {area.price_summary_conditions && <p className="text-xs text-slate-600">{area.price_summary_conditions}</p>}
     {area.occupancy_snapshot && <details className="rounded-xl bg-slate-50 p-3 text-xs"><summary className="cursor-pointer font-semibold text-slate-700">Dated operator availability snapshot</summary>{Object.entries(area.occupancy_snapshot.vehicles).filter(([,v])=>v.capacity>0).map(([vehicle,v])=><p key={vehicle}>{vehicle}: <b>{v.available} reported available in this snapshot</b> of {v.capacity}</p>)}<p className="mt-1 text-emerald-800">Fetched {new Date(area.occupancy_snapshot.fetched_at).toLocaleString()}. The source does not publish an observation timestamp; availability can change before arrival.</p><a className="text-emerald-900 underline" target="_blank" rel="noreferrer" href={area.occupancy_snapshot.source_url}>Chennai Metro availability</a></details>}
-    {area.tariffs?.length ? <details open={compact ? false : undefined}>
+    {area.tariffs?.length ? <details open={compact ? false : undefined} onToggle={event => { if (event.currentTarget.open) trackEvent('restriction_view', { result_type: 'parking_area' }) }}>
       <summary className="cursor-pointer font-semibold text-blue-700">Prices by vehicle & duration</summary>
       <table className="mt-2 w-full text-left text-xs"><caption className="sr-only">Published parking prices in {area.currency ?? 'AUD'}</caption><thead><tr><th>Vehicle</th><th>Duration</th><th className="text-right">Price</th></tr></thead><tbody>{area.tariffs.map((row,i)=><tr key={i} className="border-t border-slate-100"><td className="py-1 pr-2">{row.vehicle}</td><td className="pr-2">{row.category && <b>{row.category} · </b>}{row.period}{row.conditions && <p className="mt-1 text-[11px] text-slate-500">{row.conditions}</p>}</td><td className="text-right">{formatMoney(area.currency ?? 'AUD', row.amount)}</td></tr>)}</tbody></table>
       <p className="mt-2 text-xs text-slate-500">{area.pricing_notes}</p>
@@ -41,5 +42,6 @@ export function ParkingAreaDetails({ area, compact=false }: { area: CarPark; com
       {area.source_terms && Object.entries(area.source_terms).filter(([key]) => /charge|maxstay|restriction/.test(key)).map(([key,value]) => <p key={key}>{key}: {value}</p>)}
       {area.opening_hours && <p>Source opening hours: {area.opening_hours}</p>}
     </details>
+    {!compact && onReport && <button type="button" onClick={onReport} className="mt-3 w-full rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-700">Report incorrect parking information</button>}
   </div>
 }
