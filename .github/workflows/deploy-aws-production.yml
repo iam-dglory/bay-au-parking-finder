@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { ref: ${{ inputs.ref }} }
+        with:
+          ref: ${{ inputs.ref }}
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - uses: aws-actions/configure-aws-credentials@v5
