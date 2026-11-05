@@ -15,3 +15,14 @@ describe('evidence required for live availability',()=>{
  it.each(['not-a-date',time(-1)])('rejects malformed/future source time %s',last_confirmed_at=>expect(availability({...spot,sensor_status:{...sensor,last_confirmed_at}},now).state).toBe('unknown'))
  it('does not use a question mark or a claim of vacancy without evidence',()=>expect(availability({...spot,sensor_status:null},now).label).toBe('Availability on arrival'))
 })
+
+describe('stuck sensors', () => {
+  it('ignores a sensor that still reports but has not changed state for over a day', async () => {
+    const { availability } = await import('./availability')
+    const now = new Date('2026-11-06T03:00:00Z')
+    const spot = { kerbside_id: '1', latest_ping: null, sensor_status: { sensor_kerbside_id: '1', status: 'unoccupied' as const, match_method: 'kerbside_id' as const,
+      status_timestamp: '2026-10-01T00:00:00Z', last_confirmed_at: '2026-11-06T02:59:00Z', synced_at: '2026-11-06T02:59:00Z' } }
+    expect(availability(spot, now).state).toBe('unknown')
+    expect(availability({ ...spot, sensor_status: { ...spot.sensor_status, status_timestamp: '2026-11-06T01:00:00Z' } }, now).state).toBe('vacant')
+  })
+})

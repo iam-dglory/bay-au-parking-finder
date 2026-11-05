@@ -76,3 +76,14 @@ Settings for `supabase.yml` and `android-release.yml` (Settings → Secrets and 
 - **Environment:** create `production` (Settings → Environments) with a required reviewer.
 
 First Supabase run: keep `dry_run` on and check the list. If it wants to re-apply old migrations that were applied by hand, mark them as applied with `supabase migration repair --status applied <version>` instead of pushing them again.
+
+## Prices: "how long can I stay and what will it cost"
+
+- **Street parking (City of Melbourne):** `python3 -I scripts/build_melbourne_street_rates.py` builds `public/data/melbourne/street-rates.json` from the council Pay Stay datasets. Streets with one pay zone (or identical zones) get an exact price; others show a range. Re-run after refreshing the council datasets.
+- **Car parks:** `public/data/melbourne/car-park-rates.json` is maintained by hand from each operator's published **drive-up** rates, with `source_url` and `checked` date. The app flags entries older than 45 days. To add one: copy an entry, fill in rates from the operator page, set `lat`/`lng` (entries with `null` coordinates are kept but not shown). Do not scrape operator sites.
+- **Calculator:** `src/lib/parkingCost.ts` (tests in `parkingCost.test.ts`).
+
+## Map
+
+Google Maps (`@vis.gl/react-google-maps`). Set `VITE_GOOGLE_MAPS_API_KEY` (and optionally `VITE_GOOGLE_MAP_ID`) in `.env` and as a GitHub Actions variable. Without a key the app still works and shows prices as a list.
+

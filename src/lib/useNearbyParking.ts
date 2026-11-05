@@ -26,7 +26,9 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setError(null)
     try {
       const remoteDeadline = AbortSignal.timeout(15000)
-      const regionalOnly = isUSSearch(lat, lng) || isIndiaSearch(lat, lng) || isAustraliaSearch(lat, lng)
+      // Melbourne sits inside the Australia box, but its council bays, rules and
+      // sensors live in Supabase; only the rest of Australia is catalog-only.
+      const regionalOnly = isUSSearch(lat, lng) || isIndiaSearch(lat, lng) || (isAustraliaSearch(lat, lng) && !isMelbourneSearch(lat, lng))
       const [remote, local, council] = await Promise.allSettled([regionalOnly ? Promise.resolve([] as ParkingSpot[]) : loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })

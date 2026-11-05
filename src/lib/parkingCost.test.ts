@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import carParkData from '../../public/data/melbourne/car-park-rates.json'
 import { carParkCost, formatCents, melbourneStart, streetCost, streetCostRange, type CarParkRates, type WeekSchedule } from './parkingCost'
 
 const everyDay = (windows: [number, number, number, number][]): WeekSchedule => Array.from({ length: 7 }, () => windows)
@@ -68,10 +69,8 @@ describe('carParkCost', () => {
 })
 
 describe('car park data file', () => {
-  it('prices every listed car park for a weekday and has a dated source', async () => {
-    const { readFileSync } = await import('node:fs')
-    const data = JSON.parse(readFileSync('public/data/melbourne/car-park-rates.json', 'utf8'))
-    for (const park of data.car_parks) {
+  it('prices every listed car park for a weekday and has a dated source', () => {
+    for (const park of carParkData.car_parks as { id: string; source_url: string; checked: string; rates: CarParkRates }[]) {
       expect(park.source_url).toMatch(/^https:\/\//)
       expect(park.checked).toMatch(/^\d{4}-\d{2}-\d{2}$/)
       const weekdayMorning = carParkCost(park.rates, tuesday(10), 120) ?? carParkCost(park.rates, { day: 5, minute: 600 }, 120)
