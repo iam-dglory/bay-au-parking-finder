@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { BellRing, ChevronDown, Clock3, ExternalLink, Navigation, Radio, TriangleAlert, X } from 'lucide-react'
+import { BellRing, Check, ChevronDown, Clock3, ExternalLink, Flag, Navigation, Radio, Share2, Star, TriangleAlert, X } from 'lucide-react'
+import { toggleFavourite, useFavourites } from '../lib/favourites'
+import { reportPlaceProblem } from '../lib/feedback'
 import { REMIND_BEFORE_MINUTES, startParking, type ReminderResult } from '../lib/parkingTimer'
 import type { ParkingOption } from '../lib/parkingOptions'
 import { directionsUrl, shortStreetName, splitStreet, walkMinutes } from '../lib/parkingOptions'
@@ -13,7 +15,10 @@ const dateLabel = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateStri
  * the price is made up, live sensor readings and where the price came from. */
 export function OptionSheet({ option, durationMinutes, arrival, later = false, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; later?: boolean; onClose: () => void }) {
   const [reminder, setReminder] = useState<ReminderResult | 'starting' | null>(null)
+  const [shared, setShared] = useState(false)
+  const favourites = useFavourites()
   if (!option) return null
+  const saved = favourites.some(f => f.id === option.id)
   const leaveAt = new Date(arrival.getTime() + durationMinutes * 60_000)
   const limitAt = option.limitMinutes != null ? new Date(arrival.getTime() + option.limitMinutes * 60_000) : null
   const leaveBy = limitAt && limitAt < leaveAt ? limitAt : leaveAt
@@ -30,7 +35,16 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
             <p className="mt-0.5 text-sm text-[#40516d]">{[kindLabel, `${walkMinutes(option.distanceM)} min walk`].join(' · ')}</p>
             {block && <p className="text-xs text-[#64748b]">{block}</p>}
           </div>
-          <button onClick={onClose} className="bay-icon-button h-10 w-10" aria-label="Close"><X className="h-5 w-5" /></button>
+          <div className="flex shrink-0 gap-1.5">
+            <button onClick={() => toggleFavourite({ id: option.id, name: option.kind === 'street' ? shortStreetName(option.name) : option.name, lat: option.lat, lng: option.lng })} aria-pressed={saved} aria-label={saved ? 'Remove from saved' : 'Save this place'}
+              className={`flex h-10 w-10 items-center justify-center rounded-[14px] transition-colors ${saved ? 'bg-amber-50 text-amber-500' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>
+              <Star className="h-5 w-5" fill={saved ? 'currentColor' : 'none'} />
+            </button>
+            <button onClick={async () => { if (await sharePlace(option, price, durationMinutes, leaveBy)) { setShared(true); window.setTimeout(() => setShared(false), 2000) } }} aria-label="Share" className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]">
+              {shared ? <Check className="h-5 w-5 text-[#047857]" /> : <Share2 className="h-5 w-5" />}
+            </button>
+            <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]" aria-label="Close"><X className="h-5 w-5" /></button>
+          </div>
         </div>
 
         <section className="mt-4 rounded-[24px] bg-[#f5f8ff] p-5 shadow-[inset_0_0_0_1px_rgba(23,105,255,.12)]">
@@ -99,7 +113,50 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
             {' '}{option.live && 'Free bays come from council sensors and update every few minutes. '}Rates can change. The sign at the bay or the car park entrance is what applies.
           </p>
         </details>
+        <ReportProblem placeId={option.id} placeName={option.name} />
       </div>
     </div>
   )
 }
+
+const PROBLEMS = ['Price is wrong', 'Time limit is wrong', "Can't park here", 'Something else'] as const
+
+/** Lets a driver flag a wrong price or sign in two taps. */
+function ReportProblem({ placeId, placeName }: { placeId: string; placeName: string }) {
+  const [open, setOpen] = useState(false)
+  const [problem, setProblem] = useState<(typeof PROBLEMS)[number] | null>(null)
+  const [note, setNote] = useState('')
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  if (state === 'sent') return <p role="status" className="mt-3 flex items-center gap-2 text-sm text-[#047857]"><Check className="h-4 w-4" />Thanks, we'll check it.</p>
+  if (!open) return <button onClick={() => setOpen(true)} className="mt-2 flex min-h-11 items-center gap-2 text-sm font-semibold text-[#40516d]"><Flag className="h-4 w-4" />Something wrong here?</button>
+  return <form className="mt-3 rounded-2xl bg-[#f8fafc] p-3" onSubmit={async e => {
+    e.preventDefault(); if (!problem) return
+    setState('sending')
+    try { await reportPlaceProblem(placeId, placeName, problem, note); setState('sent') } catch { setState('error') }
+  }}>
+    <p className="text-sm font-semibold text-[#0b1730]">What's wrong?</p>
+    <div className="mt-2 flex flex-wrap gap-2">
+      {PROBLEMS.map(p => <button type="button" key={p} aria-pressed={problem === p} onClick={() => setProblem(p)}
+        className={`min-h-10 rounded-full px-3.5 text-sm font-semibold ${problem === p ? 'bg-[#1769ff] text-white' : 'bg-white text-[#40516d] shadow-[inset_0_0_0_1px_#dce7f8]'}`}>{p}</button>)}
+    </div>
+    <textarea value={note} onChange={e => setNote(e.target.value)} maxLength={500} rows={2} placeholder="What does the sign say? (optional)" aria-label="Details (optional)"
+      className="mt-2 w-full rounded-xl bg-white p-2.5 text-sm text-[#0b1730] shadow-[inset_0_0_0_1px_#dce7f8] outline-none focus:shadow-[inset_0_0_0_2px_#1769ff]" />
+    {state === 'error' && <p className="mt-1 text-xs text-[#b45309]">Couldn't send. Check your connection and try again.</p>}
+    <div className="mt-2 flex gap-2">
+      <button type="submit" disabled={!problem || state === 'sending'} className="h-11 flex-1 rounded-[14px] bg-[#1769ff] text-sm font-bold text-white disabled:opacity-50">{state === 'sending' ? 'Sending…' : 'Send'}</button>
+      <button type="button" onClick={() => setOpen(false)} className="h-11 rounded-[14px] px-4 text-sm font-semibold text-[#40516d]">Cancel</button>
+    </div>
+  </form>
+}
+
+/** Native share sheet where available, otherwise copy to clipboard. */
+async function sharePlace(option: ParkingOption, price: string, durationMinutes: number, leaveBy: Date): Promise<boolean> {
+  const title = option.kind === 'street' ? splitStreet(option.name).title : option.name
+  const text = `Parking at ${title}: ${price} for ${formatDurationShort(durationMinutes)}, leave by ${clock(leaveBy)}. Found on Bay.`
+  const url = `https://www.google.com/maps/search/?api=1&query=${option.lat},${option.lng}`
+  try {
+    if (navigator.share) { await navigator.share({ title: `Parking at ${title}`, text, url }); return false }
+    await navigator.clipboard.writeText(`${text} ${url}`); return true
+  } catch { return false }
+}
+
