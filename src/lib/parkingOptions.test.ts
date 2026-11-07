@@ -54,3 +54,12 @@ describe('shortStreetName', () => {
     expect(shortStreetName('Flinders Lane')).toBe('Flinders Ln')
   })
 })
+
+describe('streetOptionHere', () => {
+  it('finds the street whose bay is closest, within 40 m', async () => {
+    const { streetOptionHere } = await import('./parkingOptions')
+    const opts = streetOptions([bay('a', 'Queen St', { lat: -37.81, lng: 144.96 }), bay('b', 'Side St', { lat: -37.8103, lng: 144.96 })], rates, start, 60, now)
+    expect(streetOptionHere(opts, { lat: -37.8101, lng: 144.96 })?.option.name).toBe('Queen St')
+    expect(streetOptionHere(opts, { lat: -37.815, lng: 144.96 })).toBeNull()
+  })
+})

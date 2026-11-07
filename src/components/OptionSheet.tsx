@@ -1,4 +1,6 @@
-import { CarFront, Clock3, ExternalLink, MapPin, Navigation, Radio, TriangleAlert, X } from 'lucide-react'
+import { useState } from 'react'
+import { BellRing, CarFront, Clock3, ExternalLink, MapPin, Navigation, Radio, TriangleAlert, X } from 'lucide-react'
+import { REMIND_BEFORE_MINUTES, startParking, type ReminderResult } from '../lib/parkingTimer'
 import type { ParkingOption } from '../lib/parkingOptions'
 import { directionsUrl, shortStreetName } from '../lib/parkingOptions'
 import { formatCents, formatDurationShort } from '../lib/parkingCost'
@@ -10,6 +12,7 @@ const dateLabel = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateStri
 /** Detail for one street or car park: total for the stay, leave-by time, how
  * the price is made up, live sensor readings and where the price came from. */
 export function OptionSheet({ option, durationMinutes, arrival, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; onClose: () => void }) {
+  const [reminder, setReminder] = useState<ReminderResult | 'starting' | null>(null)
   if (!option) return null
   const leaveAt = new Date(arrival.getTime() + durationMinutes * 60_000)
   const limitAt = option.limitMinutes != null ? new Date(arrival.getTime() + option.limitMinutes * 60_000) : null
@@ -58,8 +61,30 @@ export function OptionSheet({ option, durationMinutes, arrival, onClose }: { opt
         )}
         {option.notes && <p className="mt-3 text-sm text-[#64748b]">{option.notes}</p>}
 
+        {option.fits !== false && (
+          <button
+            disabled={reminder === 'starting'}
+            onClick={async () => {
+              setReminder('starting')
+              const leaveBy = limitAt && limitAt < leaveAt ? limitAt : leaveAt
+              const result = await startParking({
+                name: option.kind === 'street' ? shortStreetName(option.name) : option.name,
+                lat: option.lat, lng: option.lng, kind: option.kind,
+                startedAt: arrival.toISOString(), leaveBy: leaveBy.toISOString(),
+                limitAt: limitAt?.toISOString(), cents: option.cents,
+              })
+              setReminder(result)
+            }}
+            className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#1769ff] text-sm font-bold text-[#1769ff] disabled:opacity-60">
+            <BellRing className="h-4 w-4" />{reminder && reminder !== 'starting' ? 'Timer started' : "I've parked here · remind me"}
+          </button>
+        )}
+        {reminder === 'scheduled' && <p role="status" className="mt-2 text-xs text-[#065f46]">We'll remind you {REMIND_BEFORE_MINUTES} minutes before, and when time is up.</p>}
+        {reminder === 'in-app-only' && <p role="status" className="mt-2 text-xs text-[#64748b]">Timer started. In a browser, reminders only appear while Bay is open in a tab.</p>}
+        {reminder === 'denied' && <p role="status" className="mt-2 text-xs text-[#b45309]">Timer started, but notifications are off for Bay, so watch the countdown on the home screen.</p>}
+
         <a href={directionsUrl(option.lat, option.lng)} target="_blank" rel="noreferrer" onClick={() => trackEvent('directions_open', { result_type: option.kind })}
-          className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#1769ff] text-sm font-bold text-white shadow-lg shadow-blue-500/25">
+          className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#1769ff] text-sm font-bold text-white shadow-lg shadow-blue-500/25">
           <Navigation className="h-4 w-4" />Directions
         </a>
 

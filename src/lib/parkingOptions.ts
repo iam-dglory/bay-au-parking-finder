@@ -145,3 +145,18 @@ export function shortStreetName(name: string): string {
   const cross = (part: string) => abbreviate(part).replace(/ (St|Rd|Ln|Pde|Ave|Pl)$/, '')
   return `${abbreviate(match[1])} · ${cross(match[2])}–${cross(match[3])}`
 }
+
+/** "Can I park here?": the street option whose nearest bay is within
+ * `maxM` of the driver. GPS is often 10-30 m off in the CBD, so the default
+ * radius is 40 m; anything further is not "here". */
+export function streetOptionHere(options: ParkingOption[], point: { lat: number; lng: number }, maxM = 40): { option: ParkingOption; distanceM: number } | null {
+  let best: { option: ParkingOption; distanceM: number } | null = null
+  for (const option of options) {
+    if (option.kind !== 'street' || !option.bays) continue
+    for (const bay of option.bays) {
+      const d = haversineMeters(point, { lat: bay.lat, lng: bay.lng })
+      if (d <= maxM && (!best || d < best.distanceM)) best = { option, distanceM: d }
+    }
+  }
+  return best
+}

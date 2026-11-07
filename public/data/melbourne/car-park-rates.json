@@ -473,8 +473,8 @@
    "id": "wilson-530-collins",
    "name": "530 Collins St",
    "operator": "Wilson Parking",
-   "lat": null,
-   "lng": null,
+   "lat": -37.8177934,
+   "lng": 144.9568668,
    "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/530-collins-st-car-park/",
    "checked": "2026-11-06",
    "rates": {
@@ -518,7 +518,8 @@
      }
     ]
    },
-   "notes": "Validated hourly rates. Entry via Little Collins St. Closed weekends."
+   "notes": "Validated hourly rates. Entry via Little Collins St. Closed weekends.",
+   "location_source": "OpenStreetMap building \"530 Collins\""
   },
   {
    "id": "wilson-50-lonsdale",
@@ -568,7 +569,8 @@
      }
     ]
    },
-   "notes": "Entry via 52 Little Lonsdale St. Closed weekends."
+   "notes": "Entry via 52 Little Lonsdale St. Closed weekends.",
+   "location_source": "Not placed: address search matched only the street, not the building."
   },
   {
    "id": "wilson-180-russell",
@@ -631,7 +633,8 @@
      }
     ]
    },
-   "notes": "Weekend drive-up price unclear on the source page; not included."
+   "notes": "Weekend drive-up price unclear on the source page; not included.",
+   "location_source": "Not placed: address search matched only the street, not the building."
   },
   {
    "id": "wilson-62-la-trobe",
@@ -719,14 +722,15 @@
       "exitBy": 1440
      }
     ]
-   }
+   },
+   "location_source": "Not placed: address search matched only the street, not the building."
   },
   {
    "id": "wilson-380-la-trobe",
    "name": "380 La Trobe St",
    "operator": "Wilson Parking",
-   "lat": null,
-   "lng": null,
+   "lat": -37.8101273,
+   "lng": 144.9582639,
    "source_url": "https://www.wilsonparking.com.au/park/3253_380-La-Trobe-St-Car-Park_380-LaTrobe-Street-Melbourne",
    "checked": "2026-11-06",
    "rates": {
@@ -784,7 +788,8 @@
      }
     ]
    },
-   "notes": "Entry at 191 A'Beckett St. Early bird no longer offered."
+   "notes": "Entry at 191 A'Beckett St. Early bird no longer offered.",
+   "location_source": "OpenStreetMap address 191 A'Beckett St (car park entrance)"
   },
   {
    "id": "secure-12-20-flinders-lane",
