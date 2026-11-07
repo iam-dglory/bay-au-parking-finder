@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages production
+name: CD (deploy to GitHub Pages)
 
 # Continuous deployment: runs automatically after CI passes on main.
 # Can still be run by hand with a reviewed commit SHA (e.g. to roll back).
