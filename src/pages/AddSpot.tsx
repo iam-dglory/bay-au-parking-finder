@@ -2,22 +2,15 @@ import { useState } from 'react'
 import { MapView } from '../components/MapView'
 import { ReportSpotForm, type ReportSpotFormValue } from '../components/ReportSpotForm'
 import { supabase } from '../lib/supabaseClient'
-import { detectCountry } from '../lib/geocoding'
 import { uploadSignPhoto } from '../lib/photos'
 
 export function AddSpot({ center, onDone }: { center: { lat: number; lng: number }; onDone: () => void }) {
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null)
-  const [country, setCountry] = useState<string | null>(null)
-  const [detecting, setDetecting] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function handlePick(lat: number, lng: number) {
+  function handlePick(lat: number, lng: number) {
     setPicked({ lat, lng })
-    setDetecting(true)
-    const detected = await detectCountry(lat, lng)
-    setCountry(detected)
-    setDetecting(false)
   }
 
   async function handleSubmit(value: ReportSpotFormValue) {
@@ -41,7 +34,7 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
     const userId = userData.user?.id
     const { data: spot, error: spotError } = await supabase
       .from('parking_spots')
-      .insert({ lat: picked.lat, lng: picked.lng, address_text: value.addressText, country, photo_url: photoUrl, created_by: userId })
+      .insert({ lat: picked.lat, lng: picked.lng, address_text: value.addressText, country: 'Australia', photo_url: photoUrl, created_by: userId })
       .select('id')
       .single()
 
@@ -85,11 +78,11 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
         <div className="h-full overflow-hidden rounded-2xl"><MapView center={center} spots={[]} pickMode pickedLocation={picked} onPickLocation={handlePick} /></div>
       </div>
       <p className="mx-4 mt-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 text-center text-xs font-medium text-blue-700">
-        {!picked ? 'Tap the map to mark exactly where the sign is' : detecting ? 'Pin placed. Detecting your country...' : 'Pin placed. Fill in the sign details below.'}
+        {!picked ? 'Tap the map to mark exactly where the sign is' : 'Pin placed. Fill in the sign details below.'}
       </p>
       {error && <p className="mx-4 mt-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-center text-xs text-rose-700">{error}</p>}
       <div className="shrink-0">
-        <ReportSpotForm country={country} onCountryChange={setCountry} onSubmit={handleSubmit} submitting={submitting} />
+        <ReportSpotForm onSubmit={handleSubmit} submitting={submitting} />
       </div>
     </div>
   )

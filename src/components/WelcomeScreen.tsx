@@ -33,7 +33,7 @@ export function WelcomeScreen({ phase, onChooseLocation }: { phase: WelcomePhase
         <div className="mt-5 h-1.5 w-44 overflow-hidden rounded-full bg-[#dce6f5]" aria-label="Loading">
           <div className="h-full w-2/3 rounded-full bg-[#1769ff] transition-all" />
         </div>
-        {phase === 'locating' && <button onClick={onChooseLocation} className="mt-7 text-sm font-semibold text-[#1769ff] underline underline-offset-4">Choose a place instead</button>}
+        {phase === 'locating' && <button onClick={onChooseLocation} className="mt-7 text-sm font-semibold text-[#1769ff] underline underline-offset-4">Start in Melbourne CBD</button>}
       </div>
     </main>
   )

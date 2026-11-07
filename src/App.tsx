@@ -1,13 +1,13 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { BookOpen, Building2, Clock3, Map as MapIcon, MapPin } from 'lucide-react'
 import { FeedbackForm } from './components/FeedbackForm'
-import { LocationPicker } from './components/LocationPicker'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { ensureSession } from './lib/supabaseClient'
 import { getBrowserLocation, watchLocation } from './lib/geolocation'
 import { reverseGeocodeLabel } from './lib/geocoding'
 import { loadSavedLocations, rememberLocation, savedStartupLocation, type SavedLocation, type SavedPlaceKind } from './lib/savedLocations'
 import { marketplaceV2Enabled } from './lib/featureFlags'
+import { isMelbourneSearch } from './lib/melbourneSensors'
 import { trackEvent, trackFirstOpen } from './lib/analytics'
 
 const Home = lazy(() => import('./pages/Home').then((module) => ({ default: module.Home })))
@@ -19,9 +19,12 @@ const MarketplaceAdmin = lazy(() => import('./pages/MarketplaceAdmin').then((mod
 
 type Tab = 'home' | 'marketplace' | 'addSign' | 'mine' | 'guide'
 type Location = SavedLocation
-type LocationStatus = 'detecting' | 'resolved' | 'manual'
+type LocationStatus = 'detecting' | 'resolved'
 
 const LOCATION_DETECT_TIMEOUT_MS = 6000
+/** Bay covers Melbourne only. Without a Melbourne GPS fix, start in the CBD. */
+const MELBOURNE_CBD: Location = { lat: -37.8136, lng: 144.9631, label: 'Melbourne CBD', country: 'Australia' }
+const inMelbourne = (loc: Location | null) => loc && isMelbourneSearch(loc.lat, loc.lng) ? loc : null
 
 export default function App() {
   const marketplaceEnabled = marketplaceV2Enabled()
@@ -33,11 +36,11 @@ export default function App() {
   const initialSaved = useRef(loadSavedLocations())
   const [authReady, setAuthReady] = useState(false)
   const [introComplete, setIntroComplete] = useState(false)
-  const [location, setLocation] = useState<Location | null>(() => savedStartupLocation(initialSaved.current))
+  const [location, setLocation] = useState<Location | null>(() => inMelbourne(savedStartupLocation(initialSaved.current)))
   const [savedLocations, setSavedLocations] = useState(() => initialSaved.current)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [trackLive, setTrackLive] = useState(false)
-  const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => savedStartupLocation(initialSaved.current) ? 'resolved' : 'detecting')
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => inMelbourne(savedStartupLocation(initialSaved.current)) ? 'resolved' : 'detecting')
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
   const [showFeedback, setShowFeedback] = useState(() => new URLSearchParams(window.location.search).get('feedback') === '1')
@@ -65,6 +68,8 @@ export default function App() {
       if (epoch !== gpsEpoch.current) return
       const lat = pos.coords.latitude
       const lng = pos.coords.longitude
+      // Outside Melbourne there is nothing to show near the driver: open the CBD.
+      if (!isMelbourneSearch(lat, lng)) { onResolved(MELBOURNE_CBD); return }
       needsRefinement.current = (pos.coords.accuracy ?? Infinity) > 200
       onResolved({ lat, lng, label: needsRefinement.current ? 'Approximate current location' : 'Current location' })
       setLiveLocation({ lat, lng })
@@ -122,7 +127,7 @@ export default function App() {
         gpsEpoch.current++
         // Keep a saved place on screen if GPS is slow. It is a usable
         // fallback, unlike a blank first launch where the picker is needed.
-        if (!savedStartupLocation(initialSaved.current)) setLocationStatus('manual')
+        if (!inMelbourne(savedStartupLocation(initialSaved.current))) setCurrentLocation(MELBOURNE_CBD)
       }
     }, LOCATION_DETECT_TIMEOUT_MS)
 
@@ -136,7 +141,7 @@ export default function App() {
       clearTimeout(timeout)
         // A saved home/last search is already visible. Only open the picker
         // when neither saved location nor device location is available.
-        if (!savedStartupLocation(initialSaved.current)) setLocationStatus('manual')
+        if (!inMelbourne(savedStartupLocation(initialSaved.current))) setCurrentLocation(MELBOURNE_CBD)
     })
 
     // This ref is a cancellation token, not a DOM node.
@@ -163,40 +168,20 @@ export default function App() {
     }
   }, [])
 
-  if (!introComplete) return <WelcomeScreen phase={!authReady ? 'connecting' : locationStatus === 'detecting' ? 'locating' : 'ready'} onChooseLocation={() => { gpsEpoch.current++; setLocationStatus('manual') }} />
+  if (!introComplete) return <WelcomeScreen phase={!authReady ? 'connecting' : locationStatus === 'detecting' ? 'locating' : 'ready'} onChooseLocation={() => { gpsEpoch.current++; setCurrentLocation(MELBOURNE_CBD) }} />
 
   if (marketplaceAdminRequested) return <Suspense fallback={<div className="flex h-full items-center justify-center text-sm text-slate-500">Opening marketplace controls…</div>}><MarketplaceAdmin /></Suspense>
 
   const feedbackOverlay = showFeedback && authReady && <FeedbackForm pageContext={tab} onClose={() => setShowFeedback(false)} />
 
-  if (locationStatus === 'detecting') {
+  if (locationStatus === 'detecting' || !location) {
     return (
       <>
         <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#f6f8fc] text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 shadow-xl shadow-blue-600/25"><MapPin className="h-7 w-7 animate-pulse text-white" strokeWidth={1.8} /></div>
-          <div><p className="text-base font-semibold text-slate-900">Finding your parking area</p><p className="mt-1 text-sm text-slate-500">Allow location access for the fastest results</p></div>
-        <button className="mt-3 text-sm font-semibold text-blue-600" onClick={() => { gpsEpoch.current++; setLocationStatus('manual') }}>Choose an area instead</button>
+          <div><p className="text-base font-semibold text-slate-900">Finding parking near you</p><p className="mt-1 text-sm text-slate-500">Allow location access for the fastest results</p></div>
+          <button className="mt-3 text-sm font-semibold text-blue-600" onClick={() => { gpsEpoch.current++; setCurrentLocation(MELBOURNE_CBD) }}>Start in Melbourne CBD</button>
         </div>
-        {feedbackOverlay}
-      </>
-    )
-  }
-
-  if (locationStatus === 'manual' || !location) {
-    return (
-      <>
-        <LocationPicker
-          savedLocations={savedLocations}
-          onPick={(lat, lng, label, country) => {
-            gpsEpoch.current++
-            needsRefinement.current = false
-            refreshOnReturn.current = false
-            setTrackLive(false)
-            setLiveLocation(null)
-            setCurrentLocation({ lat, lng, label, country })
-          }}
-          onUseGps={() => refreshCurrentLocation()}
-        />
         {feedbackOverlay}
       </>
     )
@@ -228,14 +213,13 @@ export default function App() {
               setLiveLocation(null)
               setCurrentLocation(place)
             }}
-            onChangeLocation={() => { gpsEpoch.current++; setTrackLive(false); setLocationStatus('manual') }}
             onUseCurrentLocation={() => { void refreshCurrentLocation().catch(() => {}) }}
           />
         )}
         {tab === 'addSign' && <AddSpot key={addKey} center={location} onDone={goHome} />}
         {marketplaceEnabled && tab === 'marketplace' && <Marketplace center={location} onFindParking={() => setTab('home')} />}
         {tab === 'mine' && <MyActivity center={location} savedLocations={savedLocations} onOpenFeedback={() => setShowFeedback(true)} onAddSign={() => { setAddKey((k) => k + 1); setTab('addSign') }} />}
-        {tab === 'guide' && <Guide location={location} />}
+        {tab === 'guide' && <Guide />}
         </Suspense>
       </div>
 

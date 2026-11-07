@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react'
 import { Accessibility, ChevronRight, CircleAlert, Clock3, CreditCard, MapPin, ParkingSquare, ShieldCheck, Truck, UsersRound, XCircle } from 'lucide-react'
-import { getSignOptionsForCountry } from '../lib/countrySignPresets'
-import { SIGN_AVAILABILITY, SIGN_TYPE_MEANING, GUIDE_COUNTRIES, COUNTRY_GUIDE_INTRO, GUIDE_GENERIC_INTRO } from '../lib/signGuide'
-import { detectCountry } from '../lib/geocoding'
+import { SIGN_OPTIONS } from '../lib/signPresets'
+import { SIGN_AVAILABILITY, SIGN_TYPE_MEANING, GUIDE_INTRO } from '../lib/signGuide'
 import type { SignType } from '../types'
-
-type GuideCountry = (typeof GUIDE_COUNTRIES)[number] | 'Other'
 
 const SIGN_TYPE_ICON: Record<SignType, typeof Clock3> = {
   FREE_UNLIMITED: ParkingSquare,
@@ -49,39 +45,21 @@ function GuideHeroArtwork() {
   </div>
 }
 
-export function Guide({ location }: { location: { lat: number; lng: number; country?: string } | null }) {
-  const knownCountry = GUIDE_COUNTRIES.find(c => c === location?.country)
-  const [country, setCountry] = useState<GuideCountry>(knownCountry ?? 'Australia')
-  const [autoDetected, setAutoDetected] = useState(false)
-
-  useEffect(() => {
-    if (autoDetected || !location) return
-    setAutoDetected(true)
-    if (knownCountry) { setCountry(knownCountry); return }
-    detectCountry(location.lat, location.lng).then((detected) => {
-      const match = GUIDE_COUNTRIES.find((c) => c.toLowerCase() === detected?.toLowerCase())
-      if (match) setCountry(match)
-    })
-  }, [location, autoDetected, knownCountry])
-
-  const signs = getSignOptionsForCountry(country === 'Other' ? undefined : country)
-  const intro = country === 'Other' ? GUIDE_GENERIC_INTRO : COUNTRY_GUIDE_INTRO[country]
+export function Guide() {
+  const signs = SIGN_OPTIONS
+  const intro = GUIDE_INTRO
 
   return <main className="h-full overflow-y-auto bg-[#f7faff] pb-6 text-[#0b1730]">
     <header className="relative min-h-52 overflow-hidden bg-[radial-gradient(circle_at_22%_0%,#e2f2ff,transparent_42%),linear-gradient(135deg,#ffffff_30%,#eef6ff_100%)] px-5 pb-5 pt-[max(1.4rem,env(safe-area-inset-top))]">
       <GuideHeroArtwork />
-      <div className="relative max-w-[65%] sm:max-w-md"><p className="text-xs font-bold uppercase tracking-[.16em] text-[#1769ff]">Bay guide</p><h1 className="mt-2 text-[26px] font-bold tracking-tight text-[#0b1730]">Understand parking signs</h1><p className="mt-1.5 text-[15px] leading-6 text-[#536b95]">Simple explanations of common parking signs. Always check the physical sign at the location.</p></div>
+      <div className="relative max-w-[65%] sm:max-w-md"><p className="text-xs font-bold uppercase tracking-[.16em] text-[#1769ff]">Bay guide</p><h1 className="mt-2 text-[26px] font-bold tracking-tight text-[#0b1730]">Understand parking signs</h1><p className="mt-1.5 text-[15px] leading-6 text-[#536b95]">What Melbourne parking signs mean. Always check the physical sign at the location.</p></div>
     </header>
-
-    <div className="flex gap-2 overflow-x-auto border-y border-[#e3edf9] bg-white/80 px-4 py-3 [scrollbar-width:none]">
-      {[...GUIDE_COUNTRIES, 'Other'].map((c) => <button key={c} onClick={() => setCountry(c as GuideCountry)} className={`min-h-10 shrink-0 rounded-full border px-4 text-sm font-semibold transition ${country === c ? 'border-[#1769ff] bg-[#1769ff] text-white shadow-lg shadow-blue-500/20' : 'border-[#dce7f8] bg-white text-[#385073] hover:border-blue-200 hover:bg-blue-50'}`}>{c}</button>)}
-    </div>
 
     <div className="mx-auto max-w-2xl px-4 pb-7 pt-4">
       <aside className="rounded-2xl border border-blue-100 bg-blue-50/75 p-4 text-sm leading-6 text-[#304b79]"><CircleAlert className="mr-2 inline-block h-5 w-5 -translate-y-0.5 text-[#1769ff]" /><span>{intro}</span></aside>
       <div className="mt-5 flex gap-7 text-sm font-semibold"><span className="flex items-center gap-2 text-emerald-800"><i className="h-3 w-3 rounded-full bg-emerald-500" />Can park</span><span className="flex items-center gap-2 text-rose-700"><i className="h-3 w-3 rounded-full bg-rose-500" />Restricted</span></div>
 
-      <section aria-label={`${country} parking sign guide`} className="mt-4 space-y-3">
+      <section aria-label="Melbourne parking sign guide" className="mt-4 space-y-3">
         {signs.map((sign) => {
           const usable = SIGN_AVAILABILITY[sign.type] === 'usable'
           const Icon = SIGN_TYPE_ICON[sign.type]
