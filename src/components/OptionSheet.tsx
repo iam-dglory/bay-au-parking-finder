@@ -26,8 +26,8 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
   const kindLabel = option.kind === 'carpark' ? `${option.operator} car park` : `Street parking · ${option.bayCount} bay${option.bayCount === 1 ? '' : 's'}`
   const price = option.cents === 0 ? 'Free' : option.cents != null ? formatCents(option.cents) : option.range ? `${formatCents(option.range.min)}–${formatCents(option.range.max)}` : 'Price not listed'
   return (
-    <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/25 sm:items-center" onClick={onClose}>
-      <div role="dialog" aria-label={`${option.name} parking cost`} className="bay-sheet max-h-[86dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:rounded-[28px]" onClick={e => e.stopPropagation()}>
+    <div className="bay-fade fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/25 sm:items-center" onClick={onClose}>
+      <div role="dialog" aria-label={`${option.name} parking cost`} className="bay-sheet bay-sheet-in max-h-[86dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-white px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:rounded-[28px]" onClick={e => e.stopPropagation()}>
         <div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" />
         <div className="mt-3 flex items-start gap-3">
           <div className="min-w-0 flex-1">
@@ -38,10 +38,10 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
           <div className="flex shrink-0 gap-1.5">
             <button onClick={() => toggleFavourite({ id: option.id, name: option.kind === 'street' ? shortStreetName(option.name) : option.name, lat: option.lat, lng: option.lng })} aria-pressed={saved} aria-label={saved ? 'Remove from saved' : 'Save this place'}
               className={`flex h-10 w-10 items-center justify-center rounded-[14px] transition-colors ${saved ? 'bg-amber-50 text-amber-500' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>
-              <Star className="h-5 w-5" fill={saved ? 'currentColor' : 'none'} />
+              <Star key={String(saved)} className={`h-5 w-5 ${saved ? 'bay-pop' : ''}`} fill={saved ? 'currentColor' : 'none'} />
             </button>
             <button onClick={async () => { if (await sharePlace(option, price, durationMinutes, leaveBy)) { setShared(true); window.setTimeout(() => setShared(false), 2000) } }} aria-label="Share" className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]">
-              {shared ? <Check className="h-5 w-5 text-[#047857]" /> : <Share2 className="h-5 w-5" />}
+              {shared ? <Check className="bay-pop h-5 w-5 text-[#047857]" /> : <Share2 className="h-5 w-5" />}
             </button>
             <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]" aria-label="Close"><X className="h-5 w-5" /></button>
           </div>
@@ -87,12 +87,12 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
           )}
         </div>
         {!reminder && option.fits !== false && !later && <p className="mt-2 text-xs text-[#64748b]">Parked? Tap Remind me and we'll warn you {REMIND_BEFORE_MINUTES} min before {clock(leaveBy)}.</p>}
-        {reminder === 'scheduled' && <p role="status" className="mt-2 text-xs text-[#065f46]">We'll remind you {REMIND_BEFORE_MINUTES} min before, and when time is up.</p>}
+        {reminder === 'scheduled' && <p role="status" className="bay-rise mt-2 text-xs text-[#065f46]">We'll remind you {REMIND_BEFORE_MINUTES} min before, and when time is up.</p>}
         {reminder === 'in-app-only' && <p role="status" className="mt-2 text-xs text-[#64748b]">Reminder set. In a browser it only shows while Bay is open.</p>}
         {reminder === 'denied' && <p role="status" className="mt-2 text-xs text-[#b45309]">Notifications are off for Bay, so keep an eye on the countdown on the home screen.</p>}
         {option.notes && <p className="mt-3 text-sm text-[#40516d]">{option.notes}</p>}
 
-        <details className="group mt-4 border-t border-[#eef2f7] pt-1">
+        <details className="group mt-4 [&[open]>*:not(summary)]:[animation:bay-fade_.2s_ease-out_both] border-t border-[#eef2f7] pt-1">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-[#40516d] [&::-webkit-details-marker]:hidden">
             Price details<ChevronDown className="h-4 w-4 group-open:rotate-180" />
           </summary>
@@ -127,9 +127,9 @@ function ReportProblem({ placeId, placeName }: { placeId: string; placeName: str
   const [problem, setProblem] = useState<(typeof PROBLEMS)[number] | null>(null)
   const [note, setNote] = useState('')
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  if (state === 'sent') return <p role="status" className="mt-3 flex items-center gap-2 text-sm text-[#047857]"><Check className="h-4 w-4" />Thanks, we'll check it.</p>
+  if (state === 'sent') return <p role="status" className="bay-rise mt-3 flex items-center gap-2 text-sm text-[#047857]"><Check className="h-4 w-4" />Thanks, we'll check it.</p>
   if (!open) return <button onClick={() => setOpen(true)} className="mt-2 flex min-h-11 items-center gap-2 text-sm font-semibold text-[#40516d]"><Flag className="h-4 w-4" />Something wrong here?</button>
-  return <form className="mt-3 rounded-2xl bg-[#f8fafc] p-3" onSubmit={async e => {
+  return <form className="bay-rise mt-3 rounded-2xl bg-[#f8fafc] p-3" onSubmit={async e => {
     e.preventDefault(); if (!problem) return
     setState('sending')
     try { await reportPlaceProblem(placeId, placeName, problem, note); setState('sent') } catch { setState('error') }

@@ -144,9 +144,12 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
               </div>}
           </div>
           {melbourne && <div className="mt-1 border-t border-[#eef2f7] px-1 pt-1.5">
-            <div className="flex items-center gap-0.5" role="radiogroup" aria-label="How long are you staying?">
+            <div className="relative flex items-center gap-0.5" role="radiogroup" aria-label="How long are you staying?">
+              {/* One pill slides to the chosen stay instead of chips flashing on and off. */}
+              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 rounded-[14px] bg-[#1769ff] shadow-[0_4px_12px_rgba(23,105,255,.35)] transition-transform duration-300 [transition-timing-function:var(--ease-out)]"
+                style={{ width: `calc((100% - ${(DURATIONS.length - 1) * 2}px) / ${DURATIONS.length})`, transform: `translateX(calc(${DURATIONS.indexOf(duration)} * (100% + 2px)))` }} />
               {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} onClick={() => setDuration(d)}
-                className={`h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-[background-color,color,transform] active:scale-[0.97] ${duration === d ? 'bg-[#1769ff] text-white shadow-[0_4px_12px_rgba(23,105,255,.35)]' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>{durationLabel(d)}</button>)}
+                className={`relative h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-colors duration-200 active:scale-[0.97] ${duration === d ? 'text-white' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>{durationLabel(d)}</button>)}
             </div>
           </div>}
         </div>
@@ -180,13 +183,15 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
           {melbourne && <>
             {loading && !best && <SkeletonRows />}
             {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
-            {showTips && best && <div className="mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
+            {showTips && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
               <SignMark className="h-7 w-7 shrink-0" />
               <p className="min-w-0 flex-1 text-[13px] leading-5">Pick how long you're staying. Bay finds the cheapest place that allows it.</p>
               <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
             </div>}
+            <div key={`${duration}-${String(arriveIn)}`} className="bay-stagger">
             {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onOpen={() => pick(best)} />}
-            {others.length > 0 && <ul className="mt-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
+            {others.length > 0 && <ul className="mt-1 bay-stagger">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
+            </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
             {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-[#64748b]">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
           </>}
@@ -232,7 +237,7 @@ function BestCard({ option, duration, at, later, starred, onOpen }: { option: Pa
   return <div className="rounded-[22px] bg-[#f5f8ff] shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)]">
     <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
       <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
-      <span className="shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
+      <span key={priceText(option)} className="bay-price shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
     </button>
     <div className="flex items-center gap-3 px-4 pb-3 pt-1">
       <span className="min-w-0 flex-1 text-sm text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
@@ -276,8 +281,8 @@ function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name
   const soon = !over && minutesLeft <= 15
   const tone = over ? 'bg-red-600 text-white' : soon ? 'bg-amber-400 text-[#2b1a00]' : 'bg-[#07152f] text-white'
   const left = over ? `${formatDurationShort(-minutesLeft)} over` : `${formatDurationShort(Math.max(minutesLeft, 0))} left`
-  return <div role="timer" aria-live="polite" className={`flex items-center gap-3 rounded-[20px] py-2 pl-3.5 pr-2 shadow-[0_10px_30px_rgba(15,23,42,.18)] ${tone}`}>
-    <BellRing className="h-5 w-5 shrink-0" />
+  return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[20px] py-2 pl-3.5 pr-2 shadow-[0_10px_30px_rgba(15,23,42,.18)] transition-colors duration-500 ${tone}`}>
+    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${soon ? 'bay-pulse' : ''}`}><BellRing className="h-5 w-5" /></span>
     <span className="min-w-0 flex-1">
       <span className="block text-sm font-bold tabular-nums">{left}</span>
       <span className="block truncate text-xs opacity-80">Leave by {clock(new Date(leaveBy))} · {name}</span>
@@ -299,7 +304,7 @@ function SearchOverlay({ saved, onSaved, onPick, onVenue, onClose }: { saved: Fa
     const found = await searchPlaces(query).catch(() => [])
     if (id === request.current) { setResults(found); setBusy(false); setSearched(true) }
   }
-  return <div className="fixed inset-0 z-[1100] overflow-y-auto bg-white px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
+  return <div className="bay-fade fixed inset-0 z-[1100] overflow-y-auto bg-white px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
     <div className="mx-auto max-w-xl">
       <form onSubmit={e => { e.preventDefault(); void run() }} className="flex items-center gap-2 rounded-[20px] bg-[#f5f8ff] pl-3.5 pr-1.5 shadow-[inset_0_0_0_1px_#dce7f8] focus-within:shadow-[inset_0_0_0_2px_#1769ff]">
         <Search className="h-5 w-5 shrink-0 text-[#1769ff]" />
@@ -338,7 +343,7 @@ function WhenMenu({ value, now, onPick, onClose }: { value: ArriveIn; now: Date;
   ]
   return <>
     <button aria-label="Close" className="fixed inset-0 z-[690] cursor-default" onClick={onClose} />
-    <div role="menu" aria-label="When are you arriving?" className="absolute right-0 top-12 z-[700] w-52 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
+    <div role="menu" aria-label="When are you arriving?" className="bay-menu absolute right-0 top-12 z-[700] w-52 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
       <p className="px-3 pb-1 pt-2 text-xs font-semibold text-[#64748b]">Arriving</p>
       {choices.map(c => <button key={String(c.v)} role="menuitemradio" aria-checked={value === c.v} onClick={() => onPick(c.v)}
         className={`flex min-h-11 w-full items-center justify-between rounded-[14px] px-3 text-left text-sm font-semibold hover:bg-[#f5f8ff] ${value === c.v ? 'text-[#1769ff]' : 'text-[#0b1730]'}`}>
@@ -351,7 +356,7 @@ function WhenMenu({ value, now, onPick, onClose }: { value: ArriveIn; now: Date;
 function SavedMenu({ saved, onSave, onSelect, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onClose: () => void }) {
   const act = (fn: () => void) => { fn(); onClose() }
   const item = 'flex min-h-11 w-full items-center gap-2.5 rounded-[14px] px-3 text-left text-sm font-semibold text-[#0b1730] hover:bg-[#f5f8ff]'
-  return <div className="absolute right-0 top-12 z-[700] w-60 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
+  return <div className="bay-menu absolute right-0 top-12 z-[700] w-60 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
     {saved.home && <button onClick={() => act(() => onSelect('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#1769ff]" />Home</button>}
     {saved.work && <button onClick={() => act(() => onSelect('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Work</button>}
     <button onClick={() => act(() => onSave('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#64748b]" />Save this as home</button>
