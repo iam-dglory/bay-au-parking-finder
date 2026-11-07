@@ -18,6 +18,6 @@ export function BrandMark({ className = '', size = 'md', label = 'Bay' }: { clas
   const s = { sm: ['h-7 w-7', 'text-xl'], md: ['h-9 w-9', 'text-2xl'], lg: ['h-14 w-14', 'text-4xl'] }[size]
   return <span className={`inline-flex items-center gap-2 ${className}`} aria-label={label} role="img">
     <SignMark className={s[0]} />
-    <span aria-hidden className={`${s[1]} font-dot text-ink`}>Bay</span>
+    <span aria-hidden className={`${s[1]} font-black tracking-[-.04em] text-ink`}>Bay</span>
   </span>
 }

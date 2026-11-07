@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { BellRing, Bookmark, BriefcaseBusiness, CarFront, Check, ChevronDown, Clock3, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Star, Ticket, X } from 'lucide-react'
+import { Bookmark, BriefcaseBusiness, Check, ChevronDown, Clock3, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Star, Ticket, X } from 'lucide-react'
 import { OptionSheet } from '../components/OptionSheet'
+import { SignPlate, TicketTime, plateLabel, signNotation } from '../components/Kerb'
 import { SignMark } from '../components/BrandMark'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { isMelbourneSearch } from '../lib/melbourneSensors'
@@ -167,12 +168,14 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
               </div>}
           </div>
           {melbourne && <div className="mt-1 border-t border-line px-1 pt-1.5">
-            <div className="relative flex items-center gap-0.5" role="radiogroup" aria-label="How long are you staying?">
-              {/* One pill slides to the chosen stay instead of chips flashing on and off. */}
-              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 rounded-[14px] selected-pill transition-transform duration-300 [transition-timing-function:var(--ease-out)]"
-                style={{ width: `calc((100% - ${(DURATIONS.length - 1) * 2}px) / ${DURATIONS.length})`, transform: `translateX(calc(${DURATIONS.indexOf(duration)} * (100% + 2px)))` }} />
-              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} onClick={() => setDuration(d)}
-                className={`relative h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-colors duration-200 active:scale-[0.97] ${duration === d ? 'text-white' : 'text-ink-2 hover:bg-tint'}`}>{durationLabel(d)}</button>)}
+            {/* The stay, written the way the kerb writes it. */}
+            <div className="flex items-stretch gap-1.5 px-1 pb-1 pt-1.5" role="radiogroup" aria-label="How long are you staying?">
+              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => setDuration(d)}
+                className={`h-11 min-w-0 flex-1 rounded-[7px] transition-[background-color,color,box-shadow,transform] duration-200 active:scale-[0.96] ${duration === d
+                  ? 'bg-[#0369a1] text-white shadow-[0_6px_14px_rgba(3,105,161,.35),inset_0_0_0_1.5px_rgba(255,255,255,.6)]'
+                  : 'bg-white text-[#0b6b3a] shadow-[inset_0_0_0_1.5px_rgba(12,21,48,.18)]'}`}>
+                <span className={`figure ${d === 540 ? 'text-[13px] font-extrabold' : 'text-[18px]'}`}>{d === 540 ? 'All day' : signNotation(d)}</span>
+              </button>)}
             </div>
           </div>}
         </div>
@@ -212,9 +215,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
               <p className="min-w-0 flex-1 text-[13px] leading-5">Pick how long you're staying. Bay finds the cheapest place that allows it.</p>
               <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
             </div>}
-            <div key={`${duration}-${String(arriveIn)}`} className="bay-stagger">
+            <div key={`${duration}-${String(arriveIn)}`}>
             {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onGo={() => goTo(best)} onOpen={() => pick(best)} />}
-            {others.length > 0 && <ul className="mt-1 bay-stagger">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
+            {others.length > 0 && <ul className="mt-3 px-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
             </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
             {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
@@ -235,50 +238,55 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   </main>
 }
 
-function OptionTitle({ option, starred }: { option: ParkingOption; starred?: boolean }) {
+function OptionTitle({ option, starred, size = 'md' }: { option: ParkingOption; starred?: boolean; size?: 'md' | 'lg' }) {
   const title = option.kind === 'carpark' ? option.name : splitStreet(option.name).title
-  return <span className="flex items-center gap-1 text-[15px] font-semibold text-ink"><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" aria-label="Saved" />}</span>
+  return <span className={`flex items-center gap-1 font-extrabold tracking-[-.01em] text-ink ${size === 'lg' ? 'text-[21px] leading-6' : 'text-[16px] leading-5'}`}><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-pink" fill="currentColor" aria-label="Saved" />}</span>
 }
 
-/** One plain line: "2 min walk · 2 hr max · 3 free now" or "Car park · 5 min walk". */
-/** "2 hrs max" when that's the sign's limit. When free hours come first (e.g.
- * arriving at midnight before a 7:30am 2P), say until when instead. */
-function maxStayText(limitMinutes: number, at: Date) {
-  return limitMinutes % 15 === 0 && limitMinutes <= 240 ? `${formatDurationShort(limitMinutes)} max` : `till ${clock(new Date(at.getTime() + limitMinutes * 60_000))}`
-}
-
+/** Under the name: where it is and how far, then live bays if we have them.
+ * The time limit and meter are on the sign plate, so they're not repeated. */
 function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: boolean }) {
-  const parts = [option.kind === 'carpark' ? `${option.operator ?? 'Car'} car park` : null, `${walkMinutes(option.distanceM)} min walk`]
-  if (option.limitMinutes != null) parts.push(maxStayText(option.limitMinutes, at))
+  const where = option.kind === 'carpark' ? option.operator ?? 'Car park' : splitStreet(option.name).block?.replace(/^Between /, '').replace(' and ', '–')
   const live = option.live && !later ? option.live : null
-  return <span className="mt-0.5 line-clamp-2 block text-[13px] leading-[18px] text-ink-2 tabular-nums">
-    {parts.filter(Boolean).join(' · ')}
-    {live && <> · {live.free > 0 ? <span className="font-semibold text-ok">{live.free} free now</span> : <span className="font-semibold text-warn">Full now</span>}</>}
+  const oddLimit = option.limitMinutes != null && signNotation(option.limitMinutes) == null
+  return <span className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px] leading-[18px] text-ink-2">
+    {where && <span className="min-w-0 truncate">{where}</span>}
+    <span className="whitespace-nowrap">{walkMinutes(option.distanceM)} min walk</span>
+    {oddLimit && <span className="whitespace-nowrap">Stay till {clock(new Date(at.getTime() + option.limitMinutes! * 60_000))}</span>}
+    {live && (live.free > 0
+      ? <span className="whitespace-nowrap font-bold text-ok"><span aria-hidden className="mr-1 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-current" />{live.free} free now</span>
+      : <span className="whitespace-nowrap font-bold text-warn">Full now</span>)}
   </span>
 }
 
+/** The best option, as the pay-and-display ticket you'd get for it. */
 function BestCard({ option, duration, at, later, starred, onGo, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; starred?: boolean; onGo: () => void; onOpen: () => void }) {
   const leave = option.limitMinutes != null && option.limitMinutes < duration ? option.limitMinutes : duration
-  return <div className="rounded-[22px] bg-tint shadow-[inset_0_0_0_1px_rgba(3,105,161,.14)]">
-    <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
-      <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
-      <span key={priceText(option)} className="bay-price font-dot shrink-0 text-right text-[34px] leading-none text-ink tabular-nums">{priceText(option)}</span>
+  return <div className="ticket bay-print text-ink">
+    <button onClick={onOpen} className="flex w-full items-start gap-3 px-4 pb-5 pt-4 text-left" aria-label={`${option.name}, ${plateLabel(option)}, details`}>
+      <SignPlate option={option} size="lg" />
+      <span className="min-w-0 flex-1 pt-0.5"><OptionTitle option={option} starred={starred} size="lg" /><Facts option={option} at={at} later={later} /></span>
+      <span className="shrink-0 text-right">
+        <span className="figure block text-[40px] leading-[.9] text-ink">{priceText(option)}</span>
+        <span className="mt-1 block text-xs text-ink-3">for {formatDurationShort(duration)}</span>
+      </span>
     </button>
-    <div className="flex items-center gap-3 px-4 pb-3 pt-1">
-      <span className="min-w-0 flex-1 text-[15px] text-ink-2">Leave by <strong className="font-bold text-ink tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
+    <span aria-hidden className="ticket-tear" />
+    <div className="flex h-[80px] items-center gap-3 px-4">
+      <span className="min-w-0 flex-1"><span className="block text-xs text-ink-3">Leave by</span><TicketTime className="block text-[26px] leading-7 text-ink" date={new Date(at.getTime() + leave * 60_000)} /></span>
       <a href={directionsUrl(option.navTo?.lat ?? option.lat, option.navTo?.lng ?? option.lng)} target="_blank" rel="noreferrer" onClick={onGo}
-        className="flex h-14 shrink-0 items-center gap-2 rounded-[18px] cta px-6 text-base font-bold text-white transition-transform active:scale-[0.97]"><Navigation2 className="h-5 w-5" />Go</a>
+        className="flex h-14 shrink-0 items-center gap-2 rounded-full cta px-7 text-[17px] font-extrabold transition-transform active:scale-[0.97]"><Navigation2 className="h-5 w-5" />Go</a>
     </div>
   </div>
 }
 
 function OptionRow({ option, at, later, starred, onClick }: { option: ParkingOption; at: Date; later: boolean; starred?: boolean; onClick: () => void }) {
   const price = option.fits === false ? null : priceText(option)
-  return <li>
-    <button onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left transition-colors hover:bg-tint">
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${option.kind === 'carpark' ? 'selected-pill text-white' : 'bg-tint-2 text-brand'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-[18px] w-[18px]" /> : <MapPin className="h-[18px] w-[18px]" />}</span>
+  return <li className="border-b border-line last:border-b-0">
+    <button onClick={onClick} aria-label={`${option.name}, ${plateLabel(option)}`} className="flex min-h-[68px] w-full items-center gap-3 px-1 py-2.5 text-left">
+      <SignPlate option={option} />
       <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
-      <span className="shrink-0 text-right text-base font-extrabold text-ink tabular-nums">{price ?? <span className="text-sm font-semibold text-ink-3">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
+      <span className="figure shrink-0 text-right text-[20px] text-ink">{price ?? <span className="text-sm font-semibold text-ink-3">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
     </button>
   </li>
 }
@@ -301,19 +309,19 @@ function SkeletonRows() {
   </div>
 }
 
+/** The ticket on the dash: when it expires, how long is left. */
 function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name: string; lat: number; lng: number; leaveBy: string; minutesLeft: number; onEnd: () => void }) {
   const over = minutesLeft < 0
   const soon = !over && minutesLeft <= 15
-  const tone = over ? 'bg-red-600 text-white' : soon ? 'bg-amber-400 text-[#2b1a00]' : 'bg-night text-white'
   const left = over ? `${formatDurationShort(-minutesLeft)} over` : `${formatDurationShort(Math.max(minutesLeft, 0))} left`
-  return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[20px] py-2 pl-3.5 pr-2 shadow-[0_10px_30px_rgba(15,23,42,.18)] transition-colors duration-500 ${tone}`}>
-    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${soon ? 'bay-pulse' : ''}`}><BellRing className="h-5 w-5" /></span>
+  return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[16px] bg-white py-2.5 pl-3 pr-2 text-[#0c1530] shadow-[0_10px_28px_rgba(3,105,161,.2)] ${over ? 'ring-2 ring-[var(--cta)]' : soon ? 'ring-2 ring-[var(--pink)] bay-pulse' : ''}`}>
     <span className="min-w-0 flex-1">
-      <span className="font-dot block text-xl leading-tight tabular-nums">{left}</span>
-      <span className="block truncate text-xs opacity-80">Leave by {clock(new Date(leaveBy))} · {name}</span>
+      <span className="block text-[11px] text-[#5d6b85]">Expires</span>
+      <TicketTime className="block text-[22px] leading-6" date={new Date(leaveBy)} />
+      <span className={`block truncate text-xs ${over || soon ? 'font-bold text-[#db0f73]' : 'text-[#3d4e6b]'}`}>{left}, {name}</span>
     </span>
-    <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-10 shrink-0 items-center rounded-[14px] bg-white/15 px-3 text-xs font-bold transition-transform active:scale-[0.97]">Find car</a>
-    <button onClick={onEnd} className="h-10 shrink-0 rounded-[14px] bg-white/15 px-3 text-xs font-bold transition-transform active:scale-[0.97]">I've left</button>
+    <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-11 shrink-0 items-center rounded-full bg-[#e0f2fe] px-3.5 text-xs font-extrabold text-[#0369a1] transition-transform active:scale-[0.97]">Find car</a>
+    <button onClick={onEnd} className="h-11 shrink-0 rounded-full px-3 text-xs font-bold text-[#3d4e6b] transition-transform active:scale-[0.97]">I've left</button>
   </div>
 }
 

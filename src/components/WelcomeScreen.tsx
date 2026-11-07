@@ -12,7 +12,7 @@ export function WelcomeScreen({ phase, onChooseLocation }: { phase: WelcomePhase
   return (
     <main className="relative flex h-full min-h-[100dvh] flex-col items-center justify-center bg-transparent px-6 text-center text-ink">
       <SignMark className="h-24 w-24 drop-shadow-[0_14px_30px_rgba(3,105,161,.35)]" title="Bay" />
-      <h1 className="mt-6 font-dot text-5xl">Bay</h1>
+      <h1 className="mt-6 text-5xl font-black tracking-[-.05em]">Bay</h1>
       <p className="mt-1 text-base text-ink-2">What parking costs in Melbourne, before you get there.</p>
       <p role="status" className="mt-10 text-sm text-ink-3">{DETAIL[phase]}</p>
       <div className="mt-3 h-1.5 w-40 overflow-hidden rounded-full bg-tint-2" aria-hidden>
