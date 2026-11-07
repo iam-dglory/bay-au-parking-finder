@@ -31,9 +31,11 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     env:
-      # Build-time settings (Settings -> Secrets and variables -> Actions -> Variables).
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      # Build-time settings. Actions variables override these defaults.
+      # The publishable key is meant to ship in the browser bundle (access is
+      # enforced by row level security), so it is safe to keep here.
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ezwiagssiuvmhayvsmbk.supabase.co' }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah' }}
       VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
       VITE_GOOGLE_MAP_ID: ${{ vars.VITE_GOOGLE_MAP_ID }}
     steps:
