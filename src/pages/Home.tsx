@@ -172,7 +172,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
             <div className="flex items-stretch gap-1.5 px-1 pb-1 pt-1.5" role="radiogroup" aria-label="How long are you staying?">
               {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => setDuration(d)}
                 className={`h-11 min-w-0 flex-1 rounded-[7px] transition-[background-color,color,box-shadow,transform] duration-200 active:scale-[0.96] ${duration === d
-                  ? 'bg-[#0369a1] text-white shadow-[0_6px_14px_rgba(3,105,161,.35),inset_0_0_0_1.5px_rgba(255,255,255,.6)]'
+                  ? 'bg-sel text-sel-ink shadow-[0_6px_14px_rgba(16,44,64,.35)]'
                   : 'bg-white text-[#0b6b3a] shadow-[inset_0_0_0_1.5px_rgba(12,21,48,.18)]'}`}>
                 <span className={`figure ${d === 540 ? 'text-[13px] font-extrabold' : 'text-[18px]'}`}>{d === 540 ? 'All day' : signNotation(d)}</span>
               </button>)}
@@ -240,7 +240,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
 function OptionTitle({ option, starred, size = 'md' }: { option: ParkingOption; starred?: boolean; size?: 'md' | 'lg' }) {
   const title = option.kind === 'carpark' ? option.name : splitStreet(option.name).title
-  return <span className={`flex items-center gap-1 font-extrabold tracking-[-.01em] text-ink ${size === 'lg' ? 'text-[21px] leading-6' : 'text-[16px] leading-5'}`}><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-pink" fill="currentColor" aria-label="Saved" />}</span>
+  return <span className={`flex items-center gap-1 font-extrabold tracking-[-.01em] text-ink ${size === 'lg' ? 'text-[21px] leading-6' : 'text-[16px] leading-5'}`}><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-brand" fill="currentColor" aria-label="Saved" />}</span>
 }
 
 /** Under the name: where it is and how far, then live bays if we have them.
@@ -314,14 +314,14 @@ function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name
   const over = minutesLeft < 0
   const soon = !over && minutesLeft <= 15
   const left = over ? `${formatDurationShort(-minutesLeft)} over` : `${formatDurationShort(Math.max(minutesLeft, 0))} left`
-  return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[16px] bg-white py-2.5 pl-3 pr-2 text-[#0c1530] shadow-[0_10px_28px_rgba(3,105,161,.2)] ${over ? 'ring-2 ring-[var(--cta)]' : soon ? 'ring-2 ring-[var(--pink)] bay-pulse' : ''}`}>
+  return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[16px] bg-white py-2.5 pl-3 pr-2 text-[#102c40] shadow-[0_10px_28px_rgba(16,44,64,.2)] ${over ? 'ring-[3px] ring-[#dbff00]' : soon ? 'ring-[3px] ring-[#dbff00]' : ''}`}>
     <span className="min-w-0 flex-1">
-      <span className="block text-[11px] text-[#5d6b85]">Expires</span>
+      <span className="block text-[11px] text-[#5c7183]">Expires</span>
       <TicketTime className="block text-[22px] leading-6" date={new Date(leaveBy)} />
-      <span className={`block truncate text-xs ${over || soon ? 'font-bold text-[#db0f73]' : 'text-[#3d4e6b]'}`}>{left}, {name}</span>
+      <span className={`block truncate text-xs ${over || soon ? 'font-bold text-[#102c40] underline decoration-[#dbff00] decoration-[3px] underline-offset-2' : 'text-[#3e5568]'}`}>{left}, {name}</span>
     </span>
-    <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-11 shrink-0 items-center rounded-full bg-[#e0f2fe] px-3.5 text-xs font-extrabold text-[#0369a1] transition-transform active:scale-[0.97]">Find car</a>
-    <button onClick={onEnd} className="h-11 shrink-0 rounded-full px-3 text-xs font-bold text-[#3d4e6b] transition-transform active:scale-[0.97]">I've left</button>
+    <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-11 shrink-0 items-center rounded-full bg-[#dbff00] px-3.5 text-xs font-extrabold text-[#102c40] transition-transform active:scale-[0.97]">Find car</a>
+    <button onClick={onEnd} className="h-11 shrink-0 rounded-full px-3 text-xs font-bold text-[#3e5568] transition-transform active:scale-[0.97]">I've left</button>
   </div>
 }
 
