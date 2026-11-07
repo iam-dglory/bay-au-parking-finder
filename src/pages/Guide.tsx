@@ -39,7 +39,7 @@ function GuideHeroArtwork() {
     <div className="absolute bottom-8 left-25 h-27 w-11 rounded-t bg-blue-100/80" />
     <div className="absolute bottom-8 right-6 h-16 w-10 rounded-t bg-blue-100/70" />
     <div className="absolute bottom-2 left-0 right-0 h-9 rounded-t-[100%] bg-gradient-to-r from-blue-50 via-sky-100 to-blue-50" />
-    <div className="absolute bottom-7 right-12 flex h-21 w-17 flex-col items-center justify-center rounded-md border-[3px] border-white cta shadow-[0_9px_22px_rgba(3,105,161,.3)]"><span className="text-5xl font-black leading-none text-white">P</span></div>
+    <div className="absolute bottom-7 right-12 flex h-21 w-17 flex-col items-center justify-center rounded-md border-[3px] border-white cta shadow-[0_9px_22px_rgba(16,44,64,.3)]"><span className="text-5xl font-black leading-none text-white">P</span></div>
     <div className="absolute bottom-0 right-[4.1rem] h-9 w-1.5 bg-night" />
     <i className="absolute bottom-2 right-1 h-8 w-2 rounded-full bg-emerald-300" /><i className="absolute bottom-2 right-4 h-12 w-2 rounded-full bg-emerald-300" /><i className="absolute bottom-2 left-8 h-10 w-2 rounded-full bg-emerald-300" />
   </div>

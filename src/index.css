@@ -11,6 +11,10 @@
   --color-ink-3: var(--ink-3);
   --color-brand: var(--brand);
   --color-cta: var(--cta);
+  --color-lime: var(--lime);
+  --color-navy: var(--navy);
+  --color-sel: var(--sel);
+  --color-sel-ink: var(--sel-ink);
   --color-pink: var(--pink);
   --color-sky: var(--sky);
   --color-tint: var(--tint);
@@ -24,12 +28,12 @@
   /* Older screens use Tailwind's blue scale: point it at the theme. */
   --color-blue-50: var(--tint);
   --color-blue-100: var(--tint-2);
-  --color-blue-200: #bae6fd;
-  --color-blue-300: #7dd3fc;
-  --color-blue-500: #0ea5e9;
+  --color-blue-200: var(--line);
+  --color-blue-300: color-mix(in srgb, var(--ink) 30%, transparent);
+  --color-blue-500: var(--ink-2);
   --color-blue-600: var(--cta);
   --color-blue-700: var(--brand);
-  --color-blue-900: #0c4a6e;
+  --color-blue-900: var(--ink);
   --color-slate-50: var(--tint);
   --color-slate-100: var(--tint-2);
   --color-slate-200: var(--line);
@@ -53,23 +57,31 @@
 
 :root {
   color-scheme: light;
-  --ink: #0c1530;
-  --ink-2: #3d4e6b;
-  --ink-3: #5d6b85;
-  --brand: #0369a1;          /* sky, deep enough for text and icons */
-  --sky: #38bdf8;            /* sky, decorative */
-  --pink: #ff2d87;           /* hot pink, decorative */
-  --cta: #db0f73;            /* hot pink with white text at 4.8:1 */
-  --tint: rgba(224, 242, 254, .62);
-  --tint-2: rgba(186, 230, 253, .55);
-  --line: rgba(3, 105, 161, .14);
-  --surface: rgba(255, 255, 255, .72);
-  --canvas: #f4f9ff;
-  --night: #0c1530;
+  /* Midnight navy, cloud white, electric lime. Lime is never text on white:
+     it's a fill with navy on it, or text on navy. */
+  --navy: #102c40;
+  --cloud: #f7fafc;
+  --lime: #dbff00;
+  --ink: #102c40;
+  --ink-2: #3e5568;
+  --ink-3: #5c7183;
+  --brand: #102c40;          /* links and icons */
+  --sky: #5f8fb3;            /* wallpaper light, decorative */
+  --pink: #dbff00;           /* wallpaper accent (lime), decorative */
+  --cta: #dbff00;            /* lime, navy text */
+  --cta-ink: #102c40;
+  --sel: #102c40;            /* selected state */
+  --sel-ink: #ffffff;
+  --tint: rgba(16, 44, 64, .05);
+  --tint-2: rgba(16, 44, 64, .09);
+  --line: rgba(16, 44, 64, .12);
+  --surface: rgba(255, 255, 255, .8);
+  --canvas: #f7fafc;
+  --night: #102c40;
   --warn: #b45309;
-  --ok: #047857;
-  --glass-edge: rgba(255, 255, 255, .85);
-  --glass-shadow: 0 1px 1px rgba(12, 21, 48, .04), 0 12px 36px rgba(12, 74, 110, .14);
+  --ok: #3f6212;             /* lime family, dark enough to read on white */
+  --glass-edge: rgba(255, 255, 255, .9);
+  --glass-shadow: 0 1px 1px rgba(16, 44, 64, .05), 0 12px 32px rgba(16, 44, 64, .14);
   font-family: "Overpass Variable", Overpass, ui-sans-serif, system-ui, sans-serif;
   color: var(--ink);
   background: var(--canvas);
@@ -78,22 +90,25 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --ink: #eef5ff;
-    --ink-2: #bccbe2;
-    --ink-3: #91a1bb;
-    --brand: #7dd3fc;
-    --sky: #38bdf8;
-    --pink: #ff4d9a;
-    --cta: #e5127a;
-    --tint: rgba(56, 189, 248, .12);
-    --tint-2: rgba(56, 189, 248, .2);
-    --line: rgba(186, 230, 253, .14);
-    --surface: rgba(16, 26, 50, .66);
-    --canvas: #060c1c;
-    --night: #13213f;
+    --ink: #f7fafc;
+    --ink-2: #bccbd7;
+    --ink-3: #8fa4b5;
+    --brand: #dbff00;
+    --sky: #2b5f86;
+    --pink: #dbff00;
+    --cta: #dbff00;
+    --cta-ink: #102c40;
+    --sel: #dbff00;
+    --sel-ink: #102c40;
+    --tint: rgba(247, 250, 252, .06);
+    --tint-2: rgba(247, 250, 252, .1);
+    --line: rgba(247, 250, 252, .12);
+    --surface: rgba(16, 44, 64, .72);
+    --canvas: #0a1d2b;
+    --night: #16384f;
     --warn: #fbbf24;
-    --ok: #34d399;
-    --glass-edge: rgba(255, 255, 255, .12);
+    --ok: #dbff00;
+    --glass-edge: rgba(255, 255, 255, .1);
     --glass-shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 16px 40px rgba(0, 0, 0, .45);
   }
 }
@@ -105,10 +120,9 @@ body { margin: 0; min-width: 320px; background: var(--canvas); }
 body::before {
   content: ""; position: fixed; inset: -20%; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(38% 30% at 18% 12%, color-mix(in srgb, var(--sky) 55%, transparent), transparent 70%),
-    radial-gradient(34% 28% at 88% 34%, color-mix(in srgb, var(--pink) 38%, transparent), transparent 70%),
-    radial-gradient(40% 32% at 30% 88%, color-mix(in srgb, var(--sky) 40%, transparent), transparent 70%),
-    radial-gradient(30% 24% at 82% 92%, color-mix(in srgb, var(--pink) 30%, transparent), transparent 70%);
+    radial-gradient(40% 30% at 15% 10%, color-mix(in srgb, var(--sky) 45%, transparent), transparent 70%),
+    radial-gradient(30% 24% at 90% 38%, color-mix(in srgb, var(--pink) 22%, transparent), transparent 70%),
+    radial-gradient(42% 32% at 28% 90%, color-mix(in srgb, var(--sky) 35%, transparent), transparent 70%);
   filter: blur(40px);
 }
 #root { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
@@ -124,7 +138,7 @@ summary { touch-action: manipulation; }
 .bay-card { border: 1px solid var(--glass-edge); background: var(--surface); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); }
 .bay-icon-button { display: inline-flex; height: 42px; width: 42px; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid var(--glass-edge); background: var(--surface); color: var(--ink-2); box-shadow: var(--glass-shadow); transition: transform .16s ease, background .16s ease, color .16s ease; }
 .bay-icon-button:hover { transform: translateY(-1px); color: var(--ink); }
-.bay-sheet { box-shadow: 0 -18px 48px rgba(12, 21, 48, .22); }
+.bay-sheet { box-shadow: 0 -18px 48px rgba(16, 44, 64, .22); }
 
 /* Frosted glass: translucent surface, blur, a bright hairline edge. */
 .glass {
@@ -140,16 +154,17 @@ summary { touch-action: manipulation; }
 @keyframes bay-dim { from { background-color: transparent; } }
 .bay-dim { animation: bay-dim .2s ease-out both; }
 
-/* Hot pink action with a glassy top highlight. */
+/* Lime action, navy text, glassy top highlight. */
 .cta {
-  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 55%), var(--cta);
-  color: #fff;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--pink) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
+  background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 55%), var(--cta);
+  color: var(--cta-ink);
+  box-shadow: 0 8px 22px rgba(16, 44, 64, .22), inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 0 1px rgba(16, 44, 64, .08);
 }
-/* Selected state: deep sky with the same gloss. */
+/* Navy chip with a slight gloss (car park icons, small markers). */
 .selected-pill {
-  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0) 60%), #0369a1;
-  box-shadow: 0 6px 16px rgba(3, 105, 161, .35), inset 0 1px 0 rgba(255,255,255,.3);
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,0) 60%), var(--navy);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(16, 44, 64, .3), inset 0 1px 0 rgba(255,255,255,.2);
 }
 /* ---------- kerbside objects ---------- */
 /* Overpass is drawn from highway-sign lettering; heavy and tight for figures. */
@@ -162,10 +177,10 @@ summary { touch-action: manipulation; }
 .plate {
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
   border-radius: 6px; background: #fff; color: #0b6b3a;
-  box-shadow: inset 0 0 0 1.5px rgba(12, 21, 48, .22), 0 1px 2px rgba(12, 21, 48, .12);
+  box-shadow: inset 0 0 0 1.5px rgba(16, 44, 64, .22), 0 1px 2px rgba(16, 44, 64, .12);
   line-height: 1;
 }
-.plate-carpark { background: #0369a1; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), 0 1px 2px rgba(12, 21, 48, .2); }
+.plate-carpark { background: var(--navy); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), 0 1px 2px rgba(12, 21, 48, .2); }
 .plate-unknown { color: #5d6b85; }
 .plate-sub { font-size: 8.5px; font-weight: 700; letter-spacing: .02em; margin-top: 2px; }
 
@@ -176,17 +191,17 @@ summary { touch-action: manipulation; }
   position: relative;
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 1px 1px rgba(12, 21, 48, .06), 0 14px 32px rgba(3, 105, 161, .16);
+  box-shadow: 0 1px 1px rgba(16, 44, 64, .06), 0 14px 32px rgba(16, 44, 64, .16);
   -webkit-mask: radial-gradient(circle at 0 var(--perf), transparent 9px, #000 9.5px) left / 51% 100% no-repeat,
                 radial-gradient(circle at 100% var(--perf), transparent 9px, #000 9.5px) right / 51% 100% no-repeat;
           mask: radial-gradient(circle at 0 var(--perf), transparent 9px, #000 9.5px) left / 51% 100% no-repeat,
                 radial-gradient(circle at 100% var(--perf), transparent 9px, #000 9.5px) right / 51% 100% no-repeat;
 }
-.ticket-tear { position: absolute; left: 14px; right: 14px; top: var(--perf); border-top: 2px dashed rgba(3, 105, 161, .22); }
+.ticket-tear { position: absolute; left: 14px; right: 14px; top: var(--perf); border-top: 2px dashed rgba(16, 44, 64, .2); }
 @media (prefers-color-scheme: dark) {
-  .ticket { background: #f2f7ff; color: #0c1530; }
-  .ticket .text-ink { color: #0c1530; } .ticket .text-ink-2 { color: #3d4e6b; } .ticket .text-ink-3 { color: #5d6b85; }
-  .ticket .text-ok { color: #047857; } .ticket .text-warn { color: #b45309; } .ticket .text-brand { color: #0369a1; }
+  .ticket { background: #f7fafc; color: #102c40; }
+  .ticket .text-ink { color: #102c40; } .ticket .text-ink-2 { color: #3e5568; } .ticket .text-ink-3 { color: #5c7183; }
+  .ticket .text-ok { color: #3f6212; } .ticket .text-warn { color: #b45309; } .ticket .text-brand { color: #102c40; }
 }
 /* The one orchestrated moment: the ticket prints when the stay changes. */
 @keyframes bay-print { from { clip-path: inset(0 0 100% 0 round 18px); transform: translateY(-10px); } to { clip-path: inset(0 0 0 0 round 18px); transform: none; } }

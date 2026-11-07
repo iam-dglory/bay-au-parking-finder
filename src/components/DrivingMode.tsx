@@ -14,7 +14,7 @@ export function DrivingOverlay({ target, onPassenger }: { target: { name: string
     <div className="flex flex-1 flex-col justify-center">
       {target ? <>
         <a href={navigationUrl(target.lat, target.lng, app)} target="_blank" rel="noreferrer" onClick={() => trackEvent('directions_open', { result_type: 'driving_mode' })}
-          className="bay-press flex min-h-[132px] w-full flex-col items-center justify-center gap-2 rounded-[32px] cta px-6 text-center shadow-[0_18px_50px_rgba(3,105,161,.45)]">
+          className="bay-press flex min-h-[132px] w-full flex-col items-center justify-center gap-2 rounded-[32px] cta px-6 text-center shadow-[0_18px_50px_rgba(16,44,64,.45)]">
           <Navigation className="h-10 w-10" />
           <span className="text-2xl font-extrabold leading-tight">Navigate to {target.name}</span>
         </a>
@@ -30,7 +30,7 @@ export function ParkedPrompt({ heading, onStart, onDismiss }: { heading: Heading
   const stay = heading.limitMinutes != null ? Math.min(heading.durationMinutes, heading.limitMinutes) : heading.durationMinutes
   return <div className="bay-rise mb-2 rounded-[22px] bg-night p-4 text-white">
     <div className="flex items-start gap-3">
-      <ParkingSquare className="mt-0.5 h-6 w-6 shrink-0 text-sky" />
+      <ParkingSquare className="mt-0.5 h-6 w-6 shrink-0 text-lime" />
       <p className="min-w-0 flex-1 text-lg font-bold leading-snug">Parked at {heading.name}?</p>
       <button onClick={onDismiss} aria-label="Not now" className="-mr-1 -mt-1 flex h-10 w-10 items-center justify-center rounded-full text-white/60"><X className="h-5 w-5" /></button>
     </div>

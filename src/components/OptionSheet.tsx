@@ -84,7 +84,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
         <NavAppChoice />
           <div className="mt-3 grid grid-cols-3 gap-2">
           <button onClick={() => toggleFavourite({ id: option.id, name: option.kind === 'street' ? shortStreetName(option.name) : option.name, lat: option.lat, lng: option.lng })} aria-pressed={saved} aria-label={saved ? 'Remove from saved' : 'Save this place'}
-            className={`flex h-12 items-center justify-center gap-2 rounded-[14px] text-sm font-bold transition-colors ${saved ? 'bg-[color-mix(in_srgb,var(--pink)_14%,transparent)] text-pink' : 'bg-tint text-ink-2'}`}>
+            className={`flex h-12 items-center justify-center gap-2 rounded-[14px] text-sm font-bold transition-colors ${saved ? 'bg-sel text-sel-ink' : 'bg-tint text-ink-2'}`}>
             <Star key={String(saved)} className={`h-5 w-5 ${saved ? 'bay-pop' : ''}`} fill={saved ? 'currentColor' : 'none'} />{saved ? 'Saved' : 'Save'}
           </button>
           {canSpeak() ? <button onClick={() => speak(summary(option, price, durationMinutes, leaveBy, later ? arrival : null))} aria-label="Read out" className="flex h-12 items-center justify-center gap-2 rounded-[14px] bg-tint text-sm font-bold text-ink-2"><Volume2 className="h-5 w-5" />Read out</button> : <span />}

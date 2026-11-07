@@ -115,5 +115,5 @@ export function MarketplaceAdmin() {
 }
 
 function AdminCard({ icon: Icon, title, children }: { icon: typeof ShieldCheck; title: string; children: import('react').ReactNode }) {
-  return <section className="rounded-[26px] border border-line bg-surface p-5 shadow-[0_12px_30px_rgba(3,105,161,.06)]"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-brand"><Icon className="h-5 w-5" /></span><h2 className="text-lg font-bold">{title}</h2></div>{children}</section>
+  return <section className="rounded-[26px] border border-line bg-surface p-5 shadow-[0_12px_30px_rgba(16,44,64,.06)]"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-brand"><Icon className="h-5 w-5" /></span><h2 className="text-lg font-bold">{title}</h2></div>{children}</section>
 }
