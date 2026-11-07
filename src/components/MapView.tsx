@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { AdvancedMarker, APIProvider, APILoadingStatus, Map, useApiLoadingStatus, useMap } from '@vis.gl/react-google-maps'
+import { AdvancedMarker, APIProvider, ColorScheme, APILoadingStatus, Map, useApiLoadingStatus, useMap } from '@vis.gl/react-google-maps'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import type { ParkingOption } from '../lib/parkingOptions'
 import { availability } from '../lib/availability'
@@ -43,6 +43,7 @@ export function MapView({
       <LoadState />
       <Map
         mapId={MAP_ID}
+        colorScheme={ColorScheme.FOLLOW_SYSTEM}
         defaultCenter={center}
         defaultZoom={Math.min(zoom, 19)}
         gestureHandling="greedy"

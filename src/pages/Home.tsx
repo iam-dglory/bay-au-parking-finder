@@ -10,7 +10,10 @@ import { formatCents, formatDurationShort, melbourneStart } from '../lib/parking
 import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, rankOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type StreetRatesFile } from '../lib/parkingOptions'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
-import { endParking, useParkingSession } from '../lib/parkingTimer'
+import { endParking, startParking, useParkingSession } from '../lib/parkingTimer'
+import { setHeading, useHeading, type Heading } from '../lib/heading'
+import { DrivingOverlay, ParkedPrompt } from '../components/DrivingMode'
+import { haversineMeters } from '../lib/distance'
 import { VENUES, type Venue } from '../lib/venues'
 import { useFavourites, type FavouritePlace } from '../lib/favourites'
 
@@ -41,8 +44,8 @@ const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric'
 
 const priceText = (o: ParkingOption) => o.cents != null ? (o.cents === 0 ? 'Free' : formatCents(o.cents)) : o.range ? `${formatCents(o.range.min)}–${formatCents(o.range.max)}` : null
 
-export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
-  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onUseCurrentLocation: () => void
+export function Home({ center, myLocation, driving = false, locationLabel, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
+  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; driving?: boolean; locationLabel: string; onUseCurrentLocation: () => void
   savedLocations: SavedLocations; onSavePlace: (kind: SavedPlaceKind) => void; onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
   const [duration, setDurationState] = useState(readDuration)
@@ -62,6 +65,10 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
 
   const target = destination ?? center
   const { session: parked, minutesLeft } = useParkingSession()
+  const heading = useHeading()
+  const [passenger, setPassenger] = useState(false)
+  // A new drive resets "I'm a passenger".
+  useEffect(() => { if (!driving) setPassenger(false) }, [driving])
   const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
   const { spots, loading, updatedAt } = useNearbyParking(target, FAR_M)
@@ -96,6 +103,22 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
   const others = fitting.slice(1)
   const selected = allOptions.find(o => o.id === selectedId) ?? null
 
+  /** Remember where the driver is going so Bay can offer the timer on arrival. */
+  function goTo(option: ParkingOption) {
+    const nav = option.navTo ?? option
+    setHeading({ id: option.id, name: option.kind === 'street' ? splitStreet(option.name).title : option.name, kind: option.kind, lat: option.lat, lng: option.lng, navLat: nav.lat, navLng: nav.lng,
+      cents: option.cents, durationMinutes: duration, limitMinutes: option.limitMinutes, setAt: Date.now() })
+    trackEvent('directions_open', { result_type: option.kind })
+  }
+  const nearHeading = !!heading && !!myLocation && haversineMeters(myLocation, heading) <= 150
+  const showParkedPrompt = !!heading && !parked && !driving && nearHeading
+  async function startFromHeading(h: Heading) {
+    const now = new Date()
+    const stay = h.limitMinutes != null ? Math.min(h.durationMinutes, h.limitMinutes) : h.durationMinutes
+    await startParking({ name: h.name, lat: h.lat, lng: h.lng, kind: h.kind, startedAt: now.toISOString(), leaveBy: new Date(now.getTime() + stay * 60_000).toISOString(),
+      limitAt: h.limitMinutes != null ? new Date(now.getTime() + h.limitMinutes * 60_000).toISOString() : undefined, cents: h.cents })
+    setHeading(null)
+  }
   function pick(option: ParkingOption) { setSelectedId(option.id); trackEvent('parking_result_view', { result_type: option.kind }) }
   function goToVenue(venue: Venue) {
     setDestination({ lat: venue.lat, lng: venue.lng, label: venue.name, note: venue.note })
@@ -110,7 +133,7 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
     else setHereMessage(myLocation ? 'No council bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
   }
 
-  return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-white antialiased">
+  return <main className="bay-themed relative flex h-full min-h-0 flex-col overflow-hidden bg-white antialiased">
     <div className="relative min-h-0 flex-1">
       <Suspense fallback={<div className="h-full bg-[#eef4ff]" />}>
         <MapView center={target} myLocation={myLocation} zoom={radius === NEAR_M ? 17 : 16}
@@ -183,13 +206,14 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
           {melbourne && <>
             {loading && !best && <SkeletonRows />}
             {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
-            {showTips && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
+            {showParkedPrompt && heading && <ParkedPrompt heading={heading} onStart={() => void startFromHeading(heading)} onDismiss={() => setHeading(null)} />}
+            {showTips && !showParkedPrompt && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
               <SignMark className="h-7 w-7 shrink-0" />
               <p className="min-w-0 flex-1 text-[13px] leading-5">Pick how long you're staying. Bay finds the cheapest place that allows it.</p>
               <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
             </div>}
             <div key={`${duration}-${String(arriveIn)}`} className="bay-stagger">
-            {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onOpen={() => pick(best)} />}
+            {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onGo={() => goTo(best)} onOpen={() => pick(best)} />}
             {others.length > 0 && <ul className="mt-1 bay-stagger">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
             </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
@@ -206,7 +230,8 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
 
     {searchOpen && <SearchOverlay saved={favourites} onSaved={f => { setDestination({ lat: f.lat, lng: f.lng, label: f.name }); setSearchOpen(false) }} onClose={() => setSearchOpen(false)} onVenue={goToVenue}
       onPick={place => { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setSearchOpen(false) }} />}
-    <OptionSheet key={selected?.id ?? 'none'} option={selected} durationMinutes={duration} arrival={arrival} later={later} onClose={() => setSelectedId(null)} />
+    {driving && !passenger && <DrivingOverlay target={heading ? { name: heading.name, lat: heading.navLat, lng: heading.navLng } : best ? { name: best.kind === 'street' ? splitStreet(best.name).title : best.name, lat: (best.navTo ?? best).lat, lng: (best.navTo ?? best).lng } : null} onPassenger={() => setPassenger(true)} />}
+    <OptionSheet key={selected?.id ?? 'none'} onGo={goTo} option={selected} durationMinutes={duration} arrival={arrival} later={later} onClose={() => setSelectedId(null)} />
   </main>
 }
 
@@ -232,7 +257,7 @@ function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: 
   </span>
 }
 
-function BestCard({ option, duration, at, later, starred, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; starred?: boolean; onOpen: () => void }) {
+function BestCard({ option, duration, at, later, starred, onGo, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; starred?: boolean; onGo: () => void; onOpen: () => void }) {
   const leave = option.limitMinutes != null && option.limitMinutes < duration ? option.limitMinutes : duration
   return <div className="rounded-[22px] bg-[#f5f8ff] shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)]">
     <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
@@ -240,9 +265,9 @@ function BestCard({ option, duration, at, later, starred, onOpen }: { option: Pa
       <span key={priceText(option)} className="bay-price shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
     </button>
     <div className="flex items-center gap-3 px-4 pb-3 pt-1">
-      <span className="min-w-0 flex-1 text-sm text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
-      <a href={directionsUrl(option.lat, option.lng)} target="_blank" rel="noreferrer" onClick={() => trackEvent('directions_open', { result_type: option.kind })}
-        className="flex h-11 shrink-0 items-center gap-1.5 rounded-[14px] bg-[#1769ff] px-5 text-sm font-bold text-white shadow-[0_6px_16px_rgba(23,105,255,.3)] transition-transform active:scale-[0.97]"><Navigation2 className="h-4 w-4" />Go</a>
+      <span className="min-w-0 flex-1 text-[15px] text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
+      <a href={directionsUrl(option.navTo?.lat ?? option.lat, option.navTo?.lng ?? option.lng)} target="_blank" rel="noreferrer" onClick={onGo}
+        className="flex h-14 shrink-0 items-center gap-2 rounded-[18px] bg-[#1769ff] px-6 text-base font-bold text-white shadow-[0_6px_16px_rgba(23,105,255,.3)] transition-transform active:scale-[0.97]"><Navigation2 className="h-5 w-5" />Go</a>
     </div>
   </div>
 }
@@ -284,7 +309,7 @@ function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name
   return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[20px] py-2 pl-3.5 pr-2 shadow-[0_10px_30px_rgba(15,23,42,.18)] transition-colors duration-500 ${tone}`}>
     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${soon ? 'bay-pulse' : ''}`}><BellRing className="h-5 w-5" /></span>
     <span className="min-w-0 flex-1">
-      <span className="block text-sm font-bold tabular-nums">{left}</span>
+      <span className="block text-lg font-extrabold leading-tight tabular-nums">{left}</span>
       <span className="block truncate text-xs opacity-80">Leave by {clock(new Date(leaveBy))} · {name}</span>
     </span>
     <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-10 shrink-0 items-center rounded-[14px] bg-white/15 px-3 text-xs font-bold transition-transform active:scale-[0.97]">Find car</a>

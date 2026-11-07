@@ -3,6 +3,7 @@ import { availability } from './availability'
 import { haversineMeters } from './distance'
 import { carParkCost, streetCostRange, type CarParkRates, type LocalStart, type WeekSchedule } from './parkingCost'
 import { publicAssetUrl } from './publicAssets'
+import { navigationUrl } from './navigation'
 
 /* ---------- data files (generated / curated, see scripts/ and docs) ---------- */
 
@@ -14,6 +15,8 @@ export interface StreetRatesFile {
 export interface CarParkRecord {
   id: string; name: string; operator: string
   lat: number | null; lng: number | null
+  /** Where cars drive in, when it differs from the building pin. */
+  entrance?: { lat: number; lng: number }
   source_url: string; checked: string; notes?: string
   rates: CarParkRates
 }
@@ -41,6 +44,8 @@ export interface ParkingOption {
   operator?: string
   lat: number
   lng: number
+  /** Where to send navigation (a car park's vehicle entrance), if not lat/lng. */
+  navTo?: { lat: number; lng: number }
   distanceM: number
   /** Exact total for the stay, or null when unknown. */
   cents: number | null
@@ -116,7 +121,7 @@ export function carParkOptions(file: CarParkRatesFile | null, center: { lat: num
     const cost = carParkCost(park.rates, start, durationMinutes)
     const ageDays = (now.getTime() - Date.parse(park.checked)) / DAY_MS
     options.push({
-      kind: 'carpark', id: park.id, name: park.name, operator: park.operator, lat: park.lat, lng: park.lng, distanceM,
+      kind: 'carpark', id: park.id, name: park.name, operator: park.operator, lat: park.lat, lng: park.lng, navTo: park.entrance, distanceM,
       cents: cost?.cents ?? null, rateName: cost?.rateName ?? 'No published rate for this time',
       limitMinutes: null, fits: cost ? true : null,
       source: { label: park.operator, url: park.source_url, date: park.checked, stale: ageDays > file.stale_after_days },
@@ -133,8 +138,9 @@ export function rankOptions(options: ParkingOption[]): ParkingOption[] {
   return [...options].sort((a, b) => bucket(a) - bucket(b) || (price(a) ?? 0) - (price(b) ?? 0) || a.distanceM - b.distanceM)
 }
 
+/** Driving directions in the driver's chosen navigation app. */
 export function directionsUrl(lat: number, lng: number) {
-  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`
+  return navigationUrl(lat, lng)
 }
 
 /** "Queen Street between La Trobe Street and A'Beckett Street" -> "Queen St · La Trobe–A'Beckett". */

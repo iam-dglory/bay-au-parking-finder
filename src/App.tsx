@@ -8,6 +8,7 @@ import { reverseGeocodeLabel } from './lib/geocoding'
 import { loadSavedLocations, rememberLocation, savedStartupLocation, type SavedLocation, type SavedPlaceKind } from './lib/savedLocations'
 import { marketplaceV2Enabled } from './lib/featureFlags'
 import { isMelbourneSearch } from './lib/melbourneSensors'
+import { INITIAL_DRIVING, nextDrivingState } from './lib/driving'
 import { trackEvent, trackFirstOpen } from './lib/analytics'
 
 const Home = lazy(() => import('./pages/Home').then((module) => ({ default: module.Home })))
@@ -40,6 +41,8 @@ export default function App() {
   const [savedLocations, setSavedLocations] = useState(() => initialSaved.current)
   const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [trackLive, setTrackLive] = useState(false)
+  const [driving, setDriving] = useState(false)
+  const drivingState = useRef(INITIAL_DRIVING)
   const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => inMelbourne(savedStartupLocation(initialSaved.current)) ? 'resolved' : 'detecting')
   const [tab, setTab] = useState<Tab>('home')
   const [addKey, setAddKey] = useState(0)
@@ -89,6 +92,8 @@ export default function App() {
     return watchLocation((pos) => {
       const point = { lat: pos.latitude, lng: pos.longitude }
       setLiveLocation(point)
+      drivingState.current = nextDrivingState(drivingState.current, { ...point, time: pos.time, speed: pos.speed, accuracy: pos.accuracy })
+      setDriving(drivingState.current.moving)
       if (needsRefinement.current && (pos.accuracy ?? Infinity) <= 200) {
         needsRefinement.current = false
         setCurrentLocation({ ...point, label: 'Current location' })
@@ -200,6 +205,7 @@ export default function App() {
           <Home
             center={location}
             myLocation={liveLocation ?? undefined}
+            driving={driving}
             locationLabel={location.label}
             savedLocations={savedLocations}
             onSavePlace={(kind) => setSavedLocations(rememberLocation(location, kind))}
@@ -223,7 +229,7 @@ export default function App() {
         </Suspense>
       </div>
 
-      <nav aria-label="Main navigation" className="mx-2 mb-1 flex shrink-0 border-t border-[#e3eaf3] bg-white/95 px-1 py-1.5 shadow-[0_-10px_24px_rgba(15,23,42,.05)] backdrop-blur sm:mx-5 sm:mb-3 sm:rounded-2xl sm:border">
+      <nav aria-label="Main navigation" className="bay-themed mx-2 mb-1 flex shrink-0 border-t border-[#e3eaf3] bg-white/95 px-1 py-1.5 shadow-[0_-10px_24px_rgba(15,23,42,.05)] backdrop-blur sm:mx-5 sm:mb-3 sm:rounded-2xl sm:border">
         <button
           onClick={() => setTab('home')}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { BellRing, Check, ChevronDown, Clock3, ExternalLink, Flag, Navigation, Radio, Share2, Star, TriangleAlert, X } from 'lucide-react'
+import { BellRing, Check, ChevronDown, Clock3, ExternalLink, Flag, Navigation, Radio, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
 import { toggleFavourite, useFavourites } from '../lib/favourites'
+import { NAV_APP_LABEL, setNavApp, useNavApp, type NavApp } from '../lib/navigation'
 import { reportPlaceProblem } from '../lib/feedback'
 import { REMIND_BEFORE_MINUTES, startParking, type ReminderResult } from '../lib/parkingTimer'
 import type { ParkingOption } from '../lib/parkingOptions'
@@ -13,7 +14,7 @@ const dateLabel = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateStri
 
 /** Detail for one street or car park: total for the stay, leave-by time, how
  * the price is made up, live sensor readings and where the price came from. */
-export function OptionSheet({ option, durationMinutes, arrival, later = false, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; later?: boolean; onClose: () => void }) {
+export function OptionSheet({ option, durationMinutes, arrival, later = false, onGo, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; later?: boolean; onGo?: (option: ParkingOption) => void; onClose: () => void }) {
   const [reminder, setReminder] = useState<ReminderResult | 'starting' | null>(null)
   const [shared, setShared] = useState(false)
   const favourites = useFavourites()
@@ -40,6 +41,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
               className={`flex h-10 w-10 items-center justify-center rounded-[14px] transition-colors ${saved ? 'bg-amber-50 text-amber-500' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>
               <Star key={String(saved)} className={`h-5 w-5 ${saved ? 'bay-pop' : ''}`} fill={saved ? 'currentColor' : 'none'} />
             </button>
+            {canSpeak() && <button onClick={() => speak(summary(option, price, durationMinutes, leaveBy, later ? arrival : null))} aria-label="Read out" className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]"><Volume2 className="h-5 w-5" /></button>}
             <button onClick={async () => { if (await sharePlace(option, price, durationMinutes, leaveBy)) { setShared(true); window.setTimeout(() => setShared(false), 2000) } }} aria-label="Share" className="flex h-10 w-10 items-center justify-center rounded-[14px] text-[#40516d] hover:bg-[#f5f8ff]">
               {shared ? <Check className="bay-pop h-5 w-5 text-[#047857]" /> : <Share2 className="h-5 w-5" />}
             </button>
@@ -64,8 +66,8 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
         </section>
 
         <div className="mt-4 flex gap-2.5">
-          <a href={directionsUrl(option.lat, option.lng)} target="_blank" rel="noreferrer" onClick={() => trackEvent('directions_open', { result_type: option.kind })}
-            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[18px] bg-[#1769ff] text-sm font-bold text-white shadow-[0_8px_20px_rgba(23,105,255,.3)] transition-transform active:scale-[0.98]">
+          <a href={directionsUrl(option.navTo?.lat ?? option.lat, option.navTo?.lng ?? option.lng)} target="_blank" rel="noreferrer" onClick={() => { if (onGo) onGo(option); else trackEvent('directions_open', { result_type: option.kind }) }}
+            className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-[18px] bg-[#1769ff] text-sm font-bold text-white shadow-[0_8px_20px_rgba(23,105,255,.3)] transition-transform active:scale-[0.98]">
             <Navigation className="h-4 w-4" />Go
           </a>
           {option.fits !== false && !later && (
@@ -81,11 +83,12 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
                 })
                 setReminder(result)
               }}
-              className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[18px] bg-[#eef4ff] text-sm font-bold text-[#1769ff] transition-transform active:scale-[0.98] disabled:opacity-60">
+              className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-[18px] bg-[#eef4ff] text-sm font-bold text-[#1769ff] transition-transform active:scale-[0.98] disabled:opacity-60">
               <BellRing className="h-4 w-4" />{reminder && reminder !== 'starting' ? 'Reminder set' : 'Remind me'}
             </button>
           )}
         </div>
+        <NavAppChoice />
         {!reminder && option.fits !== false && !later && <p className="mt-2 text-xs text-[#64748b]">Parked? Tap Remind me and we'll warn you {REMIND_BEFORE_MINUTES} min before {clock(leaveBy)}.</p>}
         {reminder === 'scheduled' && <p role="status" className="bay-rise mt-2 text-xs text-[#065f46]">We'll remind you {REMIND_BEFORE_MINUTES} min before, and when time is up.</p>}
         {reminder === 'in-app-only' && <p role="status" className="mt-2 text-xs text-[#64748b]">Reminder set. In a browser it only shows while Bay is open.</p>}
@@ -158,5 +161,35 @@ async function sharePlace(option: ParkingOption, price: string, durationMinutes:
     if (navigator.share) { await navigator.share({ title: `Parking at ${title}`, text, url }); return false }
     await navigator.clipboard.writeText(`${text} ${url}`); return true
   } catch { return false }
+}
+
+/** "Opens in Google Maps · Change" under the Go button. */
+function NavAppChoice() {
+  const app = useNavApp()
+  const [open, setOpen] = useState(false)
+  if (!open) return <button onClick={() => setOpen(true)} className="mt-1 min-h-10 text-xs text-[#64748b]">Opens in {NAV_APP_LABEL[app]} · <span className="font-semibold text-[#1769ff]">Change</span></button>
+  return <div className="bay-rise mt-2 flex gap-2" role="radiogroup" aria-label="Navigation app">
+    {(Object.keys(NAV_APP_LABEL) as NavApp[]).map(a => <button key={a} role="radio" aria-checked={app === a} onClick={() => { setNavApp(a); setOpen(false) }}
+      className={`h-10 flex-1 rounded-full text-[13px] font-semibold ${app === a ? 'bg-[#1769ff] text-white' : 'bg-[#f5f8ff] text-[#40516d]'}`}>{NAV_APP_LABEL[a]}</button>)}
+  </div>
+}
+
+const canSpeak = () => typeof window !== 'undefined' && 'speechSynthesis' in window
+
+/** Plain sentence for reading aloud before setting off. */
+function summary(option: ParkingOption, price: string, durationMinutes: number, leaveBy: Date, arriving: Date | null) {
+  const title = option.kind === 'street' ? splitStreet(option.name).title.replace(/\bSt\b/g, 'Street') : option.name
+  if (option.fits === false) return `${title}. The time limit is too short for ${formatDurationShort(durationMinutes)}.`
+  const cost = price === 'Free' ? 'Free' : price.startsWith('$') ? `${price.replace('–', ' to ')}` : price
+  return [`${title}.`, `${cost} for ${formatDurationShort(durationMinutes).replace('hrs', 'hours').replace('hr', 'hour').replace('min', 'minutes')}${arriving ? `, arriving ${clock(arriving)}` : ''}.`, `Leave by ${clock(leaveBy)}.`, `${walkMinutes(option.distanceM)} minute walk.`].join(' ')
+}
+
+function speak(text: string) {
+  try {
+    window.speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = 'en-AU'; u.rate = 1
+    window.speechSynthesis.speak(u)
+  } catch { /* speech unavailable */ }
 }
 

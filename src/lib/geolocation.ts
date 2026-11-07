@@ -54,13 +54,13 @@ export async function getBrowserLocation(): Promise<{ coords: { latitude: number
  * GPS radio stays on and drains battery for no reason. Silently does
  * nothing on error (a dropped GPS signal mid-drive shouldn't crash the map;
  * it just stops updating until signal returns). */
-export function watchLocation(onUpdate: (pos: { latitude: number; longitude: number; accuracy?: number }) => void): () => void {
+export function watchLocation(onUpdate: (pos: { latitude: number; longitude: number; accuracy?: number; speed?: number | null; time: number }) => void): () => void {
   if (Capacitor.isNativePlatform()) {
     let watchId: string | null = null
     let cancelled = false
     Geolocation.watchPosition({ enableHighAccuracy: true, timeout: 10000 }, (pos, err) => {
       if (cancelled || err || !pos) return
-      onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy })
+      onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy, speed: pos.coords.speed, time: pos.timestamp || Date.now() })
     }).then((id) => {
       if (cancelled) void Geolocation.clearWatch({ id }).catch(() => {})
       else watchId = id
@@ -74,7 +74,7 @@ export function watchLocation(onUpdate: (pos: { latitude: number; longitude: num
   if (!navigator.geolocation) return () => {}
   let active = true
   const watchId = navigator.geolocation.watchPosition(
-    (pos) => { if (active) onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy }) },
+    (pos) => { if (active) onUpdate({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, accuracy: pos.coords.accuracy, speed: pos.coords.speed, time: pos.timestamp || Date.now() }) },
     () => {},
     { enableHighAccuracy: true, timeout: 10000 },
   )

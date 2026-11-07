@@ -79,3 +79,29 @@ summary { touch-action: manipulation; }
 .bay-stagger > *:nth-child(n+5) { animation-delay: 160ms; }
 .bay-press { transition: transform .12s ease-out; }
 .bay-press:active { transform: scale(.97); }
+
+/* ---------- dark theme (follows the phone) for the parking screen ----------
+   Night driving: no white glare. Scoped to .bay-themed (Find parking + nav),
+   mapping the light palette's exact classes to dark equivalents. */
+@media (prefers-color-scheme: dark) {
+  html { color-scheme: dark; }
+  body { background: #0a1428; }
+  .bay-themed, .bay-themed .bg-white { background-color: #0f1b33; }
+  .bay-themed.bg-white\/95, .bay-themed .bg-white\/95 { background-color: rgba(15, 27, 51, .95); }
+  .bay-themed .text-\[\#0b1730\], .bay-themed .text-slate-900, .bay-themed .text-slate-700 { color: #e8eefc; }
+  .bay-themed .text-\[\#40516d\] { color: #b4c2da; }
+  .bay-themed .text-\[\#64748b\], .bay-themed .text-slate-500, .bay-themed .text-slate-400, .bay-themed .text-\[\#94a3b8\] { color: #8f9db5; }
+  .bay-themed .text-\[\#1769ff\], .bay-themed .text-blue-700, .bay-themed .text-blue-600 { color: #7fb0ff; }
+  .bay-themed .text-\[\#b45309\] { color: #fbbf24; }
+  .bay-themed .text-\[\#047857\], .bay-themed .text-\[\#065f46\] { color: #34d399; }
+  .bay-themed .bg-\[\#f5f8ff\], .bay-themed .bg-\[\#f8fafc\], .bay-themed .bg-slate-50, .bay-themed .bg-blue-50 { background-color: #16264a; }
+  .bay-themed .bg-\[\#eef4ff\] { background-color: #1a2f5c; }
+  .bay-themed .bg-\[\#f6f8fc\], .bay-themed .bg-\[\#e6eefb\] { background-color: #0a1428; }
+  .bay-themed .bg-amber-50 { background-color: rgba(245, 158, 11, .16); }
+  .bay-themed .bg-slate-200 { background-color: #2a3b5e; }
+  .bay-themed .hover\:bg-\[\#f5f8ff\]:hover, .bay-themed .hover\:bg-slate-50:hover { background-color: #16264a; }
+  .bay-themed .border-\[\#eef2f7\], .bay-themed .border-\[\#e3eaf3\], .bay-themed.border-\[\#e3eaf3\], .bay-themed .divide-\[\#eef2f7\] > * + * { border-color: #22324f; }
+  .bay-themed .shadow-\[inset_0_0_0_1px_\#dce7f8\] { box-shadow: inset 0 0 0 1px #2a3d63; }
+  .bay-themed .bg-\[\#07152f\] { background-color: #1b2d55; }
+  .bay-themed .bay-sheet { box-shadow: 0 -18px 48px rgba(0, 0, 0, .5); }
+}
