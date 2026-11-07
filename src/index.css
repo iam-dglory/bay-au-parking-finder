@@ -247,3 +247,12 @@ summary { touch-action: manipulation; }
 .bay-stagger > *:nth-child(n+5) { animation-delay: 160ms; }
 .bay-press { transition: transform .12s ease-out; }
 .bay-press:active { transform: scale(.97); }
+
+/* ---------- map (MapLibre + OpenFreeMap) ---------- */
+.bay-map .maplibregl-ctrl-attrib { font: 11px/1.4 var(--font-sans); background: var(--surface); color: var(--ink-3); border-radius: 12px; }
+.bay-map .maplibregl-ctrl-attrib a { color: var(--ink-2); }
+.bay-map .maplibregl-ctrl-attrib-button { filter: none; }
+@media (prefers-color-scheme: dark) { .bay-map .maplibregl-ctrl-attrib-button { filter: invert(1); } }
+/* On the home screen the credit sits just under the search card, clear of the sheet. */
+.bay-home-map .maplibregl-ctrl-top-left { top: 132px; left: 6px; }
+.bay-map .maplibregl-marker { will-change: transform; }
