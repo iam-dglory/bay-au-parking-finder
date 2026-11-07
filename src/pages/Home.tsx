@@ -133,9 +133,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
     else setHereMessage(myLocation ? 'No council bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
   }
 
-  return <main className="bay-themed relative flex h-full min-h-0 flex-col overflow-hidden bg-white antialiased">
+  return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent antialiased">
     <div className="relative min-h-0 flex-1">
-      <Suspense fallback={<div className="h-full bg-[#eef4ff]" />}>
+      <Suspense fallback={<div className="h-full bg-tint-2" />}>
         <MapView center={target} myLocation={myLocation} zoom={radius === NEAR_M ? 17 : 16}
           spots={[]}
           options={options.filter(o => o.fits !== false)} selectedOptionId={selectedId} onSelectOption={pick} />
@@ -143,71 +143,71 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
       {/* Top: where + how long, one card */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))]">
-        <div className="pointer-events-auto mx-auto max-w-xl rounded-[24px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.06),0_10px_30px_rgba(15,23,42,.12)]">
+        <div className="pointer-events-auto mx-auto max-w-xl rounded-[24px] glass p-1.5">
           <div className="flex items-center gap-1">
-            <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[18px] px-3 text-left transition-colors hover:bg-[#f5f8ff]" aria-label="Where are you going?">
-              <Search className="h-5 w-5 shrink-0 text-[#1769ff]" />
+            <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[18px] px-3 text-left transition-colors hover:bg-tint" aria-label="Where are you going?">
+              <Search className="h-5 w-5 shrink-0 text-brand" />
               <span className="min-w-0 flex-1">
-                <span className="block text-[11px] font-semibold text-[#64748b]">{destination ? 'Parking near' : 'Where to?'}</span>
-                <span className="block truncate text-[15px] font-semibold text-[#0b1730]">{destination ? destination.label : /current location/i.test(locationLabel) ? 'Near you' : `Near ${locationLabel}`}</span>
+                <span className="block text-[11px] font-semibold text-ink-3">{destination ? 'Parking near' : 'Where to?'}</span>
+                <span className="block truncate text-[15px] font-semibold text-ink">{destination ? destination.label : /current location/i.test(locationLabel) ? 'Near you' : `Near ${locationLabel}`}</span>
               </span>
             </button>
             {melbourne && <div className="relative">
               <button onClick={() => setWhenOpen(v => !v)} aria-expanded={whenOpen} aria-label={`Arriving ${later ? clock(arrival) : 'now'}. Change arrival time`}
-                className={`flex h-11 items-center gap-1 rounded-[16px] px-3 text-sm font-bold tabular-nums transition-colors ${later ? 'bg-[#eef4ff] text-[#1769ff]' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>
+                className={`flex h-11 items-center gap-1 rounded-[16px] px-3 text-sm font-bold tabular-nums transition-colors ${later ? 'bg-tint-2 text-brand' : 'text-ink-2 hover:bg-tint'}`}>
                 <Clock3 className="h-4 w-4" />{later ? clock(arrival).replace(':00', '') : 'Now'}<ChevronDown className="h-3.5 w-3.5" />
               </button>
               {whenOpen && <WhenMenu value={arriveIn} now={now} onPick={v => { setArriveIn(v); setWhenOpen(false) }} onClose={() => setWhenOpen(false)} />}
             </div>}
             {destination
-              ? <button onClick={() => setDestination(null)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-[#64748b] hover:bg-[#f5f8ff]" aria-label="Back to near me"><X className="h-5 w-5" /></button>
+              ? <button onClick={() => setDestination(null)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-ink-3 hover:bg-tint" aria-label="Back to near me"><X className="h-5 w-5" /></button>
               : <div className="relative">
-                <button onClick={() => setSavedOpen(v => !v)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-[#40516d] hover:bg-[#f5f8ff]" aria-label="Saved places" aria-expanded={savedOpen}><Bookmark className="h-5 w-5" /></button>
+                <button onClick={() => setSavedOpen(v => !v)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-ink-2 hover:bg-tint" aria-label="Saved places" aria-expanded={savedOpen}><Bookmark className="h-5 w-5" /></button>
                 {savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onClose={() => setSavedOpen(false)} />}
               </div>}
           </div>
-          {melbourne && <div className="mt-1 border-t border-[#eef2f7] px-1 pt-1.5">
+          {melbourne && <div className="mt-1 border-t border-line px-1 pt-1.5">
             <div className="relative flex items-center gap-0.5" role="radiogroup" aria-label="How long are you staying?">
               {/* One pill slides to the chosen stay instead of chips flashing on and off. */}
-              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 rounded-[14px] bg-[#1769ff] shadow-[0_4px_12px_rgba(23,105,255,.35)] transition-transform duration-300 [transition-timing-function:var(--ease-out)]"
+              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 rounded-[14px] selected-pill transition-transform duration-300 [transition-timing-function:var(--ease-out)]"
                 style={{ width: `calc((100% - ${(DURATIONS.length - 1) * 2}px) / ${DURATIONS.length})`, transform: `translateX(calc(${DURATIONS.indexOf(duration)} * (100% + 2px)))` }} />
               {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} onClick={() => setDuration(d)}
-                className={`relative h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-colors duration-200 active:scale-[0.97] ${duration === d ? 'text-white' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>{durationLabel(d)}</button>)}
+                className={`relative h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-colors duration-200 active:scale-[0.97] ${duration === d ? 'text-white' : 'text-ink-2 hover:bg-tint'}`}>{durationLabel(d)}</button>)}
             </div>
           </div>}
         </div>
       </header>
 
       {/* Bottom sheet: the answer first */}
-      <section className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] bg-white shadow-[0_-1px_2px_rgba(15,23,42,.06),0_-14px_40px_rgba(15,23,42,.14)] transition-[max-height] duration-300 ${expanded ? 'max-h-[78%]' : 'max-h-[44%]'}`}>
+      <section className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] glass transition-[max-height] duration-300 ${expanded ? 'max-h-[78%]' : 'max-h-[44%]'}`}>
         {/* Floating actions ride on top of the sheet */}
         <div className={`pointer-events-none absolute -top-[60px] right-3 flex items-center gap-2 transition-opacity duration-200 ${expanded ? 'opacity-0 [&>*]:pointer-events-none' : 'opacity-100'}`} aria-hidden={expanded}>
-          {melbourne && <button tabIndex={expanded ? -1 : 0} onClick={canIParkHere} className="pointer-events-auto flex h-12 items-center gap-2 rounded-full bg-white pl-3.5 pr-4 text-sm font-bold text-[#0b1730] shadow-[0_1px_2px_rgba(15,23,42,.08),0_8px_24px_rgba(15,23,42,.16)] transition-transform active:scale-[0.97]">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1769ff] text-white"><MapPin className="h-3.5 w-3.5" /></span>Can I park here?
+          {melbourne && <button tabIndex={expanded ? -1 : 0} onClick={canIParkHere} className="pointer-events-auto flex h-12 items-center gap-2 rounded-full glass pl-3.5 pr-4 text-sm font-bold text-ink transition-transform active:scale-[0.97]">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full selected-pill text-white"><MapPin className="h-3.5 w-3.5" /></span>Can I park here?
           </button>}
-          <button tabIndex={expanded ? -1 : 0} onClick={() => { setDestination(null); onUseCurrentLocation() }} className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#1769ff] shadow-[0_1px_2px_rgba(15,23,42,.08),0_8px_24px_rgba(15,23,42,.16)] transition-transform active:scale-[0.97]" aria-label="Centre on my location"><LocateFixed className="h-5 w-5" /></button>
+          <button tabIndex={expanded ? -1 : 0} onClick={() => { setDestination(null); onUseCurrentLocation() }} className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full glass text-brand transition-transform active:scale-[0.97]" aria-label="Centre on my location"><LocateFixed className="h-5 w-5" /></button>
         </div>
 
         {parked && minutesLeft != null && <div className="px-3 pt-3"><ParkingTimerBar name={parked.name} lat={parked.lat} lng={parked.lng} leaveBy={parked.leaveBy} minutesLeft={minutesLeft} onEnd={() => void endParking()} /></div>}
         <button onClick={() => setExpanded(v => !v)} className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-slate-200" aria-label={expanded ? 'Show less' : 'Show more'} />
         <div className="flex items-end justify-between gap-3 px-5 pb-2 pt-2">
           <div className="min-w-0">
-            <h2 className="text-lg font-bold tracking-tight text-[#0b1730] [text-wrap:balance]">{melbourne ? `Cheapest for ${duration === 540 ? 'the day' : durationLabel(duration)}` : 'Parking nearby'}</h2>
-            <p className="text-xs text-[#64748b]">{loading ? 'Finding parking…' : melbourne ? fitting.length === 0 ? 'Nothing nearby fits this stay' : `${fitting.length} place${fitting.length === 1 ? '' : 's'} within a ${walkMinutes(radius)} min walk${later ? ` · arriving ${clock(arrival)}` : ''}` : 'Outside Melbourne'}</p>
+            <h2 className="text-lg font-bold tracking-tight text-ink [text-wrap:balance]">{melbourne ? `Cheapest for ${duration === 540 ? 'the day' : durationLabel(duration)}` : 'Parking nearby'}</h2>
+            <p className="text-xs text-ink-3">{loading ? 'Finding parking…' : melbourne ? fitting.length === 0 ? 'Nothing nearby fits this stay' : `${fitting.length} place${fitting.length === 1 ? '' : 's'} within a ${walkMinutes(radius)} min walk${later ? ` · arriving ${clock(arrival)}` : ''}` : 'Outside Melbourne'}</p>
           </div>
-          {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-[#1769ff] hover:bg-[#f5f8ff]">{expanded ? 'Less' : 'See all'}</button>}
+          {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-brand hover:bg-tint">{expanded ? 'Less' : 'See all'}</button>}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,env(safe-area-inset-bottom))]">
-          {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-[#f5f8ff] px-3 py-2.5 text-sm text-[#40516d]">{hereMessage}</p>}
+          {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
           {destination?.note && <p className="mx-2 mb-2 flex gap-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900"><Ticket className="h-4 w-4 shrink-0" />{destination.note}</p>}
-          {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Prices couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-white px-3 font-bold text-amber-900">Retry</button></div>}
+          {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Prices couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-amber-900">Retry</button></div>}
 
           {melbourne && <>
             {loading && !best && <SkeletonRows />}
-            {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
+            {!loading && !best && <p className="px-2 py-3 text-sm text-ink-2">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
             {showParkedPrompt && heading && <ParkedPrompt heading={heading} onStart={() => void startFromHeading(heading)} onDismiss={() => setHeading(null)} />}
-            {showTips && !showParkedPrompt && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
+            {showTips && !showParkedPrompt && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-night px-3.5 py-2.5 text-white">
               <SignMark className="h-7 w-7 shrink-0" />
               <p className="min-w-0 flex-1 text-[13px] leading-5">Pick how long you're staying. Bay finds the cheapest place that allows it.</p>
               <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
@@ -217,12 +217,12 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
             {others.length > 0 && <ul className="mt-1 bay-stagger">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
             </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
-            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-[#64748b]">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
+            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
           </>}
 
           {!melbourne && <div className="px-2 py-3">
-            <p className="text-sm text-[#40516d]">Bay covers Melbourne for now. Search for a place in Melbourne, or jump to the CBD.</p>
-            <button onClick={() => setDestination(MELBOURNE_CBD)} className="mt-3 h-12 w-full rounded-[16px] bg-[#1769ff] text-sm font-bold text-white transition-transform active:scale-[0.98]">Show parking in Melbourne CBD</button>
+            <p className="text-sm text-ink-2">Bay covers Melbourne for now. Search for a place in Melbourne, or jump to the CBD.</p>
+            <button onClick={() => setDestination(MELBOURNE_CBD)} className="mt-3 h-12 w-full rounded-[16px] cta text-sm font-bold text-white transition-transform active:scale-[0.98]">Show parking in Melbourne CBD</button>
           </div>}
         </div>
       </section>
@@ -237,7 +237,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
 function OptionTitle({ option, starred }: { option: ParkingOption; starred?: boolean }) {
   const title = option.kind === 'carpark' ? option.name : splitStreet(option.name).title
-  return <span className="flex items-center gap-1 text-[15px] font-semibold text-[#0b1730]"><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" aria-label="Saved" />}</span>
+  return <span className="flex items-center gap-1 text-[15px] font-semibold text-ink"><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" aria-label="Saved" />}</span>
 }
 
 /** One plain line: "2 min walk · 2 hr max · 3 free now" or "Car park · 5 min walk". */
@@ -251,23 +251,23 @@ function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: 
   const parts = [option.kind === 'carpark' ? `${option.operator ?? 'Car'} car park` : null, `${walkMinutes(option.distanceM)} min walk`]
   if (option.limitMinutes != null) parts.push(maxStayText(option.limitMinutes, at))
   const live = option.live && !later ? option.live : null
-  return <span className="mt-0.5 line-clamp-2 block text-[13px] leading-[18px] text-[#40516d] tabular-nums">
+  return <span className="mt-0.5 line-clamp-2 block text-[13px] leading-[18px] text-ink-2 tabular-nums">
     {parts.filter(Boolean).join(' · ')}
-    {live && <> · {live.free > 0 ? <span className="font-semibold text-[#047857]">{live.free} free now</span> : <span className="font-semibold text-[#b45309]">Full now</span>}</>}
+    {live && <> · {live.free > 0 ? <span className="font-semibold text-ok">{live.free} free now</span> : <span className="font-semibold text-warn">Full now</span>}</>}
   </span>
 }
 
 function BestCard({ option, duration, at, later, starred, onGo, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; starred?: boolean; onGo: () => void; onOpen: () => void }) {
   const leave = option.limitMinutes != null && option.limitMinutes < duration ? option.limitMinutes : duration
-  return <div className="rounded-[22px] bg-[#f5f8ff] shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)]">
+  return <div className="rounded-[22px] bg-tint shadow-[inset_0_0_0_1px_rgba(3,105,161,.14)]">
     <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
       <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
-      <span key={priceText(option)} className="bay-price shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
+      <span key={priceText(option)} className="bay-price font-dot shrink-0 text-right text-[34px] leading-none text-ink tabular-nums">{priceText(option)}</span>
     </button>
     <div className="flex items-center gap-3 px-4 pb-3 pt-1">
-      <span className="min-w-0 flex-1 text-[15px] text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
+      <span className="min-w-0 flex-1 text-[15px] text-ink-2">Leave by <strong className="font-bold text-ink tabular-nums">{clock(new Date(at.getTime() + leave * 60_000))}</strong></span>
       <a href={directionsUrl(option.navTo?.lat ?? option.lat, option.navTo?.lng ?? option.lng)} target="_blank" rel="noreferrer" onClick={onGo}
-        className="flex h-14 shrink-0 items-center gap-2 rounded-[18px] bg-[#1769ff] px-6 text-base font-bold text-white shadow-[0_6px_16px_rgba(23,105,255,.3)] transition-transform active:scale-[0.97]"><Navigation2 className="h-5 w-5" />Go</a>
+        className="flex h-14 shrink-0 items-center gap-2 rounded-[18px] cta px-6 text-base font-bold text-white transition-transform active:scale-[0.97]"><Navigation2 className="h-5 w-5" />Go</a>
     </div>
   </div>
 }
@@ -275,20 +275,20 @@ function BestCard({ option, duration, at, later, starred, onGo, onOpen }: { opti
 function OptionRow({ option, at, later, starred, onClick }: { option: ParkingOption; at: Date; later: boolean; starred?: boolean; onClick: () => void }) {
   const price = option.fits === false ? null : priceText(option)
   return <li>
-    <button onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left transition-colors hover:bg-[#f5f8ff]">
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${option.kind === 'carpark' ? 'bg-[#1769ff] text-white' : 'bg-[#eef4ff] text-[#1769ff]'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-[18px] w-[18px]" /> : <MapPin className="h-[18px] w-[18px]" />}</span>
+    <button onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left transition-colors hover:bg-tint">
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${option.kind === 'carpark' ? 'selected-pill text-white' : 'bg-tint-2 text-brand'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-[18px] w-[18px]" /> : <MapPin className="h-[18px] w-[18px]" />}</span>
       <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
-      <span className="shrink-0 text-right text-base font-extrabold text-[#0b1730] tabular-nums">{price ?? <span className="text-sm font-semibold text-[#64748b]">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
+      <span className="shrink-0 text-right text-base font-extrabold text-ink tabular-nums">{price ?? <span className="text-sm font-semibold text-ink-3">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
     </button>
   </li>
 }
 
 function Group({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  return <div className="mt-2 border-t border-[#eef2f7] pt-2">
-    <button onClick={() => setOpen(v => !v)} aria-expanded={open} className="flex min-h-11 w-full items-center gap-2 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
-      <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-[#40516d]">{title}</span><span className="block text-xs text-[#64748b]">{hint}</span></span>
-      <ChevronDown className={`h-5 w-5 text-[#64748b] transition-transform ${open ? 'rotate-180' : ''}`} />
+  return <div className="mt-2 border-t border-line pt-2">
+    <button onClick={() => setOpen(v => !v)} aria-expanded={open} className="flex min-h-11 w-full items-center gap-2 rounded-2xl px-2 text-left hover:bg-tint">
+      <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-ink-2">{title}</span><span className="block text-xs text-ink-3">{hint}</span></span>
+      <ChevronDown className={`h-5 w-5 text-ink-3 transition-transform ${open ? 'rotate-180' : ''}`} />
     </button>
     {open && children}
   </div>
@@ -296,20 +296,20 @@ function Group({ title, hint, children }: { title: string; hint: string; childre
 
 function SkeletonRows() {
   return <div aria-hidden className="space-y-2 px-1">
-    <div className="h-[132px] animate-pulse rounded-[22px] bg-[#f1f5f9]" />
-    <div className="h-14 animate-pulse rounded-2xl bg-[#f6f8fb]" />
+    <div className="h-[132px] animate-pulse rounded-[22px] bg-tint" />
+    <div className="h-14 animate-pulse rounded-2xl bg-tint" />
   </div>
 }
 
 function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name: string; lat: number; lng: number; leaveBy: string; minutesLeft: number; onEnd: () => void }) {
   const over = minutesLeft < 0
   const soon = !over && minutesLeft <= 15
-  const tone = over ? 'bg-red-600 text-white' : soon ? 'bg-amber-400 text-[#2b1a00]' : 'bg-[#07152f] text-white'
+  const tone = over ? 'bg-red-600 text-white' : soon ? 'bg-amber-400 text-[#2b1a00]' : 'bg-night text-white'
   const left = over ? `${formatDurationShort(-minutesLeft)} over` : `${formatDurationShort(Math.max(minutesLeft, 0))} left`
   return <div role="timer" aria-live="polite" className={`bay-rise flex items-center gap-3 rounded-[20px] py-2 pl-3.5 pr-2 shadow-[0_10px_30px_rgba(15,23,42,.18)] transition-colors duration-500 ${tone}`}>
     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${soon ? 'bay-pulse' : ''}`}><BellRing className="h-5 w-5" /></span>
     <span className="min-w-0 flex-1">
-      <span className="block text-lg font-extrabold leading-tight tabular-nums">{left}</span>
+      <span className="font-dot block text-xl leading-tight tabular-nums">{left}</span>
       <span className="block truncate text-xs opacity-80">Leave by {clock(new Date(leaveBy))} · {name}</span>
     </span>
     <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`} target="_blank" rel="noreferrer" className="flex h-10 shrink-0 items-center rounded-[14px] bg-white/15 px-3 text-xs font-bold transition-transform active:scale-[0.97]">Find car</a>
@@ -329,30 +329,30 @@ function SearchOverlay({ saved, onSaved, onPick, onVenue, onClose }: { saved: Fa
     const found = await searchPlaces(query).catch(() => [])
     if (id === request.current) { setResults(found); setBusy(false); setSearched(true) }
   }
-  return <div className="bay-fade fixed inset-0 z-[1100] overflow-y-auto bg-white px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
+  return <div className="bay-fade fixed inset-0 z-[1100] overflow-y-auto glass glass-strong px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
     <div className="mx-auto max-w-xl">
-      <form onSubmit={e => { e.preventDefault(); void run() }} className="flex items-center gap-2 rounded-[20px] bg-[#f5f8ff] pl-3.5 pr-1.5 shadow-[inset_0_0_0_1px_#dce7f8] focus-within:shadow-[inset_0_0_0_2px_#1769ff]">
-        <Search className="h-5 w-5 shrink-0 text-[#1769ff]" />
-        <input autoFocus enterKeyHint="search" value={query} onChange={e => { request.current++; setQuery(e.target.value); setSearched(false) }} placeholder="Where in Melbourne?" aria-label="Where are you going?" className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-[#0b1730] outline-none focus:outline-none focus-visible:outline-none placeholder:text-[#64748b]" />
-        <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-[14px] text-[#64748b]" aria-label="Close"><X className="h-5 w-5" /></button>
+      <form onSubmit={e => { e.preventDefault(); void run() }} className="flex items-center gap-2 rounded-[20px] bg-tint pl-3.5 pr-1.5 shadow-[inset_0_0_0_1px_var(--line)] focus-within:shadow-[inset_0_0_0_2px_var(--brand)]">
+        <Search className="h-5 w-5 shrink-0 text-brand" />
+        <input autoFocus enterKeyHint="search" value={query} onChange={e => { request.current++; setQuery(e.target.value); setSearched(false) }} placeholder="Where in Melbourne?" aria-label="Where are you going?" className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-ink outline-none focus:outline-none focus-visible:outline-none placeholder:text-ink-3" />
+        <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-[14px] text-ink-3" aria-label="Close"><X className="h-5 w-5" /></button>
       </form>
-      {query.trim().length >= 3 && <button onClick={() => void run()} disabled={busy} className="mt-2 h-12 w-full rounded-[18px] bg-[#1769ff] text-sm font-bold text-white transition-transform active:scale-[0.99] disabled:opacity-60">{busy ? 'Searching…' : `Search “${query.trim()}”`}</button>}
-      {results.length > 0 && <ul className="mt-3">{results.map((place, i) => <li key={`${place.name}-${i}`}><button onClick={() => onPick(place)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]"><MapPin className="h-5 w-5 shrink-0 text-[#1769ff]" /><span className="min-w-0"><span className="block text-[15px] font-semibold text-[#0b1730]">{place.name}</span>{place.address && <span className="block truncate text-xs text-[#64748b]">{place.address}</span>}</span></button></li>)}</ul>}
-      {searched && !busy && results.length === 0 && <p className="mt-3 px-2 text-sm text-[#40516d]">No places found. Try a street name or landmark.</p>}
+      {query.trim().length >= 3 && <button onClick={() => void run()} disabled={busy} className="mt-2 h-12 w-full rounded-[18px] cta text-sm font-bold text-white transition-transform active:scale-[0.99] disabled:opacity-60">{busy ? 'Searching…' : `Search “${query.trim()}”`}</button>}
+      {results.length > 0 && <ul className="mt-3">{results.map((place, i) => <li key={`${place.name}-${i}`}><button onClick={() => onPick(place)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-tint"><MapPin className="h-5 w-5 shrink-0 text-brand" /><span className="min-w-0"><span className="block text-[15px] font-semibold text-ink">{place.name}</span>{place.address && <span className="block truncate text-xs text-ink-3">{place.address}</span>}</span></button></li>)}</ul>}
+      {searched && !busy && results.length === 0 && <p className="mt-3 px-2 text-sm text-ink-2">No places found. Try a street name or landmark.</p>}
       {!query && <>
         {saved.length > 0 && <>
-          <p className="mt-5 px-2 text-xs font-semibold text-[#64748b]">Your saved spots</p>
-          <ul className="mt-1">{saved.slice(0, 6).map(f => <li key={f.id}><button onClick={() => onSaved(f)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
+          <p className="mt-5 px-2 text-xs font-semibold text-ink-3">Your saved spots</p>
+          <ul className="mt-1">{saved.slice(0, 6).map(f => <li key={f.id}><button onClick={() => onSaved(f)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-tint">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-amber-50 text-amber-500"><Star className="h-5 w-5" fill="currentColor" /></span>
-            <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-[#0b1730]">{f.name}</span>
-            <ChevronRight className="h-5 w-5 text-[#64748b]" />
+            <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-ink">{f.name}</span>
+            <ChevronRight className="h-5 w-5 text-ink-3" />
           </button></li>)}</ul>
         </>}
-        <p className="mt-5 px-2 text-xs font-semibold text-[#64748b]">Going to an event?</p>
-        <ul className="mt-1">{VENUES.map(v => <li key={v.id}><button onClick={() => onVenue(v)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#eef4ff] text-[#1769ff]"><Ticket className="h-5 w-5" /></span>
-          <span className="min-w-0 flex-1"><span className="block text-[15px] font-semibold text-[#0b1730]">{v.name}</span><span className="block text-xs text-[#64748b]">Shows parking for {durationLabel(v.minutes).toLowerCase()}</span></span>
-          <ChevronRight className="h-5 w-5 text-[#64748b]" />
+        <p className="mt-5 px-2 text-xs font-semibold text-ink-3">Going to an event?</p>
+        <ul className="mt-1">{VENUES.map(v => <li key={v.id}><button onClick={() => onVenue(v)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-tint">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-tint-2 text-brand"><Ticket className="h-5 w-5" /></span>
+          <span className="min-w-0 flex-1"><span className="block text-[15px] font-semibold text-ink">{v.name}</span><span className="block text-xs text-ink-3">Shows parking for {durationLabel(v.minutes).toLowerCase()}</span></span>
+          <ChevronRight className="h-5 w-5 text-ink-3" />
         </button></li>)}</ul>
       </>}
     </div>
@@ -368,10 +368,10 @@ function WhenMenu({ value, now, onPick, onClose }: { value: ArriveIn; now: Date;
   ]
   return <>
     <button aria-label="Close" className="fixed inset-0 z-[690] cursor-default" onClick={onClose} />
-    <div role="menu" aria-label="When are you arriving?" className="bay-menu absolute right-0 top-12 z-[700] w-52 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
-      <p className="px-3 pb-1 pt-2 text-xs font-semibold text-[#64748b]">Arriving</p>
+    <div role="menu" aria-label="When are you arriving?" className="bay-menu absolute right-0 top-12 z-[700] w-52 rounded-[20px] glass p-1.5">
+      <p className="px-3 pb-1 pt-2 text-xs font-semibold text-ink-3">Arriving</p>
       {choices.map(c => <button key={String(c.v)} role="menuitemradio" aria-checked={value === c.v} onClick={() => onPick(c.v)}
-        className={`flex min-h-11 w-full items-center justify-between rounded-[14px] px-3 text-left text-sm font-semibold hover:bg-[#f5f8ff] ${value === c.v ? 'text-[#1769ff]' : 'text-[#0b1730]'}`}>
+        className={`flex min-h-11 w-full items-center justify-between rounded-[14px] px-3 text-left text-sm font-semibold hover:bg-tint ${value === c.v ? 'text-brand' : 'text-ink'}`}>
         {c.label}{value === c.v && <Check className="h-4 w-4" />}
       </button>)}
     </div>
@@ -380,11 +380,11 @@ function WhenMenu({ value, now, onPick, onClose }: { value: ArriveIn; now: Date;
 
 function SavedMenu({ saved, onSave, onSelect, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onClose: () => void }) {
   const act = (fn: () => void) => { fn(); onClose() }
-  const item = 'flex min-h-11 w-full items-center gap-2.5 rounded-[14px] px-3 text-left text-sm font-semibold text-[#0b1730] hover:bg-[#f5f8ff]'
-  return <div className="bay-menu absolute right-0 top-12 z-[700] w-60 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
-    {saved.home && <button onClick={() => act(() => onSelect('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#1769ff]" />Home</button>}
-    {saved.work && <button onClick={() => act(() => onSelect('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Work</button>}
-    <button onClick={() => act(() => onSave('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#64748b]" />Save this as home</button>
-    <button onClick={() => act(() => onSave('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#64748b]" />Save this as work</button>
+  const item = 'flex min-h-11 w-full items-center gap-2.5 rounded-[14px] px-3 text-left text-sm font-semibold text-ink hover:bg-tint'
+  return <div className="bay-menu absolute right-0 top-12 z-[700] w-60 rounded-[20px] glass p-1.5">
+    {saved.home && <button onClick={() => act(() => onSelect('home'))} className={item}><HomeIcon className="h-4 w-4 text-brand" />Home</button>}
+    {saved.work && <button onClick={() => act(() => onSelect('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-brand" />Work</button>}
+    <button onClick={() => act(() => onSave('home'))} className={item}><HomeIcon className="h-4 w-4 text-ink-3" />Save this as home</button>
+    <button onClick={() => act(() => onSave('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-ink-3" />Save this as work</button>
   </div>
 }

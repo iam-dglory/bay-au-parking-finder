@@ -55,7 +55,7 @@ export function MapView({
       >
         <Recenter center={center} zoom={zoom} />
         <AdvancedMarker position={myLocation ?? center} zIndex={1} title="You are here">
-          <span className="block h-4 w-4 rounded-full border-[3px] border-white bg-[#1769ff] shadow-[0_0_0_6px_rgba(23,105,255,.22)]" />
+          <span className="block h-4 w-4 rounded-full border-[3px] border-white cta shadow-[0_0_0_6px_rgba(3,105,161,.22)]" />
         </AdvancedMarker>
 
         {options?.map(option => (
@@ -66,7 +66,7 @@ export function MapView({
 
         {spots.slice(0, MAX_PLAIN_MARKERS).map(spot => {
           const live = availability(spot).state
-          const color = live === 'vacant' ? '#059669' : live === 'occupied' ? '#e11d48' : '#1769ff'
+          const color = live === 'vacant' ? '#059669' : live === 'occupied' ? '#e11d48' : '#0369a1'
           return (
             <AdvancedMarker key={spot.id} position={{ lat: spot.lat, lng: spot.lng }} zIndex={5} title={spot.address_text}
               onClick={() => spot.status && onSelectSpot?.(spot as ParkingSpot & { status: SpotStatus })}>
@@ -77,13 +77,13 @@ export function MapView({
 
         {carParks.map(area => (
           <AdvancedMarker key={area.id} position={{ lat: area.lat, lng: area.lng }} zIndex={8} title={area.address_text} onClick={() => onSelectCarPark?.(area)}>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-white bg-[#1769ff] text-xs font-extrabold text-white shadow-md">P</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-white cta text-xs font-extrabold text-white shadow-md">P</span>
           </AdvancedMarker>
         ))}
 
         {pickedLocation && (
           <AdvancedMarker position={pickedLocation} zIndex={60} title="Selected location">
-            <span className="block h-5 w-5 rounded-full border-[3px] border-white bg-[#07152f] shadow-lg" />
+            <span className="block h-5 w-5 rounded-full border-[3px] border-white bg-night shadow-lg" />
           </AdvancedMarker>
         )}
       </Map>
@@ -97,15 +97,15 @@ function PricePin({ option, selected }: { option: ParkingOption; selected: boole
     : option.cents != null ? formatCents(option.cents)
     : option.range ? `${formatCents(option.range.min)}+`
     : '?'
-  const tone = selected ? 'bg-[#07152f] text-white border-[#07152f]'
-    : blocked ? 'bg-white text-[#94a3b8] border-[#e3eaf3]'
-    : option.kind === 'carpark' ? 'bg-[#1769ff] text-white border-[#1769ff]'
-    : 'bg-white text-[#1769ff] border-[#1769ff]'
+  const tone = selected ? 'bg-night text-white border-night'
+    : blocked ? 'bg-surface text-ink-3 border-line'
+    : option.kind === 'carpark' ? 'cta text-white border-brand'
+    : 'bg-surface text-brand border-brand'
   return (
     <span className={`flex items-center gap-1 whitespace-nowrap rounded-full border-2 px-2 py-0.5 text-[12px] font-extrabold shadow-[0_4px_12px_rgba(15,23,42,.18)] ${tone}`}>
       {option.kind === 'carpark' && <span className="text-[10px] opacity-80">P</span>}
       {label}
-      {option.live && option.live.free > 0 && <span className="ml-0.5 h-2 w-2 rounded-full bg-[#059669]" aria-label={`${option.live.free} free now`} />}
+      {option.live && option.live.free > 0 && <span className="ml-0.5 h-2 w-2 rounded-full bg-ok" aria-label={`${option.live.free} free now`} />}
     </span>
   )
 }
@@ -133,10 +133,10 @@ function LoadState() {
 
 function MapUnavailable({ reason }: { reason: string }) {
   return (
-    <div className="flex h-full w-full items-center justify-center bg-[#eef4ff] p-6 text-center">
+    <div className="flex h-full w-full items-center justify-center bg-tint-2 p-6 text-center">
       <div>
-        <p className="text-sm font-bold text-[#0b1730]">Map unavailable</p>
-        <p className="mt-1 text-xs text-[#64748b]">{reason} Prices and the list still work.</p>
+        <p className="text-sm font-bold text-ink">Map unavailable</p>
+        <p className="mt-1 text-xs text-ink-3">{reason} Prices and the list still work.</p>
       </div>
     </div>
   )

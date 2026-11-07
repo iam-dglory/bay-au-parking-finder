@@ -4,40 +4,155 @@
 @import "tailwindcss" source("./");
 
 @theme {
-  --color-bay-blue: #1769ff;
-  --color-bay-navy: #07152f;
-  --color-bay-canvas: #f7f9fc;
-  --color-bay-line: #e3eaf3;
-  --color-bay-ink: #0b1730;
-  --color-bay-muted: #64748b;
+  /* Bay "glass" theme: sky blue, white and hot pink. Colours are tokens so the
+     same classes work in light and dark. */
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-brand: var(--brand);
+  --color-cta: var(--cta);
+  --color-pink: var(--pink);
+  --color-sky: var(--sky);
+  --color-tint: var(--tint);
+  --color-tint-2: var(--tint-2);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --color-night: var(--night);
+  --color-warn: var(--warn);
+  --color-ok: var(--ok);
+  /* Older screens use Tailwind's blue scale: point it at the theme. */
+  --color-blue-50: var(--tint);
+  --color-blue-100: var(--tint-2);
+  --color-blue-200: #bae6fd;
+  --color-blue-300: #7dd3fc;
+  --color-blue-500: #0ea5e9;
+  --color-blue-600: var(--cta);
+  --color-blue-700: var(--brand);
+  --color-blue-900: #0c4a6e;
+  --color-slate-50: var(--tint);
+  --color-slate-100: var(--tint-2);
+  --color-slate-200: var(--line);
+  --color-slate-300: color-mix(in srgb, var(--ink-3) 45%, transparent);
+  --color-slate-400: var(--ink-3);
+  --color-slate-500: var(--ink-3);
+  --color-slate-600: var(--ink-2);
+  --color-slate-700: var(--ink-2);
+  --color-slate-800: var(--ink);
+  --color-slate-900: var(--ink);
+  --color-slate-950: var(--ink);
+  --color-bay-blue: var(--brand);
+  --color-bay-navy: var(--night);
+  --color-bay-canvas: var(--canvas);
+  --color-bay-line: var(--line);
+  --color-bay-ink: var(--ink);
+  --color-bay-muted: var(--ink-3);
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-dot: Doto, ui-monospace, monospace;
 }
 
 :root {
   color-scheme: light;
+  --ink: #0c1530;
+  --ink-2: #3d4e6b;
+  --ink-3: #5d6b85;
+  --brand: #0369a1;          /* sky, deep enough for text and icons */
+  --sky: #38bdf8;            /* sky, decorative */
+  --pink: #ff2d87;           /* hot pink, decorative */
+  --cta: #db0f73;            /* hot pink with white text at 4.8:1 */
+  --tint: rgba(224, 242, 254, .62);
+  --tint-2: rgba(186, 230, 253, .55);
+  --line: rgba(3, 105, 161, .14);
+  --surface: rgba(255, 255, 255, .72);
+  --canvas: #f4f9ff;
+  --night: #0c1530;
+  --warn: #b45309;
+  --ok: #047857;
+  --glass-edge: rgba(255, 255, 255, .85);
+  --glass-shadow: 0 1px 1px rgba(12, 21, 48, .04), 0 12px 36px rgba(12, 74, 110, .14);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0b1730;
-  background: #f7f9fc;
+  color: var(--ink);
+  background: var(--canvas);
   font-synthesis: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ink: #eef5ff;
+    --ink-2: #bccbe2;
+    --ink-3: #91a1bb;
+    --brand: #7dd3fc;
+    --sky: #38bdf8;
+    --pink: #ff4d9a;
+    --cta: #e5127a;
+    --tint: rgba(56, 189, 248, .12);
+    --tint-2: rgba(56, 189, 248, .2);
+    --line: rgba(186, 230, 253, .14);
+    --surface: rgba(16, 26, 50, .66);
+    --canvas: #060c1c;
+    --night: #13213f;
+    --warn: #fbbf24;
+    --ok: #34d399;
+    --glass-edge: rgba(255, 255, 255, .12);
+    --glass-shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 16px 40px rgba(0, 0, 0, .45);
+  }
 }
 
 * { -webkit-tap-highlight-color: transparent; }
 html, body, #root { height: 100%; min-height: 100%; }
-body { margin: 0; min-width: 320px; background: #f7f9fc; }
+body { margin: 0; min-width: 320px; background: var(--canvas); }
+/* The wallpaper: soft sky and pink light behind frosted glass. */
+body::before {
+  content: ""; position: fixed; inset: -20%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 18% 12%, color-mix(in srgb, var(--sky) 55%, transparent), transparent 70%),
+    radial-gradient(34% 28% at 88% 34%, color-mix(in srgb, var(--pink) 38%, transparent), transparent 70%),
+    radial-gradient(40% 32% at 30% 88%, color-mix(in srgb, var(--sky) 40%, transparent), transparent 70%),
+    radial-gradient(30% 24% at 82% 92%, color-mix(in srgb, var(--pink) 30%, transparent), transparent 70%);
+  filter: blur(40px);
+}
 #root { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
 /* In the base layer so Tailwind text/weight utilities on buttons still apply. */
 @layer base {
   button, input, select, textarea { font: inherit; }
   button { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
-  :focus-visible { outline: 3px solid rgba(23, 105, 255, .38); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--sky) 60%, transparent); outline-offset: 2px; }
 }
 summary { touch-action: manipulation; }
 
-.bay-card { border: 1px solid #e3eaf3; background: #fff; box-shadow: 0 12px 30px rgba(15, 23, 42, .06); }
-.bay-icon-button { display: inline-flex; height: 42px; width: 42px; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid #e3eaf3; background: rgba(255,255,255,.96); color: #40516d; box-shadow: 0 6px 18px rgba(15,23,42,.08); transition: transform .16s ease, background .16s ease, color .16s ease; }
-.bay-icon-button:hover { transform: translateY(-1px); background: #f7f9fc; color: #07152f; }
-.bay-sheet { box-shadow: 0 -18px 48px rgba(15,23,42,.2); }
+.bay-card { border: 1px solid var(--glass-edge); background: var(--surface); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); }
+.bay-icon-button { display: inline-flex; height: 42px; width: 42px; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid var(--glass-edge); background: var(--surface); color: var(--ink-2); box-shadow: var(--glass-shadow); transition: transform .16s ease, background .16s ease, color .16s ease; }
+.bay-icon-button:hover { transform: translateY(-1px); color: var(--ink); }
+.bay-sheet { box-shadow: 0 -18px 48px rgba(12, 21, 48, .22); }
+
+/* Frosted glass: translucent surface, blur, a bright hairline edge. */
+.glass {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: inset 0 0 0 1px var(--glass-edge), var(--glass-shadow);
+}
+/* Sheets and full-screen panels hold a lot of text: more frost, less see-through. */
+.glass-strong { background: color-mix(in srgb, var(--surface) 70%, var(--canvas)); }
+/* Dimmed backdrop. Animates its colour, not opacity: an opacity animation on an
+   ancestor stops backdrop-filter from blurring what is behind the sheet. */
+@keyframes bay-dim { from { background-color: transparent; } }
+.bay-dim { animation: bay-dim .2s ease-out both; }
+
+/* Hot pink action with a glassy top highlight. */
+.cta {
+  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 55%), var(--cta);
+  color: #fff;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--pink) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
+}
+/* Selected state: deep sky with the same gloss. */
+.selected-pill {
+  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0) 60%), #0369a1;
+  box-shadow: 0 6px 16px rgba(3, 105, 161, .35), inset 0 1px 0 rgba(255,255,255,.3);
+}
+/* Dot-matrix numerals, a nod to Nothing's type. */
+.font-dot { font-family: var(--font-dot); font-weight: 800; letter-spacing: .02em; }
 
 @media (max-width: 640px) {
   input, select, textarea { font-size: 16px; }
@@ -79,29 +194,3 @@ summary { touch-action: manipulation; }
 .bay-stagger > *:nth-child(n+5) { animation-delay: 160ms; }
 .bay-press { transition: transform .12s ease-out; }
 .bay-press:active { transform: scale(.97); }
-
-/* ---------- dark theme (follows the phone) for the parking screen ----------
-   Night driving: no white glare. Scoped to .bay-themed (Find parking + nav),
-   mapping the light palette's exact classes to dark equivalents. */
-@media (prefers-color-scheme: dark) {
-  html { color-scheme: dark; }
-  body { background: #0a1428; }
-  .bay-themed, .bay-themed .bg-white { background-color: #0f1b33; }
-  .bay-themed.bg-white\/95, .bay-themed .bg-white\/95 { background-color: rgba(15, 27, 51, .95); }
-  .bay-themed .text-\[\#0b1730\], .bay-themed .text-slate-900, .bay-themed .text-slate-700 { color: #e8eefc; }
-  .bay-themed .text-\[\#40516d\] { color: #b4c2da; }
-  .bay-themed .text-\[\#64748b\], .bay-themed .text-slate-500, .bay-themed .text-slate-400, .bay-themed .text-\[\#94a3b8\] { color: #8f9db5; }
-  .bay-themed .text-\[\#1769ff\], .bay-themed .text-blue-700, .bay-themed .text-blue-600 { color: #7fb0ff; }
-  .bay-themed .text-\[\#b45309\] { color: #fbbf24; }
-  .bay-themed .text-\[\#047857\], .bay-themed .text-\[\#065f46\] { color: #34d399; }
-  .bay-themed .bg-\[\#f5f8ff\], .bay-themed .bg-\[\#f8fafc\], .bay-themed .bg-slate-50, .bay-themed .bg-blue-50 { background-color: #16264a; }
-  .bay-themed .bg-\[\#eef4ff\] { background-color: #1a2f5c; }
-  .bay-themed .bg-\[\#f6f8fc\], .bay-themed .bg-\[\#e6eefb\] { background-color: #0a1428; }
-  .bay-themed .bg-amber-50 { background-color: rgba(245, 158, 11, .16); }
-  .bay-themed .bg-slate-200 { background-color: #2a3b5e; }
-  .bay-themed .hover\:bg-\[\#f5f8ff\]:hover, .bay-themed .hover\:bg-slate-50:hover { background-color: #16264a; }
-  .bay-themed .border-\[\#eef2f7\], .bay-themed .border-\[\#e3eaf3\], .bay-themed.border-\[\#e3eaf3\], .bay-themed .divide-\[\#eef2f7\] > * + * { border-color: #22324f; }
-  .bay-themed .shadow-\[inset_0_0_0_1px_\#dce7f8\] { box-shadow: inset 0 0 0 1px #2a3d63; }
-  .bay-themed .bg-\[\#07152f\] { background-color: #1b2d55; }
-  .bay-themed .bay-sheet { box-shadow: 0 -18px 48px rgba(0, 0, 0, .5); }
-}

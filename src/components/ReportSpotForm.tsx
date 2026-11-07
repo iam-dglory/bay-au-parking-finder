@@ -143,7 +143,7 @@ export function ReportSpotForm({
           value={addressText}
           onChange={(e) => setAddressText(e.target.value)}
           placeholder="e.g. 483 George St"
-          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-surface px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
       </div>
 
@@ -209,7 +209,7 @@ export function ReportSpotForm({
                 setHasMaxStay(false)
               }}
               className={`rounded-xl border p-3 text-left text-sm transition ${
-                signType === opt.type ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/15' : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50'
+                signType === opt.type ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/15' : 'border-slate-200 bg-surface hover:border-blue-300 hover:bg-blue-50'
               }`}
             >
               <p className="font-medium">{opt.label}</p>
@@ -235,7 +235,7 @@ export function ReportSpotForm({
                 key={h}
                 onClick={() => setMaxStayHours(h)}
                 className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                  maxStayHours === h ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500'
+                  maxStayHours === h ? 'bg-night text-white' : 'bg-slate-100 text-slate-500'
                 }`}
               >
                 {formatMaxStay(h)}
@@ -286,7 +286,7 @@ export function ReportSpotForm({
                       key={d.value}
                       onClick={() => toggleDay(d.value)}
                       className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                        daysActive.includes(d.value) ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500'
+                        daysActive.includes(d.value) ? 'bg-night text-white' : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {d.label}
@@ -325,7 +325,7 @@ export function ReportSpotForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-surface px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
       </div>
 
@@ -341,7 +341,7 @@ export function ReportSpotForm({
       <button
         onClick={handleSubmit}
         disabled={!canSave || submitting}
-        className="w-full rounded-xl bg-slate-900 py-3 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full rounded-xl bg-night py-3 font-medium text-white transition hover:bg-night disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting ? 'Saving…' : 'Save parking sign'}
       </button>

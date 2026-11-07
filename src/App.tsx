@@ -182,7 +182,7 @@ export default function App() {
   if (locationStatus === 'detecting' || !location) {
     return (
       <>
-        <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#f6f8fc] text-center">
+        <div className="flex h-full flex-col items-center justify-center gap-4 bg-tint text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 shadow-xl shadow-blue-600/25"><MapPin className="h-7 w-7 animate-pulse text-white" strokeWidth={1.8} /></div>
           <div><p className="text-base font-semibold text-slate-900">Finding parking near you</p><p className="mt-1 text-sm text-slate-500">Allow location access for the fastest results</p></div>
           <button className="mt-3 text-sm font-semibold text-blue-600" onClick={() => { gpsEpoch.current++; setCurrentLocation(MELBOURNE_CBD) }}>Start in Melbourne CBD</button>
@@ -198,7 +198,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-[#f6f8fc]">
+    <div className="flex h-full flex-col bg-tint">
       <div className="min-h-0 flex-1">
         <Suspense fallback={<div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">Opening Bay…</div>}>
         {tab === 'home' && (
@@ -229,7 +229,7 @@ export default function App() {
         </Suspense>
       </div>
 
-      <nav aria-label="Main navigation" className="bay-themed mx-2 mb-1 flex shrink-0 border-t border-[#e3eaf3] bg-white/95 px-1 py-1.5 shadow-[0_-10px_24px_rgba(15,23,42,.05)] backdrop-blur sm:mx-5 sm:mb-3 sm:rounded-2xl sm:border">
+      <nav aria-label="Main navigation" className="mx-2 mb-1 flex shrink-0 border-t border-line glass px-1 py-1.5 sm:mx-5 sm:mb-3 sm:rounded-2xl sm:border">
         <button
           onClick={() => setTab('home')}
           className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${tab === 'home' ? 'bg-blue-50 text-blue-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}

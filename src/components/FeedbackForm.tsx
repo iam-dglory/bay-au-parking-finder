@@ -27,7 +27,7 @@ export function FeedbackForm({ pageContext, onClose }: { pageContext: string; on
     <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl"
+        className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-surface p-5 shadow-xl sm:rounded-2xl"
       >
         <div className="mb-4 flex items-start justify-between">
           <div>
@@ -44,7 +44,7 @@ export function FeedbackForm({ pageContext, onClose }: { pageContext: string; on
             <CircleCheck className="h-9 w-9 text-emerald-500" strokeWidth={1.75} />
             <p className="text-sm font-medium text-slate-800">Thanks, that's been sent.</p>
             <p className="text-xs text-slate-500">Your testing and feedback are what make this app better.</p>
-            <button onClick={onClose} className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+            <button onClick={onClose} className="mt-3 rounded-lg bg-night px-4 py-2 text-sm font-medium text-white hover:bg-night">
               Done
             </button>
           </div>
@@ -80,7 +80,7 @@ export function FeedbackForm({ pageContext, onClose }: { pageContext: string; on
             <button
               onClick={handleSubmit}
               disabled={!message.trim() || submitting}
-              className="w-full rounded-xl bg-slate-900 py-3 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+              className="w-full rounded-xl bg-night py-3 font-medium text-white transition hover:bg-night disabled:cursor-not-allowed disabled:opacity-40"
             >
               {submitting ? 'Sending…' : 'Send feedback'}
             </button>
