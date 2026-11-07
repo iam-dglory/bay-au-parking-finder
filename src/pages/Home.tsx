@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { BellRing, Bookmark, BriefcaseBusiness, CarFront, Check, ChevronDown, Clock3, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Ticket, X } from 'lucide-react'
+import { BellRing, Bookmark, BriefcaseBusiness, CarFront, Check, ChevronDown, Clock3, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Star, Ticket, X } from 'lucide-react'
 import { OptionSheet } from '../components/OptionSheet'
+import { SignMark } from '../components/BrandMark'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { isMelbourneSearch } from '../lib/melbourneSensors'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
@@ -11,6 +12,7 @@ import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
 import { endParking, useParkingSession } from '../lib/parkingTimer'
 import { VENUES, type Venue } from '../lib/venues'
+import { useFavourites, type FavouritePlace } from '../lib/favourites'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
 
@@ -22,6 +24,7 @@ const MIN_GOOD_OPTIONS = 3
 const MELBOURNE_CBD = { lat: -37.8136, lng: 144.9631, label: 'Melbourne CBD' }
 
 const DURATION_KEY = 'bay.stay-minutes.v1'
+const TIPS_KEY = 'bay.tips-seen.v1'
 function readDuration() {
   try { const v = Number(localStorage.getItem(DURATION_KEY)); return DURATIONS.includes(v) ? v : 120 } catch { return 120 }
 }
@@ -61,7 +64,10 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
   const { session: parked, minutesLeft } = useParkingSession()
   const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
-  const { spots, loading } = useNearbyParking(target, FAR_M)
+  const { spots, loading, updatedAt } = useNearbyParking(target, FAR_M)
+  const favourites = useFavourites()
+  const favIds = useMemo(() => new Set(favourites.map(f => f.id)), [favourites])
+  const [showTips, setShowTips] = useState(() => { try { return !localStorage.getItem(TIPS_KEY) } catch { return false } })
 
   useEffect(() => {
     if (!melbourne) return
@@ -174,9 +180,15 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
           {melbourne && <>
             {loading && !best && <SkeletonRows />}
             {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
-            {best && <BestCard option={best} duration={duration} at={arrival} later={later} onOpen={() => pick(best)} />}
-            {others.length > 0 && <ul className="mt-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} onClick={() => pick(o)} />)}</ul>}
-            {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} onClick={() => pick(o)} />)}</ul></Group>}
+            {showTips && best && <div className="mb-2 flex items-center gap-3 rounded-2xl bg-[#07152f] px-3.5 py-2.5 text-white">
+              <SignMark className="h-7 w-7 shrink-0" />
+              <p className="min-w-0 flex-1 text-[13px] leading-5">Pick how long you're staying. Bay finds the cheapest place that allows it.</p>
+              <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
+            </div>}
+            {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onOpen={() => pick(best)} />}
+            {others.length > 0 && <ul className="mt-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
+            {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
+            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-[#64748b]">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
           </>}
 
           {!melbourne && <div className="px-2 py-3">
@@ -187,15 +199,15 @@ export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, 
       </section>
     </div>
 
-    {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} onVenue={goToVenue}
+    {searchOpen && <SearchOverlay saved={favourites} onSaved={f => { setDestination({ lat: f.lat, lng: f.lng, label: f.name }); setSearchOpen(false) }} onClose={() => setSearchOpen(false)} onVenue={goToVenue}
       onPick={place => { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setSearchOpen(false) }} />}
     <OptionSheet key={selected?.id ?? 'none'} option={selected} durationMinutes={duration} arrival={arrival} later={later} onClose={() => setSelectedId(null)} />
   </main>
 }
 
-function OptionTitle({ option }: { option: ParkingOption }) {
+function OptionTitle({ option, starred }: { option: ParkingOption; starred?: boolean }) {
   const title = option.kind === 'carpark' ? option.name : splitStreet(option.name).title
-  return <span className="block truncate text-[15px] font-semibold text-[#0b1730]">{title}</span>
+  return <span className="flex items-center gap-1 text-[15px] font-semibold text-[#0b1730]"><span className="truncate">{title}</span>{starred && <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" aria-label="Saved" />}</span>
 }
 
 /** One plain line: "2 min walk · 2 hr max · 3 free now" or "Car park · 5 min walk". */
@@ -215,11 +227,11 @@ function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: 
   </span>
 }
 
-function BestCard({ option, duration, at, later, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; onOpen: () => void }) {
+function BestCard({ option, duration, at, later, starred, onOpen }: { option: ParkingOption; duration: number; at: Date; later: boolean; starred?: boolean; onOpen: () => void }) {
   const leave = option.limitMinutes != null && option.limitMinutes < duration ? option.limitMinutes : duration
   return <div className="rounded-[22px] bg-[#f5f8ff] shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)]">
     <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
-      <span className="min-w-0 flex-1"><OptionTitle option={option} /><Facts option={option} at={at} later={later} /></span>
+      <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
       <span className="shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
     </button>
     <div className="flex items-center gap-3 px-4 pb-3 pt-1">
@@ -230,12 +242,12 @@ function BestCard({ option, duration, at, later, onOpen }: { option: ParkingOpti
   </div>
 }
 
-function OptionRow({ option, at, later, onClick }: { option: ParkingOption; at: Date; later: boolean; onClick: () => void }) {
+function OptionRow({ option, at, later, starred, onClick }: { option: ParkingOption; at: Date; later: boolean; starred?: boolean; onClick: () => void }) {
   const price = option.fits === false ? null : priceText(option)
   return <li>
     <button onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left transition-colors hover:bg-[#f5f8ff]">
       <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${option.kind === 'carpark' ? 'bg-[#1769ff] text-white' : 'bg-[#eef4ff] text-[#1769ff]'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-[18px] w-[18px]" /> : <MapPin className="h-[18px] w-[18px]" />}</span>
-      <span className="min-w-0 flex-1"><OptionTitle option={option} /><Facts option={option} at={at} later={later} /></span>
+      <span className="min-w-0 flex-1"><OptionTitle option={option} starred={starred} /><Facts option={option} at={at} later={later} /></span>
       <span className="shrink-0 text-right text-base font-extrabold text-[#0b1730] tabular-nums">{price ?? <span className="text-sm font-semibold text-[#64748b]">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
     </button>
   </li>
@@ -275,7 +287,7 @@ function ParkingTimerBar({ name, lat, lng, leaveBy, minutesLeft, onEnd }: { name
   </div>
 }
 
-function SearchOverlay({ onPick, onVenue, onClose }: { onPick: (place: PlaceSearchResult) => void; onVenue: (venue: Venue) => void; onClose: () => void }) {
+function SearchOverlay({ saved, onSaved, onPick, onVenue, onClose }: { saved: FavouritePlace[]; onSaved: (f: FavouritePlace) => void; onPick: (place: PlaceSearchResult) => void; onVenue: (venue: Venue) => void; onClose: () => void }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<PlaceSearchResult[]>([])
   const [busy, setBusy] = useState(false)
@@ -298,6 +310,14 @@ function SearchOverlay({ onPick, onVenue, onClose }: { onPick: (place: PlaceSear
       {results.length > 0 && <ul className="mt-3">{results.map((place, i) => <li key={`${place.name}-${i}`}><button onClick={() => onPick(place)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]"><MapPin className="h-5 w-5 shrink-0 text-[#1769ff]" /><span className="min-w-0"><span className="block text-[15px] font-semibold text-[#0b1730]">{place.name}</span>{place.address && <span className="block truncate text-xs text-[#64748b]">{place.address}</span>}</span></button></li>)}</ul>}
       {searched && !busy && results.length === 0 && <p className="mt-3 px-2 text-sm text-[#40516d]">No places found. Try a street name or landmark.</p>}
       {!query && <>
+        {saved.length > 0 && <>
+          <p className="mt-5 px-2 text-xs font-semibold text-[#64748b]">Your saved spots</p>
+          <ul className="mt-1">{saved.slice(0, 6).map(f => <li key={f.id}><button onClick={() => onSaved(f)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-amber-50 text-amber-500"><Star className="h-5 w-5" fill="currentColor" /></span>
+            <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-[#0b1730]">{f.name}</span>
+            <ChevronRight className="h-5 w-5 text-[#64748b]" />
+          </button></li>)}</ul>
+        </>}
         <p className="mt-5 px-2 text-xs font-semibold text-[#64748b]">Going to an event?</p>
         <ul className="mt-1">{VENUES.map(v => <li key={v.id}><button onClick={() => onVenue(v)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#eef4ff] text-[#1769ff]"><Ticket className="h-5 w-5" /></span>
