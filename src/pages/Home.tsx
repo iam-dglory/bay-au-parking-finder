@@ -1,18 +1,12 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { BellRing, Bookmark, BriefcaseBusiness, CarFront, ChevronDown, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Ticket, X } from 'lucide-react'
-import { BrandMark } from '../components/BrandMark'
 import { OptionSheet } from '../components/OptionSheet'
-import { SpotDetailSheet } from '../components/SpotDetailSheet'
-import { ParkingAreaSheet } from '../components/ParkingAreaSheet'
 import { useNearbyParking } from '../lib/useNearbyParking'
-import { useNearbyCarParks } from '../lib/useNearbyCarParks'
 import { isMelbourneSearch } from '../lib/melbourneSensors'
-import { evaluateSpotStatus, rankSpots } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { formatCents, formatDurationShort, melbourneStart } from '../lib/parkingCost'
 import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, rankOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type StreetRatesFile } from '../lib/parkingOptions'
-import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
 import { endParking, useParkingSession } from '../lib/parkingTimer'
@@ -25,14 +19,15 @@ const DURATIONS = [30, 60, 120, 180, 240, 540]
 const NEAR_M = 400
 const FAR_M = 800
 const MIN_GOOD_OPTIONS = 3
+const MELBOURNE_CBD = { lat: -37.8136, lng: 144.9631, label: 'Melbourne CBD' }
 
 const durationLabel = (d: number) => d === 540 ? 'All day' : formatDurationShort(d)
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
 const priceText = (o: ParkingOption) => o.cents != null ? (o.cents === 0 ? 'Free' : formatCents(o.cents)) : o.range ? `${formatCents(o.range.min)}–${formatCents(o.range.max)}` : null
 
-export function Home({ center, myLocation, locationLabel, onChangeLocation, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
-  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onChangeLocation: () => void; onUseCurrentLocation: () => void
+export function Home({ center, myLocation, locationLabel, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
+  center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onUseCurrentLocation: () => void
   savedLocations: SavedLocations; onSavePlace: (kind: SavedPlaceKind) => void; onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
   const [duration, setDuration] = useState(120)
@@ -41,8 +36,6 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
   const [savedOpen, setSavedOpen] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [selectedSpot, setSelectedSpot] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
-  const [selectedArea, setSelectedArea] = useState<CarPark | null>(null)
   const [streetRates, setStreetRates] = useState<StreetRatesFile | null>(null)
   const [carParkRates, setCarParkRates] = useState<CarParkRatesFile | null>(null)
   const [rateError, setRateError] = useState(false)
@@ -54,7 +47,6 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
   const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
   const { spots, loading } = useNearbyParking(target, FAR_M)
-  const { carParks: mappedAreas } = useNearbyCarParks(target, NEAR_M, !melbourne)
 
   useEffect(() => {
     if (!melbourne) return
@@ -80,8 +72,6 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
   const best = fitting[0]
   const others = fitting.slice(1)
   const selected = allOptions.find(o => o.id === selectedId) ?? null
-  const otherCitySpots = useMemo(() => melbourne ? [] : rankSpots(spots, now).filter(s => s.distance_m <= NEAR_M), [melbourne, spots, now])
-  const selectedRow = selectedSpot ? spots.find(s => s.id === selectedSpot.id) : null
 
   function pick(option: ParkingOption) { setSelectedId(option.id); trackEvent('parking_result_view', { result_type: option.kind }) }
   function goToVenue(venue: Venue) {
@@ -100,8 +90,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
     <div className="relative min-h-0 flex-1">
       <Suspense fallback={<div className="h-full bg-[#eef4ff]" />}>
         <MapView center={target} myLocation={myLocation} zoom={radius === NEAR_M ? 17 : 16}
-          spots={otherCitySpots} onSelectSpot={setSelectedSpot}
-          carParks={melbourne ? [] : mappedAreas} onSelectCarPark={setSelectedArea}
+          spots={[]}
           options={options.filter(o => o.fits !== false)} selectedOptionId={selectedId} onSelectOption={pick} />
       </Suspense>
 
@@ -120,7 +109,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
               ? <button onClick={() => setDestination(null)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-[#64748b] hover:bg-[#f5f8ff]" aria-label="Back to near me"><X className="h-5 w-5" /></button>
               : <div className="relative">
                 <button onClick={() => setSavedOpen(v => !v)} className="flex h-11 w-11 items-center justify-center rounded-[16px] text-[#40516d] hover:bg-[#f5f8ff]" aria-label="Saved places" aria-expanded={savedOpen}><Bookmark className="h-5 w-5" /></button>
-                {savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onChangeArea={onChangeLocation} onClose={() => setSavedOpen(false)} />}
+                {savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onClose={() => setSavedOpen(false)} />}
               </div>}
           </div>
           {melbourne && <div className="mt-1 border-t border-[#eef2f7] px-1 pt-1.5">
@@ -147,7 +136,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
         <div className="flex items-end justify-between gap-3 px-5 pb-2 pt-2">
           <div className="min-w-0">
             <h2 className="text-lg font-bold tracking-tight text-[#0b1730] [text-wrap:balance]">{melbourne ? `Cheapest for ${duration === 540 ? 'the day' : durationLabel(duration)}` : 'Parking nearby'}</h2>
-            <p className="text-xs text-[#64748b]">{loading ? 'Finding parking…' : melbourne ? fitting.length === 0 ? 'Nothing nearby fits this stay' : `${fitting.length} place${fitting.length === 1 ? '' : 's'} within a ${walkMinutes(radius)} min walk` : 'Prices are available in central Melbourne'}</p>
+            <p className="text-xs text-[#64748b]">{loading ? 'Finding parking…' : melbourne ? fitting.length === 0 ? 'Nothing nearby fits this stay' : `${fitting.length} place${fitting.length === 1 ? '' : 's'} within a ${walkMinutes(radius)} min walk` : 'Outside Melbourne'}</p>
           </div>
           {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-[#1769ff] hover:bg-[#f5f8ff]">{expanded ? 'Less' : 'See all'}</button>}
         </div>
@@ -165,16 +154,17 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul></Group>}
           </>}
 
-          {!melbourne && <ul>{otherCitySpots.slice(0, expanded ? 50 : 5).map(s => <li key={s.id}><button onClick={() => setSelectedSpot(s)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left hover:bg-[#f5f8ff]"><MapPin className="h-5 w-5 text-[#1769ff]" /><span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#0b1730]">{s.address_text}</span><span className="text-xs tabular-nums text-[#64748b]">{walkMinutes(s.distance_m)} min</span></button></li>)}</ul>}
+          {!melbourne && <div className="px-2 py-3">
+            <p className="text-sm text-[#40516d]">Bay covers Melbourne for now. Search for a place in Melbourne, or jump to the CBD.</p>
+            <button onClick={() => setDestination(MELBOURNE_CBD)} className="mt-3 h-12 w-full rounded-[16px] bg-[#1769ff] text-sm font-bold text-white transition-transform active:scale-[0.98]">Show parking in Melbourne CBD</button>
+          </div>}
         </div>
       </section>
     </div>
 
-    {searchOpen && <SearchOverlay near={center} onClose={() => setSearchOpen(false)} onVenue={goToVenue}
+    {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} onVenue={goToVenue}
       onPick={place => { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setSearchOpen(false) }} />}
     <OptionSheet key={selected?.id ?? 'none'} option={selected} durationMinutes={duration} arrival={now} onClose={() => setSelectedId(null)} />
-    <SpotDetailSheet spot={selectedRow ? { ...selectedRow, status: evaluateSpotStatus(selectedRow.rules, selectedRow.lat, selectedRow.lng, now) } : null} onClose={() => setSelectedSpot(null)} />
-    <ParkingAreaSheet area={selectedArea} onClose={() => setSelectedArea(null)} />
   </main>
 }
 
@@ -254,7 +244,7 @@ function ParkingTimerBar({ name, leaveBy, minutesLeft, onEnd }: { name: string; 
   </div>
 }
 
-function SearchOverlay({ near, onPick, onVenue, onClose }: { near: { lat: number; lng: number }; onPick: (place: PlaceSearchResult) => void; onVenue: (venue: Venue) => void; onClose: () => void }) {
+function SearchOverlay({ onPick, onVenue, onClose }: { onPick: (place: PlaceSearchResult) => void; onVenue: (venue: Venue) => void; onClose: () => void }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<PlaceSearchResult[]>([])
   const [busy, setBusy] = useState(false)
@@ -263,14 +253,14 @@ function SearchOverlay({ near, onPick, onVenue, onClose }: { near: { lat: number
   async function run() {
     if (query.trim().length < 3) return
     const id = ++request.current; setBusy(true)
-    const found = await searchPlaces(query, near).catch(() => [])
+    const found = await searchPlaces(query).catch(() => [])
     if (id === request.current) { setResults(found); setBusy(false); setSearched(true) }
   }
   return <div className="fixed inset-0 z-[1100] overflow-y-auto bg-white px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
     <div className="mx-auto max-w-xl">
       <form onSubmit={e => { e.preventDefault(); void run() }} className="flex items-center gap-2 rounded-[20px] bg-[#f5f8ff] pl-3.5 pr-1.5 shadow-[inset_0_0_0_1px_#dce7f8] focus-within:shadow-[inset_0_0_0_2px_#1769ff]">
         <Search className="h-5 w-5 shrink-0 text-[#1769ff]" />
-        <input autoFocus enterKeyHint="search" value={query} onChange={e => { request.current++; setQuery(e.target.value); setSearched(false) }} placeholder="Where are you going?" aria-label="Where are you going?" className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-[#0b1730] outline-none focus:outline-none focus-visible:outline-none placeholder:text-[#64748b]" />
+        <input autoFocus enterKeyHint="search" value={query} onChange={e => { request.current++; setQuery(e.target.value); setSearched(false) }} placeholder="Where in Melbourne?" aria-label="Where are you going?" className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-[#0b1730] outline-none focus:outline-none focus-visible:outline-none placeholder:text-[#64748b]" />
         <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-[14px] text-[#64748b]" aria-label="Close"><X className="h-5 w-5" /></button>
       </form>
       {query.trim().length >= 3 && <button onClick={() => void run()} disabled={busy} className="mt-2 h-12 w-full rounded-[18px] bg-[#1769ff] text-sm font-bold text-white transition-transform active:scale-[0.99] disabled:opacity-60">{busy ? 'Searching…' : `Search “${query.trim()}”`}</button>}
@@ -288,7 +278,7 @@ function SearchOverlay({ near, onPick, onVenue, onClose }: { near: { lat: number
   </div>
 }
 
-function SavedMenu({ saved, onSave, onSelect, onChangeArea, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onChangeArea: () => void; onClose: () => void }) {
+function SavedMenu({ saved, onSave, onSelect, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onClose: () => void }) {
   const act = (fn: () => void) => { fn(); onClose() }
   const item = 'flex min-h-11 w-full items-center gap-2.5 rounded-[14px] px-3 text-left text-sm font-semibold text-[#0b1730] hover:bg-[#f5f8ff]'
   return <div className="absolute right-0 top-12 z-[700] w-60 rounded-[20px] bg-white p-1.5 shadow-[0_1px_2px_rgba(15,23,42,.08),0_16px_40px_rgba(15,23,42,.18)]">
@@ -296,6 +286,5 @@ function SavedMenu({ saved, onSave, onSelect, onChangeArea, onClose }: { saved: 
     {saved.work && <button onClick={() => act(() => onSelect('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Work</button>}
     <button onClick={() => act(() => onSave('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#64748b]" />Save this as home</button>
     <button onClick={() => act(() => onSave('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#64748b]" />Save this as work</button>
-    <button onClick={() => act(onChangeArea)} className={item}><span className="flex h-4 w-4 items-center"><BrandMark className="w-4" /></span>Change city</button>
   </div>
 }

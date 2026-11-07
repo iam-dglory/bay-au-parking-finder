@@ -3,12 +3,8 @@ import { supabase } from './supabaseClient'
 import { logSearchEvent } from './searchEvents'
 import { loadNearbyPages } from './nearbyPages'
 import type { ParkingSpot } from '../types'
-import { catalogSpot } from './indiaParking'
-import { regionalNearby, mergeMappedBays } from './regionalParking'
+import { catalogSpot, regionalNearby, mergeMappedBays } from './regionalParking'
 import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from './melbourneSensors'
-import { isUSSearch } from './usaParking'
-import { isIndiaSearch } from './indiaParking'
-import { isAustraliaSearch } from './nationalParking'
 import { applyBayZoneRules, loadBayZoneRules } from './melbourneZoneRules'
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
@@ -26,10 +22,9 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     setError(null)
     try {
       const remoteDeadline = AbortSignal.timeout(15000)
-      // Melbourne sits inside the Australia box, but its council bays, rules and
-      // sensors live in Supabase; only the rest of Australia is catalog-only.
-      const regionalOnly = isUSSearch(lat, lng) || isIndiaSearch(lat, lng) || (isAustraliaSearch(lat, lng) && !isMelbourneSearch(lat, lng))
-      const [remote, local, council] = await Promise.allSettled([regionalOnly ? Promise.resolve([] as ParkingSpot[]) : loadNearbyPages<ParkingSpot>(async (offset) => {
+      // Bay covers Melbourne only: council bays, rules and sensors live in Supabase.
+      if (!isMelbourneSearch(lat, lng)) { setSpots([]); setUpdatedAt(new Date()); return }
+      const [remote, local, council] = await Promise.allSettled([loadNearbyPages<ParkingSpot>(async (offset) => {
         const { data, error: rpcError, count } = await supabase
           .rpc('nearby_parking', { p_lat: lat, p_lng: lng, p_radius_m: radiusM }, { count: 'exact' })
           .order('distance_m').order('id').range(offset, offset + 999).abortSignal(remoteDeadline)
@@ -39,7 +34,7 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
       if (remote.status === 'rejected' && local.status === 'rejected' && council.status === 'rejected') throw remote.reason
       let rows = mergeMappedBays(remote.status === 'fulfilled' ? remote.value : [],local.status === 'fulfilled' ? local.value.filter(row=>row.kind==='bay').map(catalogSpot) : [])
       if (request !== sequence.current) return
-      if (isMelbourneSearch(lat,lng)) {
+      {
         // Legacy coordinate matches from the database must not colour another bay.
         rows = rows.map(row => ({...row, sensor_status: row.sensor_status?.match_method === 'kerbside_id' ? row.sensor_status : null}))
         if (council.status === 'fulfilled') rows = mergeMelbourneSensors(rows, council.value, {lat,lng}, new Date().toISOString())

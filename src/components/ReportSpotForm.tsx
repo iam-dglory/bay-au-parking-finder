@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { X, Camera as CameraIcon, RotateCcw } from 'lucide-react'
 import type { SignType } from '../types'
-import { getSignOptionsForCountry, hasLocalPreset, getDefaultCurrency } from '../lib/countrySignPresets'
-import { CURRENCY_OPTIONS } from '../types'
+import { SIGN_OPTIONS, CURRENCY } from '../lib/signPresets'
 import { captureSignPhoto, type CapturedPhoto } from '../lib/photos'
 
 const DAYS: { value: number; label: string }[] = [
@@ -35,7 +34,6 @@ export interface ReportSpotFormValue {
   photo: CapturedPhoto
 }
 
-const KNOWN_COUNTRIES = ['Australia', 'India', 'United States', 'United Kingdom']
 const ALWAYS_FREE_TYPES: SignType[] = ['FREE_UNLIMITED', 'INFORMAL_TOLERATED']
 
 function formatMaxStay(hours: number) {
@@ -51,13 +49,9 @@ function summarizeRule(rule: RuleInput, label: string) {
 }
 
 export function ReportSpotForm({
-  country,
-  onCountryChange,
   onSubmit,
   submitting,
 }: {
-  country: string | null
-  onCountryChange: (country: string) => void
   onSubmit: (value: ReportSpotFormValue) => void
   submitting: boolean
 }) {
@@ -69,7 +63,7 @@ export function ReportSpotForm({
   const [timeFrom, setTimeFrom] = useState('08:30')
   const [timeTo, setTimeTo] = useState('18:00')
   const [pricePerHour, setPricePerHour] = useState(5)
-  const [currency, setCurrency] = useState(() => getDefaultCurrency(country))
+  const currency = CURRENCY
   const [allDay, setAllDay] = useState(false)
   const [notes, setNotes] = useState('')
   const [savedRules, setSavedRules] = useState<RuleInput[]>([])
@@ -83,11 +77,7 @@ export function ReportSpotForm({
     setCapturingPhoto(false)
   }
 
-  useEffect(() => {
-    setCurrency(getDefaultCurrency(country))
-  }, [country])
-
-  const signOptions = getSignOptionsForCountry(country)
+  const signOptions = SIGN_OPTIONS
   const isAlwaysFree = signType ? ALWAYS_FREE_TYPES.includes(signType) : false
   const needsTimeWindow = signType && !isAlwaysFree
   const maxStayRequired = signType === 'TIME_LIMITED'
@@ -155,27 +145,6 @@ export function ReportSpotForm({
           placeholder="e.g. 483 George St"
           className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         />
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-slate-700">Country</label>
-        <input
-          list="known-countries"
-          value={country ?? ''}
-          onChange={(e) => onCountryChange(e.target.value)}
-          placeholder="Detecting from map pin…"
-          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-        />
-        <datalist id="known-countries">
-          {KNOWN_COUNTRIES.map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
-        <p className="mt-1 text-xs text-slate-400">
-          {hasLocalPreset(country)
-            ? `Showing sign types that match how parking is usually signed in ${country}.`
-            : "Showing a generic set. This country doesn't have a tailored list yet, but reporting still works fine."}
-        </p>
       </div>
 
       <div>
@@ -287,20 +256,6 @@ export function ReportSpotForm({
 
       {needsPrice && (
         <div className="flex gap-3">
-          <div>
-            <label className="text-sm font-medium text-slate-700">Currency</label>
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className="mt-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
-            >
-              {CURRENCY_OPTIONS.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
           <div>
             <label className="text-sm font-medium text-slate-700">Price per hour</label>
             <input

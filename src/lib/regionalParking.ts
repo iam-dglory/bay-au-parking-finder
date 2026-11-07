@@ -1,10 +1,16 @@
 import type { CarPark, ParkingSpot } from '../types'
 import { haversineMeters } from './distance'
-import { indiaNearby, nearbyCatalog } from './indiaParking'
-import { isAustraliaSearch, nationalNearby } from './nationalParking'
 import { isMelbourneSearch } from './melbourneSensors'
-import { usaNearby } from './usaParking'
 import { publicAssetUrl } from './publicAssets'
+
+export function nearbyCatalog(records: CarPark[], lat: number, lng: number, radius: number) {
+  return records.filter(row => !row.parent_area_id).map(row => ({ ...row, distance_m: haversineMeters({ lat, lng }, row) }))
+    .filter(row => row.distance_m <= radius).sort((a,b) => a.distance_m-b.distance_m)
+}
+/** A mapped Melbourne bay from the static catalog, shown alongside council bays. */
+export function catalogSpot(row: CarPark): ParkingSpot {
+  return { ...row, country: row.country ?? 'AU', state: null, created_by: 'catalog', photo_url: null, moderation_status: 'approved', kerbside_id: null, rules: [], latest_ping: null, sensor_status: null, catalog: row }
+}
 
 interface TileIndex { tile_size: number; tiles: string[] }
 let index: Promise<TileIndex> | undefined
@@ -15,10 +21,8 @@ async function json<T>(path: string): Promise<T> {
   return response.json() as Promise<T>
 }
 export async function regionalNearby(lat: number, lng: number, radius: number): Promise<CarPark[]> {
-  if (!isMelbourneSearch(lat,lng)) {
-    if (isAustraliaSearch(lat,lng)) return nationalNearby('australia',lat,lng,radius)
-    return (await indiaNearby(lat,lng,radius)).concat(await usaNearby(lat,lng,radius))
-  }
+  // Bay covers Melbourne only.
+  if (!isMelbourneSearch(lat,lng)) return []
   index ??= json<TileIndex>('melbourne/index.json').catch(error => { index = undefined; throw error })
   const meta = await index
   const latDelta = radius / 111000, lngDelta = radius / (111000 * Math.cos(lat * Math.PI / 180))
