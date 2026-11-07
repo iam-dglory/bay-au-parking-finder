@@ -1,148 +1,177 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Bookmark, BriefcaseBusiness, CarFront, ChevronRight, CircleHelp, HomeIcon, List, LocateFixed, Map as MapIcon, MapPin, Navigation, Search, SlidersHorizontal, X } from 'lucide-react'
-import { coverageRadiusForZoom, zoomForRadius } from '../lib/mapZoom'
-import { SpotCard } from '../components/SpotCard'
-import { ParkingAreaDetails } from '../components/ParkingAreaDetails'
-import { ParkingAreaSheet } from '../components/ParkingAreaSheet'
-import { isIndiaSearch } from '../lib/indiaParking'
-import { isUSSearch } from '../lib/usaParking'
-import { SpotDetailSheet } from '../components/SpotDetailSheet'
-import { FilterBar } from '../components/FilterBar'
+import { Bookmark, BriefcaseBusiness, CarFront, ChevronDown, ChevronUp, HomeIcon, LocateFixed, MapPin, Radio, Search, X } from 'lucide-react'
 import { BrandMark } from '../components/BrandMark'
+import { OptionSheet } from '../components/OptionSheet'
+import { SpotDetailSheet } from '../components/SpotDetailSheet'
+import { ParkingAreaSheet } from '../components/ParkingAreaSheet'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { useNearbyCarParks } from '../lib/useNearbyCarParks'
-import { rankSpots, evaluateSpotStatus } from '../lib/parkingStatus'
+import { isMelbourneSearch } from '../lib/melbourneSensors'
+import { evaluateSpotStatus, rankSpots } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
-import { availability } from '../lib/availability'
-import type { CarPark, ParkingSpot, SpotStatus, SignType } from '../types'
+import { formatCents, formatDurationShort, melbourneStart } from '../lib/parkingCost'
+import { carParkOptions, loadCarParkRates, loadStreetRates, rankOptions, shortStreetName, streetOptions, type CarParkRatesFile, type ParkingOption, type StreetRatesFile } from '../lib/parkingOptions'
+import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
-import { useSignPhoto } from '../lib/useSignPhoto'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
-const RADII = [{ label: '500 m', value: 500 }, { label: '1 km', value: 1000 }, { label: '2 km', value: 2000 }, { label: '5 km', value: 5000 }]
+
+const DURATIONS = [30, 60, 120, 180, 240, 540]
+const WALKS = [{ label: '5 min walk', metres: 400, zoom: 17 }, { label: '10 min walk', metres: 800, zoom: 16 }]
 
 export function Home({ center, myLocation, locationLabel, onChangeLocation, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
   center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; locationLabel: string; onChangeLocation: () => void; onUseCurrentLocation: () => void
   savedLocations: SavedLocations; onSavePlace: (kind: SavedPlaceKind) => void; onSelectSavedPlace: (kind: SavedPlaceKind) => void
 }) {
-  const [radiusM, setRadiusM] = useState(500)
-  const [vacantOnly, setVacantOnly] = useState(false)
-  const [freeOnly, setFreeOnly] = useState(false)
-  const [category, setCategory] = useState<SignType | 'all'>('all')
-  const [showCarParks, setShowCarParks] = useState(true)
-  const [view, setView] = useState<'map' | 'list'>('map')
-  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [duration, setDuration] = useState(120)
+  const [walk, setWalk] = useState(WALKS[0])
+  const [destination, setDestination] = useState<{ lat: number; lng: number; label: string } | null>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [savedOpen, setSavedOpen] = useState(false)
-  const [infoOpen, setInfoOpen] = useState(false)
+  const [listOpen, setListOpen] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [selectedSpot, setSelectedSpot] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
   const [selectedArea, setSelectedArea] = useState<CarPark | null>(null)
-  const [destination, setDestination] = useState<{ lat: number; lng: number; label: string } | null>(null)
-  const [showDestSearch, setShowDestSearch] = useState(false)
-  const [destQuery, setDestQuery] = useState('')
-  const [destResults, setDestResults] = useState<PlaceSearchResult[]>([])
-  const [destSearching, setDestSearching] = useState(false)
-  const [showDestSuggestions, setShowDestSuggestions] = useState(false)
-  const [coverageRadiusM, setCoverageRadiusM] = useState(500)
-  const destBoxRef = useRef<HTMLDivElement>(null)
-  const destRequest = useRef(0)
-  const effectiveCenter = destination ?? center
-  const dataRadiusM = Math.max(radiusM, coverageRadiusM)
+  const [streetRates, setStreetRates] = useState<StreetRatesFile | null>(null)
+  const [carParkRates, setCarParkRates] = useState<CarParkRatesFile | null>(null)
+  const [rateError, setRateError] = useState(false)
+
+  const target = destination ?? center
+  const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
-  const { spots, loading, updatedAt, refresh } = useNearbyParking(effectiveCenter, dataRadiusM)
-  const { carParks, loading: areasLoading, refresh: refreshAreas } = useNearbyCarParks(effectiveCenter, dataRadiusM, showCarParks && !vacantOnly)
-  const usa = isUSSearch(effectiveCenter.lat, effectiveCenter.lng)
-  const india = isIndiaSearch(effectiveCenter.lat, effectiveCenter.lng)
+  const { spots, loading } = useNearbyParking(target, walk.metres)
+  const { carParks: mappedAreas } = useNearbyCarParks(target, walk.metres, !melbourne)
 
-  useEffect(() => { if (usa) { setVacantOnly(false); setFreeOnly(false); setCategory('all') } }, [usa])
-  useEffect(() => { setSelectedSpot(null); setSelectedArea(null) }, [effectiveCenter.lat, effectiveCenter.lng, radiusM])
-  useEffect(() => { const close = (e: MouseEvent) => { if (destBoxRef.current && !destBoxRef.current.contains(e.target as Node)) setShowDestSuggestions(false) }; document.addEventListener('mousedown', close); return () => document.removeEventListener('mousedown', close) }, [])
+  useEffect(() => {
+    if (!melbourne) return
+    Promise.all([loadStreetRates(), loadCarParkRates()])
+      .then(([s, c]) => { setStreetRates(s); setCarParkRates(c); setRateError(false) })
+      .catch(() => setRateError(true))
+  }, [melbourne])
+  useEffect(() => { setSelectedId(null) }, [target.lat, target.lng])
 
-  const ranked = useMemo(() => {
-    let list = rankSpots(spots, now)
-    if (vacantOnly) list = list.filter(s => availability(s, now).state === 'vacant')
-    if (freeOnly) list = list.filter(s => s.status.status === 'free')
-    if (category !== 'all') list = list.filter(s => s.rules.some(r => r.sign_type === category))
-    return list
-  }, [spots, now, vacantOnly, freeOnly, category])
+  const start = useMemo(() => melbourneStart(now), [now])
+  const options = useMemo(() => melbourne
+    ? rankOptions([...streetOptions(spots, streetRates, start, duration, now), ...carParkOptions(carParkRates, target, walk.metres, start, duration, now)])
+    : [], [melbourne, spots, streetRates, carParkRates, start, duration, now, target, walk.metres])
+  const selected = options.find(o => o.id === selectedId) ?? null
+  const cheapest = options.find(o => o.fits !== false && o.cents != null)
+  const otherCitySpots = useMemo(() => melbourne ? [] : rankSpots(spots, now), [melbourne, spots, now])
   const selectedRow = selectedSpot ? spots.find(s => s.id === selectedSpot.id) : null
-  const selected = selectedRow ? { ...selectedRow, status: evaluateSpotStatus(selectedRow.rules, selectedRow.lat, selectedRow.lng, now) } : null
-  const total = ranked.length + carParks.length
-  const availabilitySummary = useMemo(() => ranked.reduce((summary, spot) => { summary[availability(spot, now).state] += 1; return summary }, { vacant: 0, occupied: 0, uncertain: 0, unknown: 0 }), [ranked, now])
 
-  async function searchDestination() {
-    if (destQuery.trim().length < 3) return
-    const request = ++destRequest.current; setDestSearching(true)
-    const found = await searchPlaces(destQuery, center)
-    if (request === destRequest.current) { setDestResults(found); setDestSearching(false); setShowDestSuggestions(true) }
-  }
-  function selectDestination(place: PlaceSearchResult) { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setDestQuery(''); setDestResults([]); setShowDestSuggestions(false); setShowDestSearch(false) }
-  function clearDestination() { setDestination(null); setDestQuery(''); setDestResults([]) }
-  const resetRefresh = () => { refresh(); refreshAreas() }
-  const filterCount = Number(vacantOnly) + Number(freeOnly) + Number(category !== 'all') + Number(!showCarParks)
+  function pick(option: ParkingOption) { setSelectedId(option.id); trackEvent('parking_result_view', { result_type: option.kind }) }
 
-  const previewArea = carParks[0] ?? null
-  const previewSpot = previewArea ? null : ranked[0] ?? null
-  const openNearestDetails = () => {
-    if (previewArea) setSelectedArea(previewArea)
-    else if (previewSpot) setSelectedSpot(previewSpot)
-  }
-
-  return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[#f7faff]">
+  return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-white">
     <div className="relative min-h-0 flex-1">
-      {view === 'map' ? <Suspense fallback={<MapLoading />}><MapView center={effectiveCenter} myLocation={myLocation} spots={ranked} carParks={carParks} onSelectSpot={setSelectedSpot} onSelectCarPark={setSelectedArea} onZoomChange={(zoom) => setCoverageRadiusM(coverageRadiusForZoom(zoom))} zoom={zoomForRadius(radiusM)} glowMe radiusM={radiusM} /></Suspense> : <ParkingList loading={loading || areasLoading} ranked={ranked} areas={carParks} usa={usa} vacantOnly={vacantOnly} filtered={freeOnly || category !== 'all'} onSpot={setSelectedSpot} onArea={setSelectedArea} />}
+      <Suspense fallback={<div className="h-full bg-[#eef4ff]" />}>
+        <MapView center={target} myLocation={myLocation} zoom={walk.zoom}
+          spots={otherCitySpots} onSelectSpot={setSelectedSpot}
+          carParks={melbourne ? [] : mappedAreas} onSelectCarPark={setSelectedArea}
+          options={options} selectedOptionId={selectedId} onSelectOption={pick} />
+      </Suspense>
 
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] sm:px-4">
-        <div className="pointer-events-auto mx-auto max-w-3xl">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))]">
+        <div className="pointer-events-auto mx-auto max-w-xl space-y-2">
           <div className="flex items-center gap-2">
-            <button onClick={onChangeLocation} className="rounded-2xl bg-white/95 px-2.5 py-2 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur transition hover:bg-white" aria-label="Choose a parking location"><BrandMark className="w-[88px]" /></button>
-            <div className="ml-auto flex rounded-2xl border border-white/80 bg-white/95 p-1 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur">
-              <button onClick={() => setView('map')} className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-sm font-bold transition ${view === 'map' ? 'bg-[#1769ff] text-white shadow-lg shadow-blue-500/25' : 'text-[#64748b]'}`}><MapIcon className="h-4 w-4" />Map</button>
-              <button onClick={() => setView('list')} className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-sm font-bold transition ${view === 'list' ? 'bg-[#1769ff] text-white shadow-lg shadow-blue-500/25' : 'text-[#64748b]'}`}><List className="h-4 w-4" />List</button>
+            <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-2.5 rounded-2xl bg-white px-3.5 text-left shadow-[0_8px_24px_rgba(15,23,42,.12)]" aria-label="Search a destination">
+              <Search className="h-5 w-5 shrink-0 text-[#1769ff]" />
+              <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-[#0b1730]">{destination ? destination.label : locationLabel}</span>
+              {destination && <span role="button" tabIndex={0} aria-label="Clear destination" onClick={e => { e.stopPropagation(); setDestination(null) }} onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); setDestination(null) } }} className="rounded-lg p-1 text-[#64748b]"><X className="h-4 w-4" /></span>}
+            </button>
+            <button onClick={() => { setDestination(null); onUseCurrentLocation() }} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#1769ff] shadow-[0_8px_24px_rgba(15,23,42,.12)]" aria-label="Use my location"><LocateFixed className="h-5 w-5" /></button>
+            <div className="relative">
+              <button onClick={() => setSavedOpen(v => !v)} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#40516d] shadow-[0_8px_24px_rgba(15,23,42,.12)]" aria-label="Saved places"><Bookmark className="h-5 w-5" /></button>
+              {savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onChangeArea={onChangeLocation} onClose={() => setSavedOpen(false)} />}
             </div>
-            <button onClick={() => { clearDestination(); onUseCurrentLocation() }} className="bay-icon-button !h-11 !w-11 !rounded-2xl !border-white/80 !bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur" aria-label="Use my current location" title="Use my current location"><LocateFixed className="h-5 w-5" /></button>
-            <div className="relative"><button onClick={() => setSavedOpen(v => !v)} className="bay-icon-button !h-11 !w-11 !rounded-2xl !border-white/80 !bg-white/95 shadow-[0_10px_28px_rgba(15,23,42,.12)] backdrop-blur" aria-label="Saved locations"><Bookmark className="h-5 w-5" /></button>{savedOpen && <SavedMenu saved={savedLocations} onSave={onSavePlace} onSelect={onSelectSavedPlace} onClose={() => setSavedOpen(false)} />}</div>
           </div>
-
-          <div className="mt-3 rounded-[26px] border border-white/85 bg-white/95 p-2 shadow-[0_14px_30px_rgba(15,23,42,.12)] backdrop-blur">
-            <button onClick={() => setShowDestSearch(true)} className="flex w-full items-center gap-3 rounded-[20px] px-3 py-3 text-left transition hover:bg-[#f5f8fd]" aria-label="Search another destination"><Search className="h-5 w-5 shrink-0 text-[#40516d]" /><span className="min-w-0 flex-1 truncate text-base font-bold text-[#0b1730]">{destination ? `Near ${destination.label}` : locationLabel}</span>{destination ? <span onClick={event => { event.stopPropagation(); clearDestination() }} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); clearDestination() } }} className="rounded-xl p-1 text-[#64748b] hover:bg-white" aria-label="Clear destination"><X className="h-5 w-5" /></span> : <ChevronRight className="h-5 w-5 text-[#94a3b8]" />}</button>
-          </div>
-          {showDestSearch && <div ref={destBoxRef} className="relative mt-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-xl backdrop-blur"><div className="flex items-center gap-2"><Search className="ml-2 h-4 w-4 shrink-0 text-[#64748b]" /><input autoFocus value={destQuery} onChange={e => { destRequest.current++; setDestQuery(e.target.value); setDestResults([]); setShowDestSuggestions(true) }} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void searchDestination() } }} className="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-slate-400" placeholder="Search a destination" /><button onClick={() => void searchDestination()} disabled={destSearching || destQuery.trim().length < 3} className="rounded-xl bg-[#1769ff] px-3 py-2 text-xs font-bold text-white disabled:opacity-50">{destSearching ? 'Searching' : 'Search'}</button><button onClick={() => setShowDestSearch(false)} className="p-2 text-slate-400"><X className="h-4 w-4" /></button></div>{showDestSuggestions && destQuery.trim() && <div className="mt-1 max-h-48 overflow-y-auto border-t border-[#e3eaf3] pt-1">{!destSearching && destResults.length === 0 && <p className="px-3 py-3 text-sm text-[#64748b]">Press Search to find a destination.</p>}{destResults.map((place, index) => <button key={`${place.name}-${index}`} onClick={() => selectDestination(place)} className="block w-full rounded-xl px-3 py-2.5 text-left hover:bg-blue-50"><span className="block text-sm font-semibold text-[#0b1730]">{place.name}</span>{place.address && <span className="block truncate text-xs text-[#64748b]">{place.address}</span>}</button>)}</div>}</div>}
-
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">{RADII.map(option => <button key={option.value} onClick={() => setRadiusM(option.value)} className={`shrink-0 rounded-2xl border border-white/90 px-4 py-3 text-sm font-bold shadow-[0_8px_20px_rgba(15,23,42,.10)] backdrop-blur transition ${radiusM === option.value ? 'bg-[#1769ff] text-white shadow-blue-500/25' : 'bg-white/95 text-[#40516d]'}`}>{option.label}</button>)}<button onClick={() => setShowCarParks(value => !value)} className={`flex shrink-0 items-center gap-2 rounded-2xl border border-white/90 px-4 py-3 text-sm font-bold shadow-[0_8px_20px_rgba(15,23,42,.10)] backdrop-blur transition ${showCarParks ? 'bg-white/95 text-[#0b1730]' : 'bg-white/80 text-[#94a3b8]'}`}><CarFront className="h-4.5 w-4.5" />Parking areas</button><button onClick={() => setFiltersOpen(true)} className="relative flex shrink-0 items-center justify-center rounded-2xl border border-white/90 bg-white/95 p-3 text-[#40516d] shadow-[0_8px_20px_rgba(15,23,42,.10)] backdrop-blur" aria-label="Open filters"><SlidersHorizontal className="h-5 w-5" />{filterCount > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#1769ff] ring-2 ring-white" />}</button></div>
+          {melbourne && <div className="rounded-2xl bg-white p-1.5 shadow-[0_8px_24px_rgba(15,23,42,.12)]">
+            <p className="px-2 pt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#64748b]">How long are you staying?</p>
+            <div className="mt-1 flex gap-1 overflow-x-auto [scrollbar-width:none]" role="radiogroup" aria-label="Length of stay">
+              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} onClick={() => setDuration(d)} className={`shrink-0 rounded-xl px-3.5 py-2 text-sm font-bold transition ${duration === d ? 'bg-[#1769ff] text-white' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>{d === 540 ? 'All day' : formatDurationShort(d)}</button>)}
+            </div>
+          </div>}
         </div>
       </header>
 
-      {view === 'map' && <div className="absolute inset-x-3 bottom-3 z-[450] mx-auto max-w-lg space-y-2 sm:bottom-4">
-        {(previewArea || previewSpot) && <button onClick={openNearestDetails} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[20px] bg-[#1769ff] px-4 py-3 text-sm font-bold text-white shadow-[0_14px_30px_rgba(23,105,255,.30)] transition hover:bg-blue-700"><MapPin className="h-4.5 w-4.5" />View nearest parking details</button>}
-        <button onClick={() => setView('list')} className="flex w-full items-center gap-3 rounded-[24px] border border-white/85 bg-white/95 p-2.5 text-left shadow-[0_14px_30px_rgba(15,23,42,.14)] backdrop-blur transition hover:bg-white">
-          <ResultThumb area={previewArea} spot={previewSpot} />
-          <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0b1730]">{loading || areasLoading ? 'Updating nearby places…' : `${total.toLocaleString()} nearby places`}</span><span className="mt-0.5 block truncate text-xs text-[#64748b]">{showCarParks && carParks.length ? `${carParks.length} parking areas · ` : ''}{usa || india || availabilitySummary.vacant + availabilitySummary.occupied === 0 ? 'availability on arrival' : `${availabilitySummary.vacant} fresh vacant · ${availabilitySummary.occupied} occupied`}</span></span><ChevronRight className="h-5 w-5 shrink-0 text-[#40516d]" />
+      <section className={`absolute inset-x-0 bottom-0 z-[450] mx-auto max-w-xl rounded-t-[28px] bg-white shadow-[0_-12px_36px_rgba(15,23,42,.14)] transition-[max-height] ${listOpen ? 'max-h-[72%]' : 'max-h-[46%]'} flex flex-col`}>
+        <button onClick={() => setListOpen(v => !v)} className="flex w-full items-center gap-2 px-5 pb-2 pt-3 text-left" aria-expanded={listOpen}>
+          <span className="min-w-0 flex-1">
+            <span className="block text-base font-bold text-[#0b1730]">{melbourne ? `Cheapest for ${duration === 540 ? 'the day' : formatDurationShort(duration)}` : 'Parking nearby'}</span>
+            <span className="block text-xs text-[#64748b]">{loading ? 'Updating…' : melbourne ? `${options.length} options within a ${walk.label}${cheapest ? ` · from ${formatCents(cheapest.cents!)}` : ''}` : `${otherCitySpots.length + mappedAreas.length} mapped places · prices are available in central Melbourne`}</span>
+          </span>
+          {listOpen ? <ChevronDown className="h-5 w-5 text-[#64748b]" /> : <ChevronUp className="h-5 w-5 text-[#64748b]" />}
         </button>
-        {(previewArea || previewSpot) && <button onClick={() => previewArea ? setSelectedArea(previewArea) : previewSpot && setSelectedSpot(previewSpot)} className="flex w-full items-center gap-3 rounded-[24px] border border-white/85 bg-white/95 p-2.5 text-left shadow-[0_14px_30px_rgba(15,23,42,.14)] backdrop-blur transition hover:bg-white"><ResultThumb area={previewArea} spot={previewSpot} large /><span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-bold uppercase tracking-[.12em] text-[#1769ff]">{previewArea ? 'Parking area' : 'Parking spot'}</span><span className="mt-1 block truncate text-base font-bold text-[#0b1730]">{previewArea?.address_text ?? previewSpot?.address_text}</span><span className="mt-1 flex items-center gap-1 text-xs text-[#64748b]"><Navigation className="h-3.5 w-3.5" />{Math.round(previewArea?.distance_m ?? previewSpot?.distance_m ?? 0)} m away</span></span><ChevronRight className="h-5 w-5 shrink-0 text-[#1769ff]" /></button>}
-        <div className="absolute -right-0 -top-14"><button onClick={() => setInfoOpen(v => !v)} className="bay-icon-button !h-11 !w-11 !rounded-2xl !border-white/90 !bg-white/95 shadow-lg backdrop-blur" aria-label="About map data"><CircleHelp className="h-5 w-5" /></button>{infoOpen && <div className="absolute bottom-14 right-0 w-[min(330px,calc(100vw-24px))] rounded-2xl border border-[#e3eaf3] bg-white p-3 text-xs leading-5 text-[#64748b] shadow-xl"><button onClick={resetRefresh} className="float-right ml-2 font-bold text-[#1769ff]">Refresh</button><p className="font-bold text-[#0b1730]">Map data</p><p className="mt-1">{usa ? 'Mapped street parking and parking areas. Check street signs and meters on arrival.' : india ? 'Mapped parking areas and source-listed terms. Live vacancy appears only where a current provider publishes it.' : 'Availability is only shown where a connected source provides a fresh reading. Physical signs control parking.'}</p>{updatedAt && <p className="mt-1 text-[11px]">Last map update {updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>}</div>}</div>
-      </div>}
+        <div className="flex gap-1.5 px-5 pb-2">
+          {WALKS.map(w => <button key={w.metres} onClick={() => setWalk(w)} className={`rounded-full border px-3 py-1 text-xs font-bold ${walk.metres === w.metres ? 'border-[#1769ff] bg-blue-50 text-[#1769ff]' : 'border-[#e3eaf3] text-[#64748b]'}`}>{w.label}</button>)}
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,env(safe-area-inset-bottom))]">
+          {rateError && <p className="mx-2 mb-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">Prices could not load. Check your connection.</p>}
+          {melbourne && !loading && options.length === 0 && <p className="px-2 py-4 text-sm text-[#64748b]">No priced parking found within a {walk.label}. Try 10 min walk.</p>}
+          {melbourne ? <ul className="space-y-1.5">{(listOpen ? options : options.slice(0, 4)).map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul>
+            : <ul className="space-y-1.5">{otherCitySpots.slice(0, listOpen ? 50 : 4).map(s => <li key={s.id}><button onClick={() => setSelectedSpot(s)} className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left hover:bg-[#f5f8ff]"><MapPin className="h-5 w-5 text-[#1769ff]" /><span className="min-w-0 flex-1 truncate text-sm font-semibold">{s.address_text}</span><span className="text-xs text-[#64748b]">{Math.round(s.distance_m)} m</span></button></li>)}</ul>}
+        </div>
+      </section>
     </div>
-    {filtersOpen && <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-slate-950/30 sm:items-center sm:p-5" onClick={() => setFiltersOpen(false)}><div className="w-full max-w-lg" onClick={e => e.stopPropagation()}><FilterBar vacantOnly={vacantOnly} onVacantOnlyChange={setVacantOnly} radiusM={radiusM} onRadiusChange={setRadiusM} freeOnly={freeOnly} onFreeOnlyChange={setFreeOnly} category={category} onCategoryChange={setCategory} showCarParks={showCarParks} onShowCarParksChange={setShowCarParks} mappedOnly={usa} onClose={() => setFiltersOpen(false)} /></div></div>}
-    <SpotDetailSheet spot={selected} onClose={() => setSelectedSpot(null)} onUpdated={refresh} />
+
+    {searchOpen && <SearchOverlay near={center} onClose={() => setSearchOpen(false)} onPick={place => { trackEvent('parking_search', { result_source: 'geocoder' }); setDestination({ lat: place.lat, lng: place.lng, label: place.name }); setSearchOpen(false) }} />}
+    <OptionSheet option={selected} durationMinutes={duration} arrival={now} onClose={() => setSelectedId(null)} />
+    <SpotDetailSheet spot={selectedRow ? { ...selectedRow, status: evaluateSpotStatus(selectedRow.rules, selectedRow.lat, selectedRow.lng, now) } : null} onClose={() => setSelectedSpot(null)} />
     <ParkingAreaSheet area={selectedArea} onClose={() => setSelectedArea(null)} />
   </main>
 }
 
-function MapLoading() { return <div className="flex h-full items-center justify-center bg-[#eef4ff] text-sm font-semibold text-[#64748b]">Loading map…</div> }
-function ParkingList({ loading, ranked, areas, usa, vacantOnly, filtered, onSpot, onArea }: { loading: boolean; ranked: (ParkingSpot & { status: SpotStatus })[]; areas: CarPark[]; usa: boolean; vacantOnly: boolean; filtered: boolean; onSpot: (spot: ParkingSpot & { status: SpotStatus }) => void; onArea: (area: CarPark) => void }) {
- const empty = vacantOnly ? 'No fresh vacant bays in this search. Turn off the vacancy filter to see mapped parking.' : filtered ? 'No places match these filters. Try a wider radius or reset filters.' : 'No mapped parking is available for this search yet. Try a wider radius.'
- return <div className="h-full overflow-y-auto bg-[#f7faff] px-3 pb-6 pt-[15.5rem] sm:px-5"><div className="mx-auto max-w-3xl">{loading && <p className="py-8 text-center text-sm text-[#64748b]">Updating nearby parking…</p>}{!loading && ranked.length === 0 && areas.length === 0 && <p className="rounded-2xl bg-white p-5 text-center text-sm text-[#64748b]">{empty}</p>}{!usa && <AreaList areas={areas} onArea={onArea} />}{ranked.length > 0 && <section className="mt-4"><p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">{usa ? 'Mapped street parking' : 'Parking spots'} · {ranked.length}</p><div className="space-y-2">{ranked.map(spot => <SpotCard key={spot.id} spot={spot} onClick={() => onSpot(spot)} />)}</div></section>}{usa && <AreaList areas={areas} onArea={onArea} />}</div></div>
+function OptionRow({ option, onClick }: { option: ParkingOption; onClick: () => void }) {
+  const blocked = option.fits === false
+  const price = blocked ? `${formatDurationShort(option.limitMinutes ?? 0)} max` : option.cents != null ? formatCents(option.cents) : option.range ? `${formatCents(option.range.min)}–${formatCents(option.range.max)}` : '—'
+  const detail = option.kind === 'carpark'
+    ? `${option.operator} · ${option.rateName}`
+    : [option.limitMinutes != null ? `${formatDurationShort(option.limitMinutes)} limit` : null, option.cents === 0 ? 'Free now' : null, option.cents == null && !option.range ? 'Check sign' : null].filter(Boolean).join(' · ') || 'Meter'
+  return <li>
+    <button onClick={onClick} className={`flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left transition hover:bg-[#f5f8ff] ${blocked ? 'opacity-60' : ''}`}>
+      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${option.kind === 'carpark' ? 'bg-[#1769ff] text-white' : 'bg-blue-50 text-[#1769ff]'}`}>{option.kind === 'carpark' ? <CarFront className="h-5 w-5" /> : <MapPin className="h-5 w-5" />}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold text-[#0b1730]">{option.kind === 'street' ? shortStreetName(option.name) : option.name}</span>
+        <span className="flex items-center gap-1.5 truncate text-xs text-[#64748b]">{detail} · {Math.round(option.distanceM)} m{option.live && <span className="inline-flex items-center gap-0.5 text-[#059669]"><Radio className="h-3 w-3" />{option.live.free} free</span>}</span>
+      </span>
+      <span className={`shrink-0 text-right text-base font-extrabold ${blocked ? 'text-[#94a3b8]' : 'text-[#0b1730]'}`}>{price}</span>
+    </button>
+  </li>
 }
-function AreaList({ areas, onArea }: { areas: CarPark[]; onArea: (area: CarPark) => void }) { if (!areas.length) return null; return <section><p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">Parking areas · {areas.length}</p><div className="space-y-2">{areas.map(area => <article key={area.id} className="bay-card rounded-2xl p-4"><div className="flex justify-end"><button onClick={() => onArea(area)} className="-mt-1 -mr-1 flex items-center gap-1 text-xs font-bold text-[#1769ff]">View <ChevronRight className="h-3.5 w-3.5" /></button></div><ParkingAreaDetails area={area} compact /></article>)}</div></section> }
-function ResultThumb({ area, spot, large = false }: { area: CarPark | null; spot: ParkingSpot | null; large?: boolean }) {
-  const spotPhoto = useSignPhoto(area ? null : spot?.photo_url)
-  const url = area?.photo_url ?? spotPhoto
-  const [failed, setFailed] = useState(false)
-  useEffect(() => setFailed(false), [url])
-  const size = large ? 'h-16 w-16 rounded-2xl' : 'h-12 w-12 rounded-xl'
-  if (url?.startsWith('https://') && !failed) return <img src={url} alt="Parking place" onError={() => setFailed(true)} className={`${size} shrink-0 object-cover`} />
-  return <span className={`flex ${size} shrink-0 items-center justify-center bg-gradient-to-br from-[#dbeafe] to-[#eff6ff] text-[#1769ff]`}><MapPin className={large ? 'h-7 w-7' : 'h-5 w-5'} /></span>
+
+function SearchOverlay({ near, onPick, onClose }: { near: { lat: number; lng: number }; onPick: (place: PlaceSearchResult) => void; onClose: () => void }) {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<PlaceSearchResult[]>([])
+  const [busy, setBusy] = useState(false)
+  const request = useRef(0)
+  async function run() {
+    if (query.trim().length < 3) return
+    const id = ++request.current; setBusy(true)
+    const found = await searchPlaces(query, near)
+    if (id === request.current) { setResults(found); setBusy(false) }
+  }
+  return <div className="fixed inset-0 z-[1100] bg-white px-3 pt-[max(.75rem,env(safe-area-inset-top))]">
+    <div className="mx-auto max-w-xl">
+      <div className="flex items-center gap-2 rounded-2xl border border-[#e3eaf3] px-3">
+        <Search className="h-5 w-5 text-[#1769ff]" />
+        <input autoFocus value={query} onChange={e => { request.current++; setQuery(e.target.value) }} onKeyDown={e => { if (e.key === 'Enter') void run() }} placeholder="Where are you going?" className="min-h-12 min-w-0 flex-1 bg-transparent text-[15px] outline-none" />
+        <button onClick={onClose} className="p-1 text-[#64748b]" aria-label="Close search"><X className="h-5 w-5" /></button>
+      </div>
+      <button onClick={() => void run()} disabled={busy || query.trim().length < 3} className="mt-2 w-full rounded-2xl bg-[#1769ff] py-3 text-sm font-bold text-white disabled:opacity-40">{busy ? 'Searching…' : 'Search'}</button>
+      <ul className="mt-2">{results.map((place, i) => <li key={`${place.name}-${i}`}><button onClick={() => onPick(place)} className="block w-full rounded-xl px-3 py-3 text-left hover:bg-[#f5f8ff]"><span className="block text-sm font-semibold">{place.name}</span>{place.address && <span className="block truncate text-xs text-[#64748b]">{place.address}</span>}</button></li>)}</ul>
+    </div>
+  </div>
 }
-function SavedMenu({ saved, onSave, onSelect, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onClose: () => void }) { const act = (fn: () => void) => { fn(); onClose() }; return <div className="absolute bottom-12 right-0 z-[700] w-56 rounded-2xl border border-[#e3eaf3] bg-white p-1.5 shadow-xl"><button onClick={() => act(() => onSave('home'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-slate-50"><HomeIcon className="h-4 w-4 text-[#1769ff]" />Save current as home</button><button onClick={() => act(() => onSave('work'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-slate-50"><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Save current as work</button>{saved.home && <button onClick={() => act(() => onSelect('home'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-blue-50"><HomeIcon className="h-4 w-4 text-slate-500" />Go to home</button>}{saved.work && <button onClick={() => act(() => onSelect('work'))} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold hover:bg-blue-50"><BriefcaseBusiness className="h-4 w-4 text-slate-500" />Go to work</button>}</div> }
+
+function SavedMenu({ saved, onSave, onSelect, onChangeArea, onClose }: { saved: SavedLocations; onSave: (kind: SavedPlaceKind) => void; onSelect: (kind: SavedPlaceKind) => void; onChangeArea: () => void; onClose: () => void }) {
+  const act = (fn: () => void) => { fn(); onClose() }
+  const item = 'flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-[#f5f8ff]'
+  return <div className="absolute right-0 top-14 z-[700] w-60 rounded-2xl border border-[#e3eaf3] bg-white p-1.5 shadow-xl">
+    {saved.home && <button onClick={() => act(() => onSelect('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#1769ff]" />Home</button>}
+    {saved.work && <button onClick={() => act(() => onSelect('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#1769ff]" />Work</button>}
+    <button onClick={() => act(() => onSave('home'))} className={item}><HomeIcon className="h-4 w-4 text-[#64748b]" />Save this as home</button>
+    <button onClick={() => act(() => onSave('work'))} className={item}><BriefcaseBusiness className="h-4 w-4 text-[#64748b]" />Save this as work</button>
+    <button onClick={() => act(onChangeArea)} className={item}><span className="flex h-4 w-4 items-center"><BrandMark className="w-4" /></span>Change city</button>
+  </div>
+}
