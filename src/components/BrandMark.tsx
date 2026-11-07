@@ -1,5 +1,19 @@
-import { WORDMARK_URL } from '../lib/assets'
+/** Bay's mark: a blue parking sign with a white "P". */
+export const P_PATH = 'M30 18H57A19 19 0 0 1 57 56H45V82H30ZM45 31V43H56A6 6 0 0 0 56 31Z'
 
-export function BrandMark({ className = 'w-24', label = 'Bay' }: { className?: string; label?: string }) {
-  return <img src={WORDMARK_URL} alt={label} className={`h-auto object-contain ${className}`} />
+export function SignMark({ className = 'h-9 w-9', title }: { className?: string; title?: string }) {
+  return <svg viewBox="0 0 100 100" className={className} role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+    <rect x="2" y="2" width="96" height="96" rx="22" fill="#1769ff" />
+    <rect x="9" y="9" width="82" height="82" rx="16" fill="none" stroke="#fff" strokeWidth="3.5" />
+    <path d={P_PATH} fill="#fff" fillRule="evenodd" />
+  </svg>
+}
+
+/** Sign mark with the "Bay" name beside it. */
+export function BrandMark({ className = '', size = 'md', label = 'Bay' }: { className?: string; size?: 'sm' | 'md' | 'lg'; label?: string }) {
+  const s = { sm: ['h-7 w-7', 'text-lg'], md: ['h-9 w-9', 'text-[22px]'], lg: ['h-14 w-14', 'text-4xl'] }[size]
+  return <span className={`inline-flex items-center gap-2 ${className}`} aria-label={label} role="img">
+    <SignMark className={s[0]} />
+    <span aria-hidden className={`${s[1]} font-extrabold tracking-[-.04em] text-[#0b1730]`}>Bay</span>
+  </span>
 }

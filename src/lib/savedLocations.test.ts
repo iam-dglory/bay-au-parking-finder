@@ -9,20 +9,20 @@ const localStorage = {
 
 afterEach(() => { store.clear(); vi.unstubAllGlobals() })
 
+const cbd = { lat: -37.8136, lng: 144.9631, label: 'Melbourne CBD', country: 'Australia' }
+const fitzroy = { lat: -37.7984, lng: 144.9783, label: 'Fitzroy', country: 'Australia' }
+
 describe('saved locations', () => {
-  it('uses the first selected place as home and persists the last search', () => {
+  it('persists the last place without making it home', () => {
     vi.stubGlobal('window', { localStorage })
-    const chennai = { lat: 13.0827, lng: 80.2707, label: 'Chennai, Tamil Nadu', country: 'India' }
-    expect(rememberLocation(chennai)).toMatchObject({ home: chennai, last: chennai })
-    expect(savedStartupLocation()).toEqual(chennai)
+    expect(rememberLocation(cbd)).toEqual({ version: 1, last: cbd })
+    expect(savedStartupLocation()).toEqual(cbd)
   })
 
-  it('keeps a distinct work place and does not trust malformed saved data', () => {
+  it('saves home and work only when asked, and ignores malformed data', () => {
     vi.stubGlobal('window', { localStorage })
-    const home = { lat: 13.0827, lng: 80.2707, label: 'Chennai', country: 'India' }
-    const work = { lat: 12.9716, lng: 77.5946, label: 'Bengaluru', country: 'India' }
-    rememberLocation(home)
-    expect(rememberLocation(work, 'work')).toMatchObject({ home, work, last: work })
+    rememberLocation(cbd, 'home')
+    expect(rememberLocation(fitzroy, 'work')).toMatchObject({ home: cbd, work: fitzroy, last: fitzroy })
     store.set('bay.saved-locations.v1', '{bad json')
     expect(loadSavedLocations()).toEqual({ version: 1 })
   })

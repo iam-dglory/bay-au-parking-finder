@@ -25,9 +25,12 @@
 html, body, #root { height: 100%; min-height: 100%; }
 body { margin: 0; min-width: 320px; background: #f7f9fc; }
 #root { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
-button, input, select, textarea { font: inherit; }
-button { cursor: pointer; }
-button:disabled { cursor: not-allowed; }
+/* In the base layer so Tailwind text/weight utilities on buttons still apply. */
+@layer base {
+  button, input, select, textarea { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
 :focus-visible { outline: 3px solid rgba(23, 105, 255, .38); outline-offset: 2px; }
 summary { touch-action: manipulation; }
 
@@ -41,4 +44,12 @@ summary { touch-action: manipulation; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+@keyframes bay-load {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[bay-load"] { animation: none; }
 }

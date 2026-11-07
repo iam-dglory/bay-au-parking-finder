@@ -11,7 +11,7 @@ const dateLabel = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateStri
 
 /** Detail for one street or car park: total for the stay, leave-by time, how
  * the price is made up, live sensor readings and where the price came from. */
-export function OptionSheet({ option, durationMinutes, arrival, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; onClose: () => void }) {
+export function OptionSheet({ option, durationMinutes, arrival, later = false, onClose }: { option: ParkingOption | null; durationMinutes: number; arrival: Date; later?: boolean; onClose: () => void }) {
   const [reminder, setReminder] = useState<ReminderResult | 'starting' | null>(null)
   if (!option) return null
   const leaveAt = new Date(arrival.getTime() + durationMinutes * 60_000)
@@ -38,11 +38,15 @@ export function OptionSheet({ option, durationMinutes, arrival, onClose }: { opt
             <p className="text-2xl font-extrabold tracking-tight text-[#0b1730]">Too short for {formatDurationShort(durationMinutes)}</p>
             {limitAt && <p className="mt-2 flex items-start gap-2 text-sm font-semibold text-[#b45309]"><TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />Max stay here is {formatDurationShort(option.limitMinutes!)}. You'd have to leave by {clock(limitAt)}.</p>}
           </> : <>
-            <p className="flex items-baseline gap-2"><span className="text-4xl font-extrabold tracking-tight text-[#0b1730] tabular-nums">{price}</span><span className="text-sm text-[#40516d]">for {formatDurationShort(durationMinutes)}</span></p>
+            <p className="flex flex-wrap items-baseline gap-x-2"><span className="text-4xl font-extrabold tracking-tight text-[#0b1730] tabular-nums">{price}</span><span className="text-sm text-[#40516d]">for {formatDurationShort(durationMinutes)}{later ? `, arriving ${clock(arrival)}` : ''}</span></p>
             {option.kind === 'carpark' && option.rateName && option.rateName !== 'Hourly' && <p className="mt-1 text-sm text-[#40516d]">{option.rateName} rate</p>}
-            <p className="mt-3 flex items-center gap-2 text-sm text-[#0b1730]"><Clock3 className="h-4 w-4 text-[#1769ff]" />Leave by <strong className="tabular-nums">{clock(leaveBy)}</strong>{option.limitMinutes != null && <span className="text-[#64748b]">· {formatDurationShort(option.limitMinutes)} max stay</span>}</p>
+            <div className="mt-3 flex items-start gap-2 text-sm text-[#0b1730]">
+              <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-[#1769ff]" />
+              <p className="min-w-0"><span className="whitespace-nowrap">Leave by <strong className="tabular-nums">{clock(leaveBy)}</strong></span>
+                {option.limitMinutes != null && <span className="block text-[#64748b]">{option.limitMinutes % 15 === 0 && option.limitMinutes <= 240 ? `Max stay ${formatDurationShort(option.limitMinutes)}` : `You can stay till ${clock(limitAt!)}`}</span>}</p>
+            </div>
           </>}
-          {option.live && <p className="mt-2 flex items-center gap-2 text-sm text-[#065f46]"><Radio className="h-4 w-4 shrink-0" />{option.live.free} of {option.live.reporting} bays free now</p>}
+          {option.live && !later && <p className="mt-2 flex items-center gap-2 text-sm text-[#065f46]"><Radio className="h-4 w-4 shrink-0" />{option.live.free} of {option.live.reporting} bays free now</p>}
         </section>
 
         <div className="mt-4 flex gap-2.5">
@@ -50,7 +54,7 @@ export function OptionSheet({ option, durationMinutes, arrival, onClose }: { opt
             className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[18px] bg-[#1769ff] text-sm font-bold text-white shadow-[0_8px_20px_rgba(23,105,255,.3)] transition-transform active:scale-[0.98]">
             <Navigation className="h-4 w-4" />Go
           </a>
-          {option.fits !== false && (
+          {option.fits !== false && !later && (
             <button
               disabled={reminder === 'starting'}
               onClick={async () => {
@@ -68,7 +72,7 @@ export function OptionSheet({ option, durationMinutes, arrival, onClose }: { opt
             </button>
           )}
         </div>
-        {!reminder && option.fits !== false && <p className="mt-2 text-xs text-[#64748b]">Parked? Tap Remind me and we'll warn you {REMIND_BEFORE_MINUTES} min before {clock(leaveBy)}.</p>}
+        {!reminder && option.fits !== false && !later && <p className="mt-2 text-xs text-[#64748b]">Parked? Tap Remind me and we'll warn you {REMIND_BEFORE_MINUTES} min before {clock(leaveBy)}.</p>}
         {reminder === 'scheduled' && <p role="status" className="mt-2 text-xs text-[#065f46]">We'll remind you {REMIND_BEFORE_MINUTES} min before, and when time is up.</p>}
         {reminder === 'in-app-only' && <p role="status" className="mt-2 text-xs text-[#64748b]">Reminder set. In a browser it only shows while Bay is open.</p>}
         {reminder === 'denied' && <p role="status" className="mt-2 text-xs text-[#b45309]">Notifications are off for Bay, so keep an eye on the countdown on the home screen.</p>}
@@ -76,7 +80,7 @@ export function OptionSheet({ option, durationMinutes, arrival, onClose }: { opt
 
         <details className="group mt-4 border-t border-[#eef2f7] pt-1">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-[#40516d] [&::-webkit-details-marker]:hidden">
-            Price details<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            Price details<ChevronDown className="h-4 w-4 group-open:rotate-180" />
           </summary>
           {option.segments && option.segments.length > 0 && (
             <ul className="divide-y divide-[#eef2f7] text-sm">
