@@ -135,7 +135,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   }
 
   return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent antialiased">
-    <div className="relative min-h-0 flex-1">
+    <div className="bay-home-map relative min-h-0 flex-1">
       <Suspense fallback={<div className="h-full bg-tint-2" />}>
         <MapView center={target} myLocation={myLocation} zoom={radius === NEAR_M ? 17 : 16}
           spots={[]}
