@@ -219,14 +219,14 @@ function OptionTitle({ option, starred }: { option: ParkingOption; starred?: boo
 /** "2 hrs max" when that's the sign's limit. When free hours come first (e.g.
  * arriving at midnight before a 7:30am 2P), say until when instead. */
 function maxStayText(limitMinutes: number, at: Date) {
-  return limitMinutes % 15 === 0 && limitMinutes <= 240 ? `${formatDurationShort(limitMinutes)} max` : `stay till ${clock(new Date(at.getTime() + limitMinutes * 60_000))}`
+  return limitMinutes % 15 === 0 && limitMinutes <= 240 ? `${formatDurationShort(limitMinutes)} max` : `till ${clock(new Date(at.getTime() + limitMinutes * 60_000))}`
 }
 
 function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: boolean }) {
   const parts = [option.kind === 'carpark' ? `${option.operator ?? 'Car'} car park` : null, `${walkMinutes(option.distanceM)} min walk`]
   if (option.limitMinutes != null) parts.push(maxStayText(option.limitMinutes, at))
   const live = option.live && !later ? option.live : null
-  return <span className="mt-0.5 block truncate text-[13px] text-[#40516d] tabular-nums">
+  return <span className="mt-0.5 line-clamp-2 block text-[13px] leading-[18px] text-[#40516d] tabular-nums">
     {parts.filter(Boolean).join(' · ')}
     {live && <> · {live.free > 0 ? <span className="font-semibold text-[#047857]">{live.free} free now</span> : <span className="font-semibold text-[#b45309]">Full now</span>}</>}
   </span>
