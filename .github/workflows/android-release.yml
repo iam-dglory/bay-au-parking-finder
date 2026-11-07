@@ -31,10 +31,10 @@ jobs:
       - run: npm ci
       - run: npm run cap:android
         env:
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ezwiagssiuvmhayvsmbk.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah' }}
           VITE_ASSET_BASE_URL: ${{ vars.VITE_ASSET_BASE_URL }}
-          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
+          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyDzf73MtrZlVoeFtGCGWry0eGvzxMyWcWM' }}
           VITE_GOOGLE_MAP_ID: ${{ vars.VITE_GOOGLE_MAP_ID }}
       - name: Restore upload keystore
         working-directory: android
