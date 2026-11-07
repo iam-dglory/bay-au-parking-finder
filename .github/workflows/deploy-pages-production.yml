@@ -1,6 +1,12 @@
 name: Deploy GitHub Pages production
 
+# Continuous deployment: runs automatically after CI passes on main.
+# Can still be run by hand with a reviewed commit SHA (e.g. to roll back).
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       ref:
@@ -19,11 +25,32 @@ concurrency:
 
 jobs:
   build:
+    # Only deploy main after a successful CI run on a push (not on PR runs).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
+    env:
+      # Build-time settings (Settings -> Secrets and variables -> Actions -> Variables).
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
+      VITE_GOOGLE_MAP_ID: ${{ vars.VITE_GOOGLE_MAP_ID }}
     steps:
+      - name: Check build settings
+        run: |
+          missing=""
+          for name in VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
+            [ -n "${!name}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing Actions variables:$missing. Without them the app cannot reach Supabase and fails on load."
+            exit 1
+          fi
+          [ -n "$VITE_GOOGLE_MAPS_API_KEY" ] || echo "::warning::VITE_GOOGLE_MAPS_API_KEY is not set; the site will deploy without the map (prices list still works)."
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || github.event.workflow_run.head_sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

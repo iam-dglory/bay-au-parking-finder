@@ -1,0 +1,1243 @@
+{
+ "schema_version": 1,
+ "currency": "AUD",
+ "basis": "Drive-up rates published by each operator on the date in 'checked'. Online, app-only, monthly, validated-discount and event prices are excluded unless noted.",
+ "units": "minutes after Melbourne midnight; days 0=Sunday..6=Saturday; cents",
+ "stale_after_days": 45,
+ "car_parks": [
+  {
+   "id": "wilson-melbourne-central",
+   "name": "Melbourne Central",
+   "operator": "Wilson Parking",
+   "lat": -37.8102628,
+   "lng": 144.9620676,
+   "source_url": "https://www.wilsonparking.com.au/park/3210_Melbourne-Central",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 1800
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 3600
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 5400
+     },
+     {
+      "upToMinutes": 240,
+      "cents": 7000
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "dailyMaxCents": 7500,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ],
+      "enterFrom": 0,
+      "enterTo": 599,
+      "cents": 1900,
+      "exitAfter": 900,
+      "exitBy": 1440
+     },
+     {
+      "name": "Night",
+      "days": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ],
+      "enterFrom": 1020,
+      "enterTo": 1439,
+      "cents": 1400,
+      "exitBy": 420
+     }
+    ]
+   },
+   "notes": "Longest published tier is 4+ hours ($75), treated as the day rate. Shopping and cinema discounts not included."
+  },
+  {
+   "id": "wilson-200-queen",
+   "name": "200 Queen St",
+   "operator": "Wilson Parking",
+   "lat": -37.81352285,
+   "lng": 144.960469712,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/200-queen-st-car-park",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1300
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2600
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 5200
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 7800
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "casualEnterFrom": 360,
+    "casualEnterTo": 960,
+    "dailyMaxCents": 8000,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1500,
+      "exitBy": 360
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 0,
+      "enterTo": 1439,
+      "cents": 1600,
+      "exitBy": 1440
+     }
+    ]
+   },
+   "notes": "Early bird no longer offered here. Hourly applies to entries 6am\u20134pm."
+  },
+  {
+   "id": "wilson-542-little-bourke",
+   "name": "542 Little Bourke St",
+   "operator": "Wilson Parking",
+   "lat": -37.81477885,
+   "lng": 144.956367186,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/542-little-bourke-st-car-park",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1000
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2000
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4000
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 6000,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 360,
+      "enterTo": 600,
+      "cents": 2400,
+      "exitAfter": 840,
+      "exitBy": 1440
+     },
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1600,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 360,
+      "enterTo": 1439,
+      "cents": 1000,
+      "exitBy": 1440
+     }
+    ]
+   }
+  },
+  {
+   "id": "wilson-222-russell",
+   "name": "222 Russell St",
+   "operator": "Wilson Parking",
+   "lat": -37.81132789,
+   "lng": 144.967994718,
+   "source_url": "https://www.wilsonparking.com.au/park/3252_222-Russell-St-Car-Park_222-Russell-Street-Melbourne",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1200
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2400
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4800
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 7200
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "casualEnterFrom": 360,
+    "casualEnterTo": 960,
+    "dailyMaxCents": 7600,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1800,
+      "exitBy": 360
+     },
+     {
+      "name": "Night (Fri)",
+      "days": [
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 2200,
+      "exitBy": 360
+     }
+    ]
+   },
+   "notes": "No drive-up weekend price published."
+  },
+  {
+   "id": "wilson-federation-square",
+   "name": "Federation Square",
+   "operator": "Wilson Parking",
+   "lat": -37.81784465,
+   "lng": 144.969917465,
+   "source_url": "https://www.wilsonparking.com.au/park/3250_Federation-Square",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 1800
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 3600
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 5400
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 7200,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 360,
+      "enterTo": 600,
+      "cents": 2200,
+      "exitAfter": 900,
+      "exitBy": 1440
+     },
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1700,
+      "exitBy": 240
+     },
+     {
+      "name": "Night (Fri)",
+      "days": [
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 2200,
+      "exitBy": 240
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 0,
+      "enterTo": 1439,
+      "cents": 2400,
+      "exitBy": 1440
+     }
+    ]
+   },
+   "notes": "Event rate ($26) may replace night/weekend rates on precinct event days."
+  },
+  {
+   "id": "wilson-452-flinders",
+   "name": "452 Flinders St",
+   "operator": "Wilson Parking",
+   "lat": -37.81946849,
+   "lng": 144.958601136,
+   "source_url": "https://www.wilsonparking.com.au/park/3126_452-Flinders-St-Car-Park_453-Flinders-Lane-Melbourne",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1500
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 3000
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 6000
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 9000,
+    "flat": []
+   },
+   "notes": "Open Mon\u2013Fri 6am\u20137pm. Entry from Flinders Lane."
+  },
+  {
+   "id": "wilson-15-william",
+   "name": "15 William St",
+   "operator": "Wilson Parking",
+   "lat": -37.8192157,
+   "lng": 144.959187534,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/15-william-st",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1200
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2400
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4800
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 7200,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1500,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 540,
+      "enterTo": 1439,
+      "cents": 1500,
+      "exitBy": 1440
+     }
+    ]
+   }
+  },
+  {
+   "id": "wilson-530-collins",
+   "name": "530 Collins St",
+   "operator": "Wilson Parking",
+   "lat": -37.8177934,
+   "lng": 144.9568668,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/530-collins-st-car-park/",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 2000
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4000
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 6000
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 6800,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 390,
+      "enterTo": 600,
+      "cents": 2900,
+      "exitAfter": 840,
+      "exitBy": 1110
+     }
+    ]
+   },
+   "notes": "Validated hourly rates. Entry via Little Collins St. Closed weekends.",
+   "location_source": "OpenStreetMap building \"530 Collins\""
+  },
+  {
+   "id": "wilson-50-lonsdale",
+   "name": "50 Lonsdale St",
+   "operator": "Wilson Parking",
+   "lat": null,
+   "lng": null,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/50-lonsdale-st-car-park",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1000
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2000
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4000
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 6000,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1800,
+      "exitBy": 1140
+     }
+    ]
+   },
+   "notes": "Entry via 52 Little Lonsdale St. Closed weekends.",
+   "location_source": "Not placed: address search matched only the street, not the building."
+  },
+  {
+   "id": "wilson-180-russell",
+   "name": "180 Russell St",
+   "operator": "Wilson Parking",
+   "lat": null,
+   "lng": null,
+   "source_url": "https://www.wilsonparking.com.au/park/3215_180-Russell-St-Car-Park_180-Russell-Street-Melbourne",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 1000
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 2000
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 4000
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 6000
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 7000,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1800,
+      "exitBy": 300
+     },
+     {
+      "name": "Night (Fri)",
+      "days": [
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 2200,
+      "exitBy": 300
+     }
+    ]
+   },
+   "notes": "Weekend drive-up price unclear on the source page; not included.",
+   "location_source": "Not placed: address search matched only the street, not the building."
+  },
+  {
+   "id": "wilson-62-la-trobe",
+   "name": "62 La Trobe St",
+   "operator": "Wilson Parking",
+   "lat": null,
+   "lng": null,
+   "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/62-la-trobe-st-car-park/",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 800
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 1600
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 3200
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 4800
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 5400,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 360,
+      "enterTo": 570,
+      "cents": 2200,
+      "exitAfter": 840,
+      "exitBy": 1440
+     },
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1300,
+      "exitBy": 1440
+     },
+     {
+      "name": "Night (Fri)",
+      "days": [
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1600,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 480,
+      "enterTo": 1439,
+      "cents": 1600,
+      "exitBy": 1440
+     }
+    ]
+   },
+   "location_source": "Not placed: address search matched only the street, not the building."
+  },
+  {
+   "id": "wilson-380-la-trobe",
+   "name": "380 La Trobe St",
+   "operator": "Wilson Parking",
+   "lat": -37.8101273,
+   "lng": 144.9582639,
+   "source_url": "https://www.wilsonparking.com.au/park/3253_380-La-Trobe-St-Car-Park_380-LaTrobe-Street-Melbourne",
+   "checked": "2026-11-06",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 30,
+      "cents": 600
+     },
+     {
+      "upToMinutes": 60,
+      "cents": 1200
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 2400
+     },
+     {
+      "upToMinutes": 180,
+      "cents": 3600
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dailyMaxCents": 4500,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1900,
+      "exitBy": 1320
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 420,
+      "enterTo": 1439,
+      "cents": 2100,
+      "exitBy": 360
+     }
+    ]
+   },
+   "notes": "Entry at 191 A'Beckett St. Early bird no longer offered.",
+   "location_source": "OpenStreetMap address 191 A'Beckett St (car park entrance)"
+  },
+  {
+   "id": "secure-12-20-flinders-lane",
+   "name": "12-20 Flinders Lane",
+   "operator": "Secure Parking",
+   "lat": -37.81439,
+   "lng": 144.973744,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/12-20-flinders-lane-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 180,
+      "cents": 1900
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 3800,
+    "flat": []
+   }
+  },
+  {
+   "id": "secure-376-flinders",
+   "name": "376 Flinders St",
+   "operator": "Secure Parking",
+   "lat": -37.818964,
+   "lng": 144.961609,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/376-flinders-street-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 180,
+      "cents": 1500
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 1900,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 700,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 360,
+      "enterTo": 1439,
+      "cents": 700,
+      "exitBy": 1440
+     }
+    ]
+   }
+  },
+  {
+   "id": "secure-460-lonsdale",
+   "name": "460 Lonsdale St",
+   "operator": "Secure Parking",
+   "lat": -37.813049,
+   "lng": 144.958346,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/460-lonsdale-street-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 180,
+      "cents": 2600
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 3900,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 330,
+      "enterTo": 600,
+      "cents": 2600,
+      "exitAfter": 900,
+      "exitBy": 1439
+     },
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 900,
+      "enterTo": 1439,
+      "cents": 500,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 330,
+      "enterTo": 1439,
+      "cents": 500,
+      "exitBy": 1440
+     }
+    ]
+   }
+  },
+  {
+   "id": "secure-522-flinders-lane",
+   "name": "522 Flinders Lane",
+   "operator": "Secure Parking",
+   "lat": -37.819415,
+   "lng": 144.955932,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/522-flinders-lane-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 120,
+      "cents": 1200
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 2400,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 330,
+      "enterTo": 600,
+      "cents": 1500,
+      "exitAfter": 840,
+      "exitBy": 1320
+     },
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 900,
+      "enterTo": 1439,
+      "cents": 1200,
+      "exitBy": 330
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 330,
+      "enterTo": 1439,
+      "cents": 1200,
+      "exitBy": 330
+     }
+    ]
+   }
+  },
+  {
+   "id": "secure-570-bourke",
+   "name": "570 Bourke St",
+   "operator": "Secure Parking",
+   "lat": -37.815229,
+   "lng": 144.956491,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/570-bourke-street-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 2500
+     },
+     {
+      "upToMinutes": 120,
+      "cents": 5000
+     }
+    ],
+    "casualDays": [
+     5
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 7500,
+    "flat": [
+     {
+      "name": "Early bird",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 330,
+      "enterTo": 570,
+      "cents": 2400,
+      "exitAfter": 900,
+      "exitBy": 1380
+     },
+     {
+      "name": "Night (Fri)",
+      "days": [
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1400,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 420,
+      "enterTo": 1439,
+      "cents": 1400,
+      "exitBy": 1440
+     }
+    ]
+   },
+   "notes": "Source lists hourly rates for Friday only."
+  },
+  {
+   "id": "secure-700-collins",
+   "name": "700 Collins St",
+   "operator": "Secure Parking",
+   "lat": -37.819471,
+   "lng": 144.950833,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/700-collins-street-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 180,
+      "cents": 1400
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "casualEnterFrom": 330,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 2800,
+    "flat": []
+   }
+  },
+  {
+   "id": "secure-east-end-place",
+   "name": "East End Place",
+   "operator": "Secure Parking",
+   "lat": -37.812614,
+   "lng": 144.969607,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/southern-cross-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 1200
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "casualEnterFrom": 360,
+    "casualEnterTo": 1439,
+    "dailyMaxCents": 2400,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1439,
+      "cents": 1200,
+      "exitBy": 1440
+     },
+     {
+      "name": "Weekend",
+      "days": [
+       0,
+       6
+      ],
+      "enterFrom": 360,
+      "enterTo": 1439,
+      "cents": 1200,
+      "exitBy": 1440
+     }
+    ]
+   }
+  },
+  {
+   "id": "secure-st-james-square",
+   "name": "St James Square",
+   "operator": "Secure Parking",
+   "lat": -37.816653,
+   "lng": 144.957473,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/st-james-square-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 60,
+      "cents": 1200
+     }
+    ],
+    "casualDays": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "casualEnterFrom": 360,
+    "casualEnterTo": 1200,
+    "dailyMaxCents": 2400,
+    "flat": []
+   },
+   "notes": "Exit before 8pm."
+  },
+  {
+   "id": "secure-the-strand",
+   "name": "The Strand",
+   "operator": "Secure Parking",
+   "lat": -37.812314,
+   "lng": 144.962556,
+   "source_url": "https://www.secureparking.com.au/en-au/car-parks/australia/vic/the-strand-melbourne-car-park/",
+   "checked": "2026-09-26",
+   "rates": {
+    "casual": [
+     {
+      "upToMinutes": 180,
+      "cents": 1500
+     }
+    ],
+    "casualDays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "casualEnterFrom": 300,
+    "casualEnterTo": 1320,
+    "dailyMaxCents": 2400,
+    "flat": [
+     {
+      "name": "Night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "enterFrom": 960,
+      "enterTo": 1319,
+      "cents": 1000,
+      "exitBy": 1320
+     }
+    ]
+   }
+  }
+ ]
+}
