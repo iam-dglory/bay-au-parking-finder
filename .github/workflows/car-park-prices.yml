@@ -1,0 +1,36 @@
+name: Car park price check
+
+# Monthly: flag car park prices that haven't been re-checked against the
+# operator's website recently, and open (or update) one issue listing them.
+on:
+  schedule:
+    - cron: '17 22 1 * *' # 9:17am Melbourne (AEDT) on the 2nd
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check price dates
+        id: check
+        continue-on-error: true
+        env:
+          REPORT_FILE: report.md
+        run: node scripts/check-car-park-freshness.mjs
+      - name: Open or update the reminder issue
+        if: steps.check.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Re-check car park prices"
+          number=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number')
+          if [ -n "$number" ]; then gh issue edit "$number" --body-file report.md
+          else gh issue create --title "$title" --body-file report.md; fi

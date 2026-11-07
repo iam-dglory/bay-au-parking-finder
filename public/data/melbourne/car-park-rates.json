@@ -525,8 +525,8 @@
    "id": "wilson-50-lonsdale",
    "name": "50 Lonsdale St",
    "operator": "Wilson Parking",
-   "lat": null,
-   "lng": null,
+   "lat": -37.80913,
+   "lng": 144.97059,
    "source_url": "https://www.wilsonparking.com.au/parking-locations/victoria/melbourne-cbd/50-lonsdale-st-car-park",
    "checked": "2026-11-06",
    "rates": {

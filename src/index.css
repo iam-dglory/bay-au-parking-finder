@@ -53,3 +53,29 @@ summary { touch-action: manipulation; }
 @media (prefers-reduced-motion: reduce) {
   [class*="animate-[bay-load"] { animation: none; }
 }
+
+/* ---------- motion: short, ease-out, transform/opacity only ---------- */
+:root { --ease-out: cubic-bezier(.22, 1, .36, 1); --ease-spring: cubic-bezier(.34, 1.56, .64, 1); }
+
+@keyframes bay-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes bay-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes bay-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bay-pop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+@keyframes bay-price { from { opacity: 0; transform: translateY(6px); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes bay-menu { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes bay-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, .55); } 50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); } }
+
+.bay-rise { animation: bay-rise .32s var(--ease-out) both; }
+.bay-fade { animation: bay-fade .2s ease-out both; }
+.bay-sheet-in { animation: bay-sheet-in .34s var(--ease-out) both; }
+.bay-pop { animation: bay-pop .32s var(--ease-spring); }
+.bay-price { animation: bay-price .28s var(--ease-out) both; }
+.bay-menu { transform-origin: top right; animation: bay-menu .16s var(--ease-out) both; }
+.bay-pulse { animation: bay-pulse 1.8s ease-in-out infinite; }
+.bay-stagger > * { animation: bay-rise .32s var(--ease-out) both; }
+.bay-stagger > *:nth-child(2) { animation-delay: 40ms; }
+.bay-stagger > *:nth-child(3) { animation-delay: 80ms; }
+.bay-stagger > *:nth-child(4) { animation-delay: 120ms; }
+.bay-stagger > *:nth-child(n+5) { animation-delay: 160ms; }
+.bay-press { transition: transform .12s ease-out; }
+.bay-press:active { transform: scale(.97); }
