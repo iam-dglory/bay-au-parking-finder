@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import carParkData from '../../public/data/melbourne/car-park-rates.json'
-import { carParkCost, formatCents, melbourneStart, streetCost, streetCostRange, type CarParkRates, type WeekSchedule } from './parkingCost'
+import { carParkCost, formatCents, formatDurationShort, melbourneStart, streetCost, streetCostRange, type CarParkRates, type WeekSchedule } from './parkingCost'
 
 const everyDay = (windows: [number, number, number, number][]): WeekSchedule => Array.from({ length: 7 }, () => windows)
 // Queen St (La Trobe–A'Beckett): $5.50/hr, 2P, 7:30am–8:30pm every day.
@@ -89,5 +89,8 @@ describe('helpers', () => {
   })
   it('formats money', () => {
     expect([formatCents(1100), formatCents(825)]).toEqual(['$11', '$8.25'])
+  })
+  it('writes durations in words', () => {
+    expect([30, 60, 120, 90].map(formatDurationShort)).toEqual(['30 min', '1 hr', '2 hrs', '1 hr 30 min'])
   })
 })
