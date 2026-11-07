@@ -114,7 +114,7 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
   if (failed) return <MapUnavailable reason="The map couldn't load. Check your connection." />
 
   return <div className="relative h-full w-full bg-tint-2">
-    <div ref={container} className="bay-map absolute inset-0" />
+    <div ref={container} className="bay-map h-full w-full" />
     {map && <>
       <Pin map={map} at={myLocation ?? center} z={1} label="You are here"><MeDot /></Pin>
       {options?.map(option => (
