@@ -160,3 +160,14 @@ export function streetOptionHere(options: ParkingOption[], point: { lat: number;
   }
   return best
 }
+
+/** "Queen Street between La Trobe Street and A'Beckett Street" -> { title: "Queen St", block: "Between La Trobe St and A'Beckett St" }. */
+export function splitStreet(name: string): { title: string; block?: string } {
+  const short = (part: string) => part.replace(/\bStreet\b/g, 'St').replace(/\bLane\b/g, 'Ln').replace(/\bRoad\b/g, 'Rd').replace(/\bParade\b/g, 'Pde').replace(/\bAvenue\b/g, 'Ave').replace(/\bPlace\b/g, 'Pl')
+  const m = name.match(/^(.*?) between (.*?) and (.*)$/)
+  if (!m) return { title: short(name) }
+  return { title: short(m[1]), block: `Between ${short(m[2])} and ${short(m[3])}` }
+}
+
+/** Walking minutes at a relaxed city pace (80 m a minute), never below 1. */
+export const walkMinutes = (metres: number) => Math.max(1, Math.round(metres / 80))
