@@ -58,16 +58,13 @@ function write(saved: SavedLocations) {
   }
 }
 
-/** Keeps the most recent search, and makes the first chosen place the home
- * default. The app therefore never falls back to a different country merely
- * because GPS is slow or has been denied on a later launch. */
+/** Keeps the most recent place, and saves home/work only when the driver asks. */
 export function rememberLocation(location: SavedLocation, saveAs?: SavedPlaceKind): SavedLocations {
   const previous = loadSavedLocations()
   const next: SavedLocations = {
     ...previous,
     last: location,
     ...(saveAs ? { [saveAs]: location } : {}),
-    ...(!previous.home ? { home: location } : {}),
   }
   write(next)
   return next

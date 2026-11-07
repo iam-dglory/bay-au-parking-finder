@@ -90,7 +90,7 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
   return <main className="h-full overflow-y-auto bg-[#f7faff] pb-6 text-[#0b1730]">
     <header className="relative overflow-hidden px-5 pb-7 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <div className="pointer-events-none absolute -right-16 top-5 h-48 w-48 rounded-full bg-blue-100/70 blur-3xl" />
-      <div className="relative"><BrandMark className="w-[94px]" /><p className="mt-8 text-[11px] font-bold uppercase tracking-[.18em] text-[#1769ff]">Your Bay</p><h1 className="mt-2 text-4xl font-bold tracking-[-.055em]">My activity</h1><p className="mt-2 max-w-sm text-base leading-6 text-[#64748b]">Your saved places, parking history and signs you’ve contributed.</p></div>
+      <div className="relative"><BrandMark size="sm" /><p className="mt-8 text-[11px] font-bold uppercase tracking-[.18em] text-[#1769ff]">Your Bay</p><h1 className="mt-2 text-4xl font-bold tracking-[-.055em]">My activity</h1><p className="mt-2 max-w-sm text-base leading-6 text-[#64748b]">Your saved places, parking history and signs you’ve contributed.</p></div>
     </header>
 
     <div className="space-y-4 px-4">
