@@ -18,6 +18,7 @@ import { availability } from '../lib/availability'
 import type { CarPark, ParkingSpot, SpotStatus, SignType } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
+import { useSignPhoto } from '../lib/useSignPhoto'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
 const RADII = [{ label: '500 m', value: 500 }, { label: '1 km', value: 1000 }, { label: '2 km', value: 2000 }, { label: '5 km', value: 5000 }]
@@ -136,7 +137,8 @@ function ParkingList({ loading, ranked, areas, usa, vacantOnly, filtered, onSpot
 }
 function AreaList({ areas, onArea }: { areas: CarPark[]; onArea: (area: CarPark) => void }) { if (!areas.length) return null; return <section><p className="mb-2 text-xs font-bold uppercase tracking-[.14em] text-[#64748b]">Parking areas · {areas.length}</p><div className="space-y-2">{areas.map(area => <article key={area.id} className="bay-card rounded-2xl p-4"><div className="flex justify-end"><button onClick={() => onArea(area)} className="-mt-1 -mr-1 flex items-center gap-1 text-xs font-bold text-[#1769ff]">View <ChevronRight className="h-3.5 w-3.5" /></button></div><ParkingAreaDetails area={area} compact /></article>)}</div></section> }
 function ResultThumb({ area, spot, large = false }: { area: CarPark | null; spot: ParkingSpot | null; large?: boolean }) {
-  const url = area?.photo_url ?? spot?.photo_url
+  const spotPhoto = useSignPhoto(area ? null : spot?.photo_url)
+  const url = area?.photo_url ?? spotPhoto
   const [failed, setFailed] = useState(false)
   useEffect(() => setFailed(false), [url])
   const size = large ? 'h-16 w-16 rounded-2xl' : 'h-12 w-12 rounded-xl'

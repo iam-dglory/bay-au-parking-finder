@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Bay: keep Capacitor bridge and plugin classes (called by reflection from the WebView).
+-keep class com.getcapacitor.** { *; }
+-keep @com.getcapacitor.annotation.CapacitorPlugin public class * { *; }
+-keepclassmembers class * { @com.getcapacitor.PluginMethod public *; }
+-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
+-keepclassmembers class * { @android.webkit.JavascriptInterface <methods>; }
+# Keep line numbers so Play crash reports stay readable (upload mapping.txt with each release).
+-keepattributes SourceFile,LineNumberTable

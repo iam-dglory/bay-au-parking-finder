@@ -53,3 +53,18 @@ export async function uploadListingPhotos(userId: string, files: File[]): Promis
   }
   return paths
 }
+
+/** Storage object name inside the sign-photos bucket, from a stored photo URL. */
+export function signPhotoPath(url: string | null | undefined): string | null {
+  const match = url?.match(/\/sign-photos\/([^?#]+)$/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
+/** The bucket is private: a photo is visible to its uploader, moderators, and
+ * everyone once its sign is approved. Viewers get a short-lived signed URL. */
+export async function signedSignPhotoUrl(url: string | null | undefined, expiresInSeconds = 3600): Promise<string | null> {
+  const path = signPhotoPath(url)
+  if (!path) return url?.startsWith('https://') ? url : null
+  const { data, error } = await supabase.storage.from('sign-photos').createSignedUrl(path, expiresInSeconds)
+  return error ? null : data.signedUrl
+}

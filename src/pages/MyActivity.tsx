@@ -6,6 +6,7 @@ import { SpotCard } from '../components/SpotCard'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
 import { evaluateSpotStatus } from '../lib/parkingStatus'
 import { BrandMark } from '../components/BrandMark'
+import { DeleteMyData } from '../components/DeleteMyData'
 import type { ParkingSpot, SpotStatus, SpotVisit } from '../types'
 import { marketplaceV2Enabled } from '../lib/featureFlags'
 
@@ -119,6 +120,8 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
       </SectionCard>
 
       <button onClick={onOpenFeedback} className="flex w-full items-center gap-3 rounded-2xl border border-[#dce7f8] bg-white p-4 text-left shadow-[0_12px_30px_rgba(37,99,235,.06)]"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#1769ff]"><Headphones className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block text-sm font-bold">App support</span><span className="block text-xs text-[#64748b]">Get help or tell us what needs fixing.</span></span><MessageSquarePlus className="h-5 w-5 text-[#64748b]" /></button>
+
+      <DeleteMyData />
     </div>
     <SpotDetailSheet spot={selectedSign} onClose={() => setSelectedSign(null)} />
   </main>
