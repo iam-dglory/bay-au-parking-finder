@@ -4,40 +4,193 @@
 @import "tailwindcss" source("./");
 
 @theme {
-  --color-bay-blue: #1769ff;
-  --color-bay-navy: #07152f;
-  --color-bay-canvas: #f7f9fc;
-  --color-bay-line: #e3eaf3;
-  --color-bay-ink: #0b1730;
-  --color-bay-muted: #64748b;
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Bay "glass" theme: sky blue, white and hot pink. Colours are tokens so the
+     same classes work in light and dark. */
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-brand: var(--brand);
+  --color-cta: var(--cta);
+  --color-pink: var(--pink);
+  --color-sky: var(--sky);
+  --color-tint: var(--tint);
+  --color-tint-2: var(--tint-2);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --color-night: var(--night);
+  --color-warn: var(--warn);
+  --color-ok: var(--ok);
+  /* Older screens use Tailwind's blue scale: point it at the theme. */
+  --color-blue-50: var(--tint);
+  --color-blue-100: var(--tint-2);
+  --color-blue-200: #bae6fd;
+  --color-blue-300: #7dd3fc;
+  --color-blue-500: #0ea5e9;
+  --color-blue-600: var(--cta);
+  --color-blue-700: var(--brand);
+  --color-blue-900: #0c4a6e;
+  --color-slate-50: var(--tint);
+  --color-slate-100: var(--tint-2);
+  --color-slate-200: var(--line);
+  --color-slate-300: color-mix(in srgb, var(--ink-3) 45%, transparent);
+  --color-slate-400: var(--ink-3);
+  --color-slate-500: var(--ink-3);
+  --color-slate-600: var(--ink-2);
+  --color-slate-700: var(--ink-2);
+  --color-slate-800: var(--ink);
+  --color-slate-900: var(--ink);
+  --color-slate-950: var(--ink);
+  --color-bay-blue: var(--brand);
+  --color-bay-navy: var(--night);
+  --color-bay-canvas: var(--canvas);
+  --color-bay-line: var(--line);
+  --color-bay-ink: var(--ink);
+  --color-bay-muted: var(--ink-3);
+  --font-sans: "Overpass Variable", Overpass, ui-sans-serif, system-ui, sans-serif;
+  --font-ticket: "Overpass Mono", ui-monospace, monospace;
 }
 
 :root {
   color-scheme: light;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0b1730;
-  background: #f7f9fc;
+  --ink: #0c1530;
+  --ink-2: #3d4e6b;
+  --ink-3: #5d6b85;
+  --brand: #0369a1;          /* sky, deep enough for text and icons */
+  --sky: #38bdf8;            /* sky, decorative */
+  --pink: #ff2d87;           /* hot pink, decorative */
+  --cta: #db0f73;            /* hot pink with white text at 4.8:1 */
+  --tint: rgba(224, 242, 254, .62);
+  --tint-2: rgba(186, 230, 253, .55);
+  --line: rgba(3, 105, 161, .14);
+  --surface: rgba(255, 255, 255, .72);
+  --canvas: #f4f9ff;
+  --night: #0c1530;
+  --warn: #b45309;
+  --ok: #047857;
+  --glass-edge: rgba(255, 255, 255, .85);
+  --glass-shadow: 0 1px 1px rgba(12, 21, 48, .04), 0 12px 36px rgba(12, 74, 110, .14);
+  font-family: "Overpass Variable", Overpass, ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
   font-synthesis: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ink: #eef5ff;
+    --ink-2: #bccbe2;
+    --ink-3: #91a1bb;
+    --brand: #7dd3fc;
+    --sky: #38bdf8;
+    --pink: #ff4d9a;
+    --cta: #e5127a;
+    --tint: rgba(56, 189, 248, .12);
+    --tint-2: rgba(56, 189, 248, .2);
+    --line: rgba(186, 230, 253, .14);
+    --surface: rgba(16, 26, 50, .66);
+    --canvas: #060c1c;
+    --night: #13213f;
+    --warn: #fbbf24;
+    --ok: #34d399;
+    --glass-edge: rgba(255, 255, 255, .12);
+    --glass-shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 16px 40px rgba(0, 0, 0, .45);
+  }
 }
 
 * { -webkit-tap-highlight-color: transparent; }
 html, body, #root { height: 100%; min-height: 100%; }
-body { margin: 0; min-width: 320px; background: #f7f9fc; }
+body { margin: 0; min-width: 320px; background: var(--canvas); }
+/* The wallpaper: soft sky and pink light behind frosted glass. */
+body::before {
+  content: ""; position: fixed; inset: -20%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 18% 12%, color-mix(in srgb, var(--sky) 55%, transparent), transparent 70%),
+    radial-gradient(34% 28% at 88% 34%, color-mix(in srgb, var(--pink) 38%, transparent), transparent 70%),
+    radial-gradient(40% 32% at 30% 88%, color-mix(in srgb, var(--sky) 40%, transparent), transparent 70%),
+    radial-gradient(30% 24% at 82% 92%, color-mix(in srgb, var(--pink) 30%, transparent), transparent 70%);
+  filter: blur(40px);
+}
 #root { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
 /* In the base layer so Tailwind text/weight utilities on buttons still apply. */
 @layer base {
   button, input, select, textarea { font: inherit; }
   button { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
-  :focus-visible { outline: 3px solid rgba(23, 105, 255, .38); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--sky) 60%, transparent); outline-offset: 2px; }
 }
 summary { touch-action: manipulation; }
 
-.bay-card { border: 1px solid #e3eaf3; background: #fff; box-shadow: 0 12px 30px rgba(15, 23, 42, .06); }
-.bay-icon-button { display: inline-flex; height: 42px; width: 42px; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid #e3eaf3; background: rgba(255,255,255,.96); color: #40516d; box-shadow: 0 6px 18px rgba(15,23,42,.08); transition: transform .16s ease, background .16s ease, color .16s ease; }
-.bay-icon-button:hover { transform: translateY(-1px); background: #f7f9fc; color: #07152f; }
-.bay-sheet { box-shadow: 0 -18px 48px rgba(15,23,42,.2); }
+.bay-card { border: 1px solid var(--glass-edge); background: var(--surface); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); }
+.bay-icon-button { display: inline-flex; height: 42px; width: 42px; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid var(--glass-edge); background: var(--surface); color: var(--ink-2); box-shadow: var(--glass-shadow); transition: transform .16s ease, background .16s ease, color .16s ease; }
+.bay-icon-button:hover { transform: translateY(-1px); color: var(--ink); }
+.bay-sheet { box-shadow: 0 -18px 48px rgba(12, 21, 48, .22); }
+
+/* Frosted glass: translucent surface, blur, a bright hairline edge. */
+.glass {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: inset 0 0 0 1px var(--glass-edge), var(--glass-shadow);
+}
+/* Sheets and full-screen panels hold a lot of text: more frost, less see-through. */
+.glass-strong { background: color-mix(in srgb, var(--surface) 70%, var(--canvas)); }
+/* Dimmed backdrop. Animates its colour, not opacity: an opacity animation on an
+   ancestor stops backdrop-filter from blurring what is behind the sheet. */
+@keyframes bay-dim { from { background-color: transparent; } }
+.bay-dim { animation: bay-dim .2s ease-out both; }
+
+/* Hot pink action with a glassy top highlight. */
+.cta {
+  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 55%), var(--cta);
+  color: #fff;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--pink) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
+}
+/* Selected state: deep sky with the same gloss. */
+.selected-pill {
+  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0) 60%), #0369a1;
+  box-shadow: 0 6px 16px rgba(3, 105, 161, .35), inset 0 1px 0 rgba(255,255,255,.3);
+}
+/* ---------- kerbside objects ---------- */
+/* Overpass is drawn from highway-sign lettering; heavy and tight for figures. */
+.figure { font-weight: 850; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+/* Pay-and-display ticket type. */
+.ticket-type { font-family: var(--font-ticket); font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+
+/* Parking sign plate: white, thin border, the rule in sign green. Car parks get
+   the blue P they have on the street. */
+.plate {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: 6px; background: #fff; color: #0b6b3a;
+  box-shadow: inset 0 0 0 1.5px rgba(12, 21, 48, .22), 0 1px 2px rgba(12, 21, 48, .12);
+  line-height: 1;
+}
+.plate-carpark { background: #0369a1; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), 0 1px 2px rgba(12, 21, 48, .2); }
+.plate-unknown { color: #5d6b85; }
+.plate-sub { font-size: 8.5px; font-weight: 700; letter-spacing: .02em; margin-top: 2px; }
+
+/* The best option is a pay-and-display ticket: paper, notched at the tear line. */
+.ticket {
+  /* The tear sits above the 80 px stub at the bottom. */
+  --perf: calc(100% - 80px);
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 1px 1px rgba(12, 21, 48, .06), 0 14px 32px rgba(3, 105, 161, .16);
+  -webkit-mask: radial-gradient(circle at 0 var(--perf), transparent 9px, #000 9.5px) left / 51% 100% no-repeat,
+                radial-gradient(circle at 100% var(--perf), transparent 9px, #000 9.5px) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle at 0 var(--perf), transparent 9px, #000 9.5px) left / 51% 100% no-repeat,
+                radial-gradient(circle at 100% var(--perf), transparent 9px, #000 9.5px) right / 51% 100% no-repeat;
+}
+.ticket-tear { position: absolute; left: 14px; right: 14px; top: var(--perf); border-top: 2px dashed rgba(3, 105, 161, .22); }
+@media (prefers-color-scheme: dark) {
+  .ticket { background: #f2f7ff; color: #0c1530; }
+  .ticket .text-ink { color: #0c1530; } .ticket .text-ink-2 { color: #3d4e6b; } .ticket .text-ink-3 { color: #5d6b85; }
+  .ticket .text-ok { color: #047857; } .ticket .text-warn { color: #b45309; } .ticket .text-brand { color: #0369a1; }
+}
+/* The one orchestrated moment: the ticket prints when the stay changes. */
+@keyframes bay-print { from { clip-path: inset(0 0 100% 0 round 18px); transform: translateY(-10px); } to { clip-path: inset(0 0 0 0 round 18px); transform: none; } }
+.bay-print { animation: bay-print .45s var(--ease-out) both; }
 
 @media (max-width: 640px) {
   input, select, textarea { font-size: 16px; }

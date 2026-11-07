@@ -1,5 +1,7 @@
 <svg width="1024" height="1024" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="100" fill="#1769ff"/>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#0369a1"/></linearGradient></defs>
+  <rect width="100" height="100" fill="url(#g)"/>
   <rect x="14" y="14" width="72" height="72" rx="14" fill="none" stroke="#fff" stroke-width="3.2"/>
   <g transform="translate(50 50) scale(.62) translate(-50 -50)"><path d="M30 18H57A19 19 0 0 1 57 56H45V82H30ZM45 31V43H56A6 6 0 0 0 56 31Z" fill="#fff" fill-rule="evenodd"/></g>
+  <circle cx="76" cy="76" r="5" fill="#ff2d87"/>
 </svg>

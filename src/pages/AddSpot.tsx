@@ -68,13 +68,13 @@ export function AddSpot({ center, onDone }: { center: { lat: number; lng: number
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-[#f6f8fc]">
-      <header className="border-b border-[#e3eaf3] bg-white px-5 py-5">
-        <p className="text-xs font-bold uppercase tracking-[.14em] text-[#1769ff]">Community map</p>
-        <div className="mt-2 flex items-center justify-between gap-3"><div><h1 className="text-2xl font-bold tracking-tight text-[#0b1730]">Add a parking sign</h1><p className="mt-1 text-sm text-[#64748b]">Help someone understand a real sign.</p></div><span className="shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-[#1769ff]">Step {picked ? '2' : '1'} of 2</span></div>
-        <div className="mt-4 flex gap-2"><span className="h-1.5 flex-1 rounded-full bg-[#1769ff]" /><span className={`h-1.5 flex-1 rounded-full ${picked ? 'bg-[#1769ff]' : 'bg-slate-200'}`} /></div>
+    <div className="flex h-full flex-col overflow-y-auto bg-tint">
+      <header className="border-b border-line bg-surface px-5 py-5">
+        <p className="text-xs font-bold uppercase tracking-[.14em] text-brand">Community map</p>
+        <div className="mt-2 flex items-center justify-between gap-3"><div><h1 className="text-2xl font-bold tracking-tight text-ink">Add a parking sign</h1><p className="mt-1 text-sm text-ink-3">Help someone understand a real sign.</p></div><span className="shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-brand">Step {picked ? '2' : '1'} of 2</span></div>
+        <div className="mt-4 flex gap-2"><span className="h-1.5 flex-1 rounded-full cta" /><span className={`h-1.5 flex-1 rounded-full ${picked ? 'cta' : 'bg-slate-200'}`} /></div>
       </header>
-      <div className="h-48 shrink-0 border-b border-slate-200 bg-white p-2">
+      <div className="h-48 shrink-0 border-b border-slate-200 bg-surface p-2">
         <div className="h-full overflow-hidden rounded-2xl"><MapView center={center} spots={[]} pickMode pickedLocation={picked} onPickLocation={handlePick} /></div>
       </div>
       <p className="mx-4 mt-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 text-center text-xs font-medium text-blue-700">
