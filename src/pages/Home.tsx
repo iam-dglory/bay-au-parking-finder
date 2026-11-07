@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { BellRing, Bookmark, BriefcaseBusiness, CarFront, ChevronDown, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Radio, Search, Ticket, X } from 'lucide-react'
+import { BellRing, Bookmark, BriefcaseBusiness, CarFront, ChevronDown, ChevronRight, HomeIcon, LocateFixed, MapPin, Navigation2, Search, Ticket, X } from 'lucide-react'
 import { BrandMark } from '../components/BrandMark'
 import { OptionSheet } from '../components/OptionSheet'
 import { SpotDetailSheet } from '../components/SpotDetailSheet'
@@ -11,7 +11,7 @@ import { evaluateSpotStatus, rankSpots } from '../lib/parkingStatus'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { formatCents, formatDurationShort, melbourneStart } from '../lib/parkingCost'
-import { carParkOptions, loadCarParkRates, loadStreetRates, rankOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type StreetRatesFile } from '../lib/parkingOptions'
+import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, rankOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type StreetRatesFile } from '../lib/parkingOptions'
 import type { CarPark, ParkingSpot, SpotStatus } from '../types'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
@@ -47,6 +47,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
   const [carParkRates, setCarParkRates] = useState<CarParkRatesFile | null>(null)
   const [rateError, setRateError] = useState(false)
   const [hereMessage, setHereMessage] = useState<string | null>(null)
+  const [retry, setRetry] = useState(0)
 
   const target = destination ?? center
   const { session: parked, minutesLeft } = useParkingSession()
@@ -60,7 +61,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
     Promise.all([loadStreetRates(), loadCarParkRates()])
       .then(([s, c]) => { setStreetRates(s); setCarParkRates(c); setRateError(false) })
       .catch(() => setRateError(true))
-  }, [melbourne])
+  }, [melbourne, retry])
   useEffect(() => { setSelectedId(null); setHereMessage(null) }, [target.lat, target.lng])
 
   const start = useMemo(() => melbourneStart(now), [now])
@@ -75,6 +76,7 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
   const fitting = options.filter(o => o.fits !== false && priceText(o) != null)
   const unpriced = options.filter(o => o.fits !== false && priceText(o) == null)
   const tooShort = options.filter(o => o.fits === false)
+  const notSuitable = [...tooShort, ...unpriced]
   const best = fitting[0]
   const others = fitting.slice(1)
   const selected = allOptions.find(o => o.id === selectedId) ?? null
@@ -123,7 +125,6 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
           </div>
           {melbourne && <div className="mt-1 border-t border-[#eef2f7] px-1 pt-1.5">
             <div className="flex items-center gap-0.5" role="radiogroup" aria-label="How long are you staying?">
-              <span className="shrink-0 pl-1.5 pr-0.5 text-xs font-semibold text-[#64748b]">Stay</span>
               {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} onClick={() => setDuration(d)}
                 className={`h-11 min-w-0 flex-1 whitespace-nowrap rounded-[14px] px-1 text-[13px] font-bold tabular-nums transition-[background-color,color,transform] active:scale-[0.97] ${duration === d ? 'bg-[#1769ff] text-white shadow-[0_4px_12px_rgba(23,105,255,.35)]' : 'text-[#40516d] hover:bg-[#f5f8ff]'}`}>{durationLabel(d)}</button>)}
             </div>
@@ -145,24 +146,23 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
         <button onClick={() => setExpanded(v => !v)} className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-slate-200" aria-label={expanded ? 'Show less' : 'Show more'} />
         <div className="flex items-end justify-between gap-3 px-5 pb-2 pt-2">
           <div className="min-w-0">
-            <h2 className="text-lg font-bold tracking-tight text-[#0b1730] [text-wrap:balance]">{melbourne ? `Best for ${duration === 540 ? 'the day' : durationLabel(duration)}` : 'Parking nearby'}</h2>
-            <p className="text-xs text-[#64748b]">{loading ? 'Finding parking…' : melbourne ? `${fitting.length} option${fitting.length === 1 ? '' : 's'} within ${walkMinutes(radius)} min walk` : 'Prices are available in central Melbourne'}</p>
+            <h2 className="text-lg font-bold tracking-tight text-[#0b1730] [text-wrap:balance]">{melbourne ? `Cheapest for ${duration === 540 ? 'the day' : durationLabel(duration)}` : 'Parking nearby'}</h2>
+            <p className="text-xs text-[#64748b]">{loading ? 'Finding parking…' : melbourne ? fitting.length === 0 ? 'Nothing nearby fits this stay' : `${fitting.length} place${fitting.length === 1 ? '' : 's'} within a ${walkMinutes(radius)} min walk` : 'Prices are available in central Melbourne'}</p>
           </div>
-          {melbourne && others.length > 2 && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-[#1769ff] hover:bg-[#f5f8ff]">{expanded ? 'Less' : `See all ${fitting.length}`}</button>}
+          {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-[#1769ff] hover:bg-[#f5f8ff]">{expanded ? 'Less' : 'See all'}</button>}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,env(safe-area-inset-bottom))]">
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-[#f5f8ff] px-3 py-2.5 text-sm text-[#40516d]">{hereMessage}</p>}
           {destination?.note && <p className="mx-2 mb-2 flex gap-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900"><Ticket className="h-4 w-4 shrink-0" />{destination.note}</p>}
-          {rateError && <p className="mx-2 mb-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-sm text-amber-900">Prices couldn't load. Check your connection.</p>}
+          {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Prices couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-white px-3 font-bold text-amber-900">Retry</button></div>}
 
           {melbourne && <>
             {loading && !best && <SkeletonRows />}
-            {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">No priced parking within a {walkMinutes(FAR_M)} minute walk for {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
-            {best && <BestCard option={best} duration={duration} now={now} onClick={() => pick(best)} />}
+            {!loading && !best && <p className="px-2 py-3 text-sm text-[#40516d]">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
+            {best && <BestCard option={best} duration={duration} now={now} onOpen={() => pick(best)} />}
             {others.length > 0 && <ul className="mt-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul>}
-            {expanded && unpriced.length > 0 && <Group title={`No price listed · ${unpriced.length}`} hint="Check the sign or meter"><ul>{unpriced.map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul></Group>}
-            {tooShort.length > 0 && <Group title={`Too short for ${durationLabel(duration).toLowerCase()} · ${tooShort.length}`} hint="Time limits are shorter than your stay"><ul>{tooShort.map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul></Group>}
+            {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="Time limit too short, or no price listed"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} onClick={() => pick(o)} />)}</ul></Group>}
           </>}
 
           {!melbourne && <ul>{otherCitySpots.slice(0, expanded ? 50 : 5).map(s => <li key={s.id}><button onClick={() => setSelectedSpot(s)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left hover:bg-[#f5f8ff]"><MapPin className="h-5 w-5 text-[#1769ff]" /><span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#0b1730]">{s.address_text}</span><span className="text-xs tabular-nums text-[#64748b]">{walkMinutes(s.distance_m)} min</span></button></li>)}</ul>}
@@ -179,42 +179,42 @@ export function Home({ center, myLocation, locationLabel, onChangeLocation, onUs
 }
 
 function OptionTitle({ option }: { option: ParkingOption }) {
-  if (option.kind === 'carpark') return <><span className="block truncate text-[15px] font-semibold text-[#0b1730]">{option.name}</span><span className="block truncate text-xs text-[#64748b]">{option.operator} car park · {option.rateName}</span></>
-  const { title, block } = splitStreet(option.name)
-  return <><span className="block truncate text-[15px] font-semibold text-[#0b1730]">{title}</span>{block && <span className="block truncate text-xs text-[#64748b]">{block}</span>}</>
+  const title = option.kind === 'carpark' ? option.name : splitStreet(option.name).title
+  return <span className="block truncate text-[15px] font-semibold text-[#0b1730]">{title}</span>
+}
+
+/** One plain line: "2 min walk · 2 hr max · 3 free now" or "Car park · 5 min walk". */
+function factsText(option: ParkingOption) {
+  const parts = [option.kind === 'carpark' ? `${option.operator ?? 'Car'} car park` : null, `${walkMinutes(option.distanceM)} min walk`]
+  if (option.limitMinutes != null) parts.push(`${formatDurationShort(option.limitMinutes)} max`)
+  if (option.live) parts.push(`${option.live.free} free now`)
+  return parts.filter(Boolean).join(' · ')
 }
 
 function Facts({ option }: { option: ParkingOption }) {
-  return <span className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[#40516d] tabular-nums"><Navigation2 className="h-3 w-3" />{walkMinutes(option.distanceM)} min walk</span>
-    {option.limitMinutes != null && <span className={`rounded-full px-2 py-0.5 tabular-nums ${option.fits === false ? 'bg-amber-50 text-amber-900' : 'bg-[#f1f5f9] text-[#40516d]'}`}>{formatDurationShort(option.limitMinutes)} limit</span>}
-    {option.live && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800 tabular-nums"><Radio className="h-3 w-3" />{option.live.free} free now</span>}
-  </span>
+  return <span className="mt-0.5 block truncate text-[13px] text-[#40516d] tabular-nums">{factsText(option)}</span>
 }
 
-function BestCard({ option, duration, now, onClick }: { option: ParkingOption; duration: number; now: Date; onClick: () => void }) {
+function BestCard({ option, duration, now, onOpen }: { option: ParkingOption; duration: number; now: Date; onOpen: () => void }) {
   const leave = option.limitMinutes != null && option.limitMinutes < duration ? option.limitMinutes : duration
-  return <button onClick={onClick} className="w-full rounded-[22px] bg-[#f5f8ff] p-4 text-left shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)] transition-transform active:scale-[0.99]">
-    <span className="flex items-start gap-3">
-      <span className="min-w-0 flex-1"><OptionTitle option={option} /></span>
-      <span className="shrink-0 text-right">
-        <span className="block text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
-        <span className="mt-1 block text-xs text-[#64748b]">for {durationLabel(duration).toLowerCase()}</span>
-      </span>
-    </span>
-    <Facts option={option} />
-    <span className="mt-3 flex items-center justify-between border-t border-[rgba(23,105,255,.12)] pt-3 text-sm">
-      <span className="text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(now.getTime() + leave * 60_000))}</strong></span>
-      <span className="inline-flex items-center gap-0.5 font-bold text-[#1769ff]">Details<ChevronRight className="h-4 w-4" /></span>
-    </span>
-  </button>
+  return <div className="rounded-[22px] bg-[#f5f8ff] shadow-[inset_0_0_0_1px_rgba(23,105,255,.14)]">
+    <button onClick={onOpen} className="flex w-full items-start gap-3 rounded-t-[22px] px-4 pb-2 pt-4 text-left" aria-label={`${option.name}, details`}>
+      <span className="min-w-0 flex-1"><OptionTitle option={option} /><Facts option={option} /></span>
+      <span className="shrink-0 text-right text-[28px] font-extrabold leading-none tracking-tight text-[#0b1730] tabular-nums">{priceText(option)}</span>
+    </button>
+    <div className="flex items-center gap-3 px-4 pb-3 pt-1">
+      <span className="min-w-0 flex-1 text-sm text-[#40516d]">Leave by <strong className="font-bold text-[#0b1730] tabular-nums">{clock(new Date(now.getTime() + leave * 60_000))}</strong></span>
+      <a href={directionsUrl(option.lat, option.lng)} target="_blank" rel="noreferrer" onClick={() => trackEvent('directions_open', { result_type: option.kind })}
+        className="flex h-11 shrink-0 items-center gap-1.5 rounded-[14px] bg-[#1769ff] px-5 text-sm font-bold text-white shadow-[0_6px_16px_rgba(23,105,255,.3)] transition-transform active:scale-[0.97]"><Navigation2 className="h-4 w-4" />Go</a>
+    </div>
+  </div>
 }
 
 function OptionRow({ option, onClick }: { option: ParkingOption; onClick: () => void }) {
   const price = option.fits === false ? null : priceText(option)
   return <li>
-    <button onClick={onClick} className="flex min-h-16 w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left transition-colors hover:bg-[#f5f8ff]">
-      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] ${option.kind === 'carpark' ? 'bg-[#1769ff] text-white' : 'bg-[#eef4ff] text-[#1769ff]'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-5 w-5" /> : <MapPin className="h-5 w-5" />}</span>
+    <button onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 py-2 text-left transition-colors hover:bg-[#f5f8ff]">
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${option.kind === 'carpark' ? 'bg-[#1769ff] text-white' : 'bg-[#eef4ff] text-[#1769ff]'}`} aria-hidden>{option.kind === 'carpark' ? <CarFront className="h-[18px] w-[18px]" /> : <MapPin className="h-[18px] w-[18px]" />}</span>
       <span className="min-w-0 flex-1"><OptionTitle option={option} /><Facts option={option} /></span>
       <span className="shrink-0 text-right text-base font-extrabold text-[#0b1730] tabular-nums">{price ?? <span className="text-sm font-semibold text-[#64748b]">{option.fits === false ? 'Too short' : 'Check sign'}</span>}</span>
     </button>
@@ -281,7 +281,7 @@ function SearchOverlay({ near, onPick, onVenue, onClose }: { near: { lat: number
         <ul className="mt-1">{VENUES.map(v => <li key={v.id}><button onClick={() => onVenue(v)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-2 text-left hover:bg-[#f5f8ff]">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#eef4ff] text-[#1769ff]"><Ticket className="h-5 w-5" /></span>
           <span className="min-w-0 flex-1"><span className="block text-[15px] font-semibold text-[#0b1730]">{v.name}</span><span className="block text-xs text-[#64748b]">Shows parking for {durationLabel(v.minutes).toLowerCase()}</span></span>
-          <ChevronRight className="h-5 w-5 text-[#94a3b8]" />
+          <ChevronRight className="h-5 w-5 text-[#64748b]" />
         </button></li>)}</ul>
       </>}
     </div>

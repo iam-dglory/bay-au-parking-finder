@@ -150,5 +150,6 @@ export function formatCents(cents: number): string {
 export function formatDurationShort(minutes: number): string {
   if (minutes < 60) return `${minutes} min`
   const h = Math.floor(minutes / 60), m = minutes % 60
-  return m ? `${h}h ${m}m` : `${h}h`
+  const hours = `${h} hr${h === 1 ? '' : 's'}`
+  return m ? `${h} hr ${m} min` : hours
 }
