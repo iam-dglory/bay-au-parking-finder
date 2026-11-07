@@ -1,0 +1,63 @@
+# Builds an installable Android test APK after every change to main and puts
+# it on one rolling pre-release, so testers always use the same link:
+#   https://github.com/iam-dglory/bay-au-parking-finder/releases/download/android-test/bay-test.apk
+# Debug-signed: fine for sideloading onto test phones, not for Play Store
+# (store builds come from android-release.yml with the upload key).
+name: Android test APK
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-test-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Build web app and copy it into the Android project
+        run: npm run cap:android
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ezwiagssiuvmhayvsmbk.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah' }}
+          VITE_ASSET_BASE_URL: ${{ vars.VITE_ASSET_BASE_URL }}
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+      - name: Publish to the android-test pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk bay-test.apk
+          notes="Test build of Bay for Android from ${SHA:0:7} ($(date -u +'%d %b %Y %H:%M UTC')).
+
+          Install: open this page on the phone, tap bay-test.apk, then allow your browser to install apps when Android asks. Updating: install the new file over the old one."
+          if gh release view android-test >/dev/null 2>&1; then
+            gh release upload android-test bay-test.apk --clobber
+            gh release edit android-test --notes "$notes" --prerelease
+          else
+            gh release create android-test bay-test.apk --prerelease --title "Bay for Android (test build)" --notes "$notes" --target "$SHA"
+          fi
