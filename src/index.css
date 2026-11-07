@@ -249,6 +249,8 @@ summary { touch-action: manipulation; }
 .bay-press:active { transform: scale(.97); }
 
 /* ---------- map (MapLibre + OpenFreeMap) ---------- */
+/* MapLibre's own CSS sets position: relative on the container, so size it explicitly. */
+.bay-map.maplibregl-map { position: absolute; inset: 0; }
 .bay-map .maplibregl-ctrl-attrib { font: 11px/1.4 var(--font-sans); background: var(--surface); color: var(--ink-3); border-radius: 12px; }
 .bay-map .maplibregl-ctrl-attrib a { color: var(--ink-2); }
 .bay-map .maplibregl-ctrl-attrib-button { filter: none; }
