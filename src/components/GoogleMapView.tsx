@@ -68,7 +68,7 @@ export function GoogleMapView({
 
         {spots.slice(0, MAX_PLAIN_MARKERS).map(spot => {
           const live = availability(spot).state
-          const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#64748B'
+          const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#1683F7'
           return (
             <AdvancedMarker key={spot.id} position={{ lat: spot.lat, lng: spot.lng }} zIndex={5} title={spot.address_text}
               onClick={() => spot.status && onSelectSpot?.(spot as ParkingSpot & { status: SpotStatus })}>

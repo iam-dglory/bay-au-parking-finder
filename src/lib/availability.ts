@@ -8,7 +8,7 @@ export const REPORT_MAX_AGE_MINUTES = 10
  * cannot do. 24 h keeps genuinely long-parked bays from being wrongly trusted. */
 export const SENSOR_STUCK_AFTER_HOURS = 24
 export type Availability = { state: 'vacant' | 'occupied' | 'uncertain' | 'unknown'; label: string; color: string }
-const ON_ARRIVAL: Availability = { state: 'unknown', label: 'Availability on arrival', color: '#64748b' }
+const ON_ARRIVAL: Availability = { state: 'unknown', label: 'Check on arrival', color: '#1683f7' }
 function fresh(iso: string | undefined, now: Date, limit: number) {
   const minutes = iso ? (now.getTime() - Date.parse(iso)) / 60000 : NaN
   return Number.isFinite(minutes) && minutes >= 0 && minutes <= limit

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { carParkOptions, rankOptions, shortStreetName, sortParkingOptions, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
+import { carParkOptions, mappedCarParkOptions, rankOptions, shortStreetName, sortParkingOptions, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
 import type { ParkingSpot } from '../types'
 
 const now = new Date('2026-11-03T23:00:00Z') // Wed 10:00am Melbourne
@@ -66,6 +66,14 @@ describe('sortParkingOptions', () => {
     expect(sortParkingOptions(rows, 'nearest').map(row => row.id)).toEqual(['near', 'cheap', 'live'])
     expect(sortParkingOptions(rows, 'cheapest').map(row => row.id)).toEqual(['cheap', 'live', 'near'])
     expect(sortParkingOptions(rows, 'available').map(row => row.id)).toEqual(['live', 'near', 'cheap'])
+  })
+})
+
+describe('mappedCarParkOptions', () => {
+  it('keeps mapped facilities visible and turns published hourly rates into stay totals', () => {
+    const rows = mappedCarParkOptions([{ id: 'spencer', address_text: 'Spencer Street Car Park', suburb: 'Melbourne', lat: -37.8183, lng: 144.9531, distance_m: 120, capacity: 300, census_year: 2025, kind: 'area', hourly_rate_min: 6, hourly_rate_max: 8, source_name: 'Verified operator' }], 120)
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({ id: 'mapped:spencer', range: { min: 1200, max: 1600 }, fits: true })
   })
 })
 

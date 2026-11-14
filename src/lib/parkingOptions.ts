@@ -1,4 +1,4 @@
-import type { ParkingSpot } from '../types'
+import type { CarPark, ParkingSpot } from '../types'
 import { availability } from './availability'
 import { haversineMeters } from './distance'
 import { carParkCost, streetCostRange, type CarParkRates, type LocalStart, type WeekSchedule } from './parkingCost'
@@ -90,7 +90,7 @@ export function streetOptions(spots: ParkingSpot[], rates: StreetRatesFile | nul
       bayCount: bays.length, bays,
     }
     if (!street || !rates) {
-      options.push({ ...base, cents: null, limitMinutes: null, fits: null, rateName: 'No meter listed', source: { label: 'Check the sign at the bay', date: rates?.fetched ?? '' } })
+      options.push({ ...base, cents: null, limitMinutes: null, fits: null, rateName: 'Check meter or sign', source: { label: 'Check the sign at the bay', date: rates?.fetched ?? '' } })
       continue
     }
     const schedules = street.zones.map(z => rates.zones[String(z)]?.days).filter((d): d is WeekSchedule => !!d)
@@ -122,13 +122,41 @@ export function carParkOptions(file: CarParkRatesFile | null, center: { lat: num
     const ageDays = (now.getTime() - Date.parse(park.checked)) / DAY_MS
     options.push({
       kind: 'carpark', id: park.id, name: park.name, operator: park.operator, lat: park.lat, lng: park.lng, navTo: park.entrance, distanceM,
-      cents: cost?.cents ?? null, rateName: cost?.rateName ?? 'No published rate for this time',
+      cents: cost?.cents ?? null, rateName: cost?.rateName ?? 'Check operator rate',
       limitMinutes: null, fits: cost ? true : null,
       source: { label: park.operator, url: park.source_url, date: park.checked, stale: ageDays > file.stale_after_days },
       notes: park.notes,
     })
   }
   return options
+}
+
+/** Turn every mapped off-street facility into a driver-facing option. The
+ * catalogue is much broader than the small manually curated rate file, so it
+ * must remain visible even when a facility has no machine-readable tariff. */
+export function mappedCarParkOptions(areas: CarPark[], durationMinutes: number): ParkingOption[] {
+  return areas.filter(area => area.kind === 'area' || area.kind == null).map(area => {
+    const hours = durationMinutes / 60
+    const min = area.hourly_rate_min != null ? Math.round(area.hourly_rate_min * 100 * hours) : null
+    const max = area.hourly_rate_max != null ? Math.round(area.hourly_rate_max * 100 * hours) : min
+    const free = area.fee === 'no' && !area.source_terms?.['fee:conditional']
+    const cents = free ? 0 : min != null && max === min ? min : null
+    return {
+      kind: 'carpark', id: `mapped:${area.id}`, name: area.address_text,
+      operator: area.source_name ?? area.facility_type ?? 'Parking area',
+      lat: area.lat, lng: area.lng, distanceM: area.distance_m,
+      cents,
+      range: min != null && max != null && max !== min ? { min, max } : undefined,
+      rateName: free ? 'Listed as free' : min != null ? 'Published hourly rate' : 'Check operator rate',
+      limitMinutes: null, fits: free || min != null ? true : null,
+      source: {
+        label: area.source_name ?? 'Mapped parking source',
+        url: area.pricing_source_url ?? area.source_url,
+        date: area.pricing_checked_at ?? area.source_updated_at ?? area.collected_at ?? '',
+      },
+      notes: area.opening_hours_summary ?? area.pricing_notes ?? undefined,
+    }
+  })
 }
 
 /** Cheapest stays that fit first, then by distance; unknown prices last. */

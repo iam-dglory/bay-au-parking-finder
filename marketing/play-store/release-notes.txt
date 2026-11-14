@@ -1,7 +1,7 @@
-Clearer parking details, 500 m default search, improved filters and issue reporting.
+Clearer map availability, broader Melbourne coverage and a refreshed BAY icon.
 
-- Refined nearby parking map and list experience.
-- Clearer separation between mapped places and fresh live availability readings.
-- Source-listed prices and restrictions are shown when supplied.
-- Added structured reporting for incorrect location, restriction, price and navigation information.
-- Improved saved places, activity, parking guide and responsive layouts.
+- Shows every nearby mapped parking area instead of limiting the map to a small subset.
+- Green markers show live openings, red shows confirmed full and BAY blue means check on arrival.
+- Removes pricing labels from map markers; rates and source details stay in the parking card.
+- Adds mapped off-street facilities around Spencer Street and across Melbourne to the main results.
+- Uses the official BAY font and a new white-background, BAY-blue app icon.

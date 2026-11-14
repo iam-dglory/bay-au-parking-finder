@@ -58,7 +58,7 @@ Replace `instagram` with `tiktok`, `linkedin`, `facebook`, `youtube` or `bay_lan
 1. Five things to check before choosing a car park.
 2. What “availability on arrival” means—and what it does not mean.
 3. A visual guide to 1P, 2P and paid-parking signs.
-4. Why BAY shows “price not supplied by this source.”
+4. Why BAY asks drivers to check the current rate when a source has no machine-readable tariff.
 5. How the 500 m, 1 km, 2 km and 5 km radiuses change a search.
 6. Melbourne parking data: council readings, operator tariffs and mapped places are different sources.
 7. A report moves from submission → review → source verification → correction → resolution.

@@ -2,13 +2,13 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Bookmark, BriefcaseBusiness, Check, ChevronDown, Clock3, ChevronRight, CircleDollarSign, HomeIcon, LocateFixed, MapPin, Navigation2, Radio, Search, Star, Ticket, X } from 'lucide-react'
 import { OptionSheet } from '../components/OptionSheet'
 import { SignPlate, TicketTime, plateLabel, signNotation } from '../components/Kerb'
-import { SignMark } from '../components/BrandMark'
+import { BrandMark, SignMark } from '../components/BrandMark'
 import { useNearbyParking } from '../lib/useNearbyParking'
 import { isMelbourneSearch } from '../lib/melbourneSensors'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
 import { formatCents, formatDurationShort, melbourneStart } from '../lib/parkingCost'
-import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, sortParkingOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type ParkingSort, type StreetRatesFile } from '../lib/parkingOptions'
+import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, mappedCarParkOptions, sortParkingOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type ParkingSort, type StreetRatesFile } from '../lib/parkingOptions'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
 import { endParking, startParking, useParkingSession } from '../lib/parkingTimer'
@@ -17,6 +17,7 @@ import { DrivingOverlay, ParkedPrompt } from '../components/DrivingMode'
 import { haversineMeters } from '../lib/distance'
 import { VENUES, type Venue } from '../lib/venues'
 import { useFavourites, type FavouritePlace } from '../lib/favourites'
+import { useNearbyCarParks } from '../lib/useNearbyCarParks'
 
 const MapView = lazy(() => import('../components/MapView').then(module => ({ default: module.MapView })))
 
@@ -25,9 +26,6 @@ const DURATIONS = [30, 60, 120, 180, 240, 540]
 const NEAR_M = 400
 const FAR_M = 800
 const MIN_GOOD_OPTIONS = 3
-/** Keep the mobile map readable and responsive. The complete result set remains
- * available in the sheet; the map shows the nearest relevant markers. */
-const MAX_MAP_OPTIONS = 24
 const MELBOURNE_CBD = { lat: -37.8136, lng: 144.9631, label: 'Melbourne CBD' }
 
 const DURATION_KEY = 'bay.stay-minutes.v1'
@@ -47,7 +45,7 @@ const durationLabel = (d: number) => d === 540 ? 'All day' : formatDurationShort
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
 const knownPriceText = (o: ParkingOption) => o.cents != null ? (o.cents === 0 ? 'Free' : formatCents(o.cents)) : o.range ? `${formatCents(o.range.min)}–${formatCents(o.range.max)}` : null
-const priceText = (o: ParkingOption) => knownPriceText(o) ?? 'Price not listed'
+const priceText = (o: ParkingOption) => knownPriceText(o) ?? 'Check rate'
 
 export function Home({ center, myLocation, driving = false, locationLabel, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
   center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; driving?: boolean; locationLabel: string; onUseCurrentLocation: () => void
@@ -77,7 +75,11 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   useEffect(() => { if (!driving) setPassenger(false) }, [driving])
   const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
-  const { spots, loading, error: parkingError, updatedAt, refresh: refreshParking } = useNearbyParking(target, FAR_M)
+  const { spots, loading: spotsLoading, error: spotsError, updatedAt, refresh: refreshSpots } = useNearbyParking(target, FAR_M)
+  const { carParks: mappedAreas, loading: areasLoading, error: areasError, refresh: refreshAreas } = useNearbyCarParks(target, FAR_M, melbourne)
+  const loading = spotsLoading || areasLoading
+  const parkingError = spotsError ?? areasError
+  const refreshParking = () => { refreshSpots(); refreshAreas() }
   const favourites = useFavourites()
   const favIds = useMemo(() => new Set(favourites.map(f => f.id)), [favourites])
   const [showTips, setShowTips] = useState(() => { try { return !localStorage.getItem(TIPS_KEY) } catch { return false } })
@@ -93,9 +95,14 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   const arrival = useMemo(() => arrivalTime(now, arriveIn), [now, arriveIn])
   const later = arrival.getTime() - now.getTime() > 5 * 60_000
   const start = useMemo(() => melbourneStart(arrival), [arrival])
-  const allOptions = useMemo(() => melbourne
-    ? [...streetOptions(spots, streetRates, start, duration, now), ...carParkOptions(carParkRates, target, FAR_M, start, duration, now)]
-    : [], [melbourne, spots, streetRates, carParkRates, start, duration, now, target])
+  const allOptions = useMemo(() => {
+    if (!melbourne) return []
+    const streets = streetOptions(spots, streetRates, start, duration, now)
+    const curated = carParkOptions(carParkRates, target, FAR_M, start, duration, now)
+    const mapped = mappedCarParkOptions(mappedAreas, duration).filter(area => !curated.some(known =>
+      haversineMeters(area, known) <= 20 && area.name.toLowerCase() === known.name.toLowerCase()))
+    return [...streets, ...curated, ...mapped]
+  }, [melbourne, spots, streetRates, carParkRates, mappedAreas, start, duration, now, target])
   const { options, radius } = useMemo(() => {
     const near = allOptions.filter(o => o.distanceM <= NEAR_M)
     const good = (list: ParkingOption[]) => list.filter(o => o.fits !== false).length
@@ -107,11 +114,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   const best = fitting[0]
   const others = fitting.slice(1)
   const selected = allOptions.find(o => o.id === selectedId) ?? null
-  const mapOptions = useMemo(() => {
-    const nearest = sortParkingOptions(options.filter(o => o.fits !== false), 'nearest').slice(0, MAX_MAP_OPTIONS)
-    if (!selected || nearest.some(o => o.id === selected.id)) return nearest
-    return [...nearest.slice(0, MAX_MAP_OPTIONS - 1), selected]
-  }, [options, selected])
+  /** Every nearby place stays visible. Compact availability markers keep the
+   * map readable without hiding places behind an arbitrary result cap. */
+  const mapOptions = useMemo(() => sortParkingOptions(options, 'nearest'), [options])
 
   /** Remember where the driver is going so Bay can offer the timer on arrival. */
   function goTo(option: ParkingOption) {
@@ -155,6 +160,8 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] lg:right-[430px]">
         <div className="pointer-events-auto mx-auto max-w-xl rounded-[24px] glass p-1.5">
           <div className="flex items-center gap-1">
+            <BrandMark size="sm" className="ml-2 mr-1 shrink-0" />
+            <span aria-hidden className="h-7 w-px shrink-0 bg-line" />
             <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[18px] px-3 text-left transition-colors hover:bg-tint" aria-label="Where are you going?">
               <Search className="h-5 w-5 shrink-0 text-brand" />
               <span className="min-w-0 flex-1">
@@ -191,9 +198,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
       </header>
 
       {melbourne && <div className="pointer-events-none absolute left-3 top-[136px] z-[420] flex items-center gap-3 rounded-full glass px-3 py-2 text-[10px] font-semibold text-ink-2 lg:top-[92px]" aria-label="Map availability legend">
-        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#16A34A]" />Live bays</span>
-        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#DC2626]" />Full</span>
-        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#64748B]" />No live data</span>
+        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#16A34A]" />Available now</span>
+        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#DC2626]" />Full now</span>
+        <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#1683F7]" />Check on arrival</span>
       </div>}
 
       {/* Bottom sheet: the answer first */}
@@ -221,7 +228,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,env(safe-area-inset-bottom))]">
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
           {destination?.note && <p className="mx-2 mb-2 flex gap-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900"><Ticket className="h-4 w-4 shrink-0" />{destination.note}</p>}
-          {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Prices couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-amber-900">Retry</button></div>}
+          {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Rate details couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-amber-900">Retry</button></div>}
           {parkingError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">{parkingError}</span><button onClick={() => refreshParking()} className="h-10 shrink-0 rounded-[12px] bg-white px-3 font-bold text-amber-900">Retry</button></div>}
 
           {melbourne && <>
@@ -267,15 +274,15 @@ function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: 
   const where = option.kind === 'carpark' ? option.operator ?? 'Car park' : splitStreet(option.name).block?.replace(/^Between /, '').replace(' and ', '–')
   const live = option.live && !later ? option.live : null
   const oddLimit = option.limitMinutes != null && signNotation(option.limitMinutes) == null
-  const priceKind = option.cents === 0 ? 'Free parking' : knownPriceText(option) ? 'Paid parking' : 'Price not listed'
+  const priceKind = option.cents === 0 ? 'Free parking' : knownPriceText(option) ? 'Paid parking' : 'Check rate at location'
   return <span className="mt-1 grid gap-0.5 text-[12px] leading-[17px] text-ink-2">
     <span className="flex min-w-0 flex-wrap gap-x-2"><span className="whitespace-nowrap">{walkMinutes(option.distanceM)} min walk</span>{where && <span className="min-w-0 truncate">{where}</span>}</span>
     <span className="flex flex-wrap gap-x-2"><span className="font-semibold">{priceKind}</span>{oddLimit && <span className="whitespace-nowrap">Stay until {clock(new Date(at.getTime() + option.limitMinutes! * 60_000))}</span>}</span>
     {live && live.free > 0
       ? <span className="whitespace-nowrap font-bold text-ok"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-[#16A34A]" />{live.free} live bays available</span>
       : live
-        ? <span className="whitespace-nowrap font-bold text-[#DC2626]"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-[#DC2626]" />No live bays available</span>
-        : <span className="whitespace-nowrap text-ink-3"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-[#64748B]" />No live data right now</span>}
+        ? <span className="whitespace-nowrap font-bold text-[#DC2626]"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-[#DC2626]" />Full now</span>
+        : <span className="whitespace-nowrap text-brand"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-[#1683F7]" />Check availability on arrival</span>}
   </span>
 }
 

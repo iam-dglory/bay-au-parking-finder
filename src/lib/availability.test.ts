@@ -13,7 +13,7 @@ describe('evidence required for live availability',()=>{
  it.each(['coordinate','unknown',undefined] as const)('rejects %s join provenance even with matching IDs',match_method=>expect(availability({...spot,sensor_status:{...sensor,match_method}},now).state).toBe('unknown'))
  it.each(['last_confirmed_at','synced_at'] as const)('expires a stale %s',key=>expect(availability({...spot,sensor_status:{...sensor,[key]:time(5.01)}},now).state).toBe('unknown'))
  it.each(['not-a-date',time(-1)])('rejects malformed/future source time %s',last_confirmed_at=>expect(availability({...spot,sensor_status:{...sensor,last_confirmed_at}},now).state).toBe('unknown'))
- it('does not use a question mark or a claim of vacancy without evidence',()=>expect(availability({...spot,sensor_status:null},now).label).toBe('Availability on arrival'))
+ it('does not claim vacancy without evidence',()=>expect(availability({...spot,sensor_status:null},now).label).toBe('Check on arrival'))
 })
 
 describe('stuck sensors', () => {

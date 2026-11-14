@@ -101,7 +101,7 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
       ))}
       {spots.slice(0, MAX_PLAIN_MARKERS).map(spot => {
         const live = availability(spot).state
-        const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#64748B'
+        const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#1683F7'
         return <Pin key={spot.id} map={map} at={spot} z={5} label={spot.address_text} onClick={() => spot.status && onSelectSpot?.(spot as ParkingSpot & { status: SpotStatus })}>
           <span className="block h-3.5 w-3.5 rounded-full border-2 border-white shadow" style={{ background: color }} />
         </Pin>

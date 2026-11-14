@@ -26,7 +26,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
   const leaveBy = limitAt && limitAt < leaveAt ? limitAt : leaveAt
   const { title, block } = option.kind === 'street' ? splitStreet(option.name) : { title: option.name, block: undefined }
   const kindLabel = option.kind === 'carpark' ? `${option.operator} car park` : `${option.bayCount} bay${option.bayCount === 1 ? '' : 's'} on this block`
-  const price = option.cents === 0 ? 'Free' : option.cents != null ? formatCents(option.cents) : option.range ? `${formatCents(option.range.min)}–${formatCents(option.range.max)}` : 'Price not listed'
+  const price = option.cents === 0 ? 'Free' : option.cents != null ? formatCents(option.cents) : option.range ? `${formatCents(option.range.min)}–${formatCents(option.range.max)}` : 'Check rate'
   return (
     <div className="bay-dim fixed inset-0 z-[1000] flex items-end justify-center bg-[rgba(6,12,28,.32)] sm:items-center" onClick={onClose}>
       <div role="dialog" aria-label={`${option.name} parking cost`} className="bay-sheet bay-sheet-in max-h-[86dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] glass glass-strong px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:rounded-[28px]" onClick={e => e.stopPropagation()}>
@@ -61,7 +61,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
         <section className="mt-3 grid grid-cols-3 gap-2" aria-label="Parking facts">
           <FactTile label="Price" value={price} />
           <FactTile label="Time limit" value={option.limitMinutes == null ? 'Not listed' : formatDurationShort(option.limitMinutes)} />
-          <FactTile label="Live bays" value={later || !option.live ? 'No live data right now' : option.live.free > 0 ? `${option.live.free} available` : 'None available'} tone={!later && option.live ? (option.live.free > 0 ? 'good' : 'bad') : 'muted'} />
+          <FactTile label="Availability" value={later || !option.live ? 'Check on arrival' : option.live.free > 0 ? `${option.live.free} open now` : 'Full now'} tone={!later && option.live ? (option.live.free > 0 ? 'good' : 'bad') : 'brand'} />
         </section>
 
         <div className="mt-4 flex gap-2.5">
@@ -131,8 +131,8 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
   )
 }
 
-function FactTile({ label, value, tone }: { label: string; value: string; tone?: 'muted' | 'good' | 'bad' }) {
-  const dot = tone === 'good' ? 'bg-[#16A34A]' : tone === 'bad' ? 'bg-[#DC2626]' : 'bg-[#64748B]'
+function FactTile({ label, value, tone }: { label: string; value: string; tone?: 'muted' | 'good' | 'bad' | 'brand' }) {
+  const dot = tone === 'good' ? 'bg-[#16A34A]' : tone === 'bad' ? 'bg-[#DC2626]' : tone === 'brand' ? 'bg-[#1683F7]' : 'bg-[#64748B]'
   return <div className="min-w-0 rounded-2xl bg-tint px-3 py-3"><span className="block text-[10px] font-bold uppercase tracking-[.08em] text-ink-3">{label}</span><span className="mt-1 flex items-start gap-1.5 text-xs font-bold leading-4 text-ink">{tone && <i className={`mt-1 h-2 w-2 shrink-0 rounded-full ${dot}`} />}{value}</span></div>
 }
 

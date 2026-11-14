@@ -1,28 +1,28 @@
 import type { ParkingOption } from '../lib/parkingOptions'
-import { signNotation } from './Kerb'
-import { formatCents } from '../lib/parkingCost'
 
 export type Point = { lat: number; lng: number }
 
-/** Map tags use BAY's price pill + availability-dot language. */
+/**
+ * Map markers answer one question only: can the driver rely on a live space?
+ * Pricing belongs in the result card, where its source and conditions fit.
+ */
 export function PricePin({ option, selected }: { option: ParkingOption; selected: boolean }) {
-  const blocked = option.fits === false
-  const label = blocked ? (signNotation(option.limitMinutes) ?? 'Short')
-    : option.cents === 0 ? 'Free'
-    : option.cents != null ? formatCents(option.cents)
-    : option.range ? `${formatCents(option.range.min)}+`
-    : 'No price'
-  const tone = selected ? 'bg-[#1683F7] text-white shadow-[0_0_0_2px_#0B1F40,0_6px_16px_rgba(22,131,247,.35)] scale-110'
-    : blocked ? 'bg-white text-[#64748B] shadow-[0_0_0_1.5px_rgba(11,31,64,.18)]'
-    : option.kind === 'carpark' ? 'bg-[#0B1F40] text-white shadow-[0_0_0_1.5px_rgba(255,255,255,.8),0_4px_12px_rgba(11,31,64,.28)]'
-    : 'bg-white text-[#0B1F40] shadow-[0_0_0_1.5px_rgba(11,31,64,.28),0_4px_12px_rgba(11,31,64,.18)]'
-  const availabilityTone = option.live ? (option.live.free > 0 ? 'bg-[#16A34A]' : 'bg-[#DC2626]') : 'bg-[#64748B]'
-  const availabilityLabel = option.live ? (option.live.free > 0 ? `${option.live.free} live bays available` : 'No live bays available') : 'No live data right now'
+  const open = option.live?.free != null && option.live.free > 0
+  const full = option.live?.free === 0
+  const label = open ? `${option.live!.free} open` : full ? 'Full' : 'P'
+  const availabilityLabel = open
+    ? `${option.live!.free} live parking spaces available`
+    : full ? 'Confirmed full by the latest live reading' : 'Parking here; check availability on arrival'
+  const tone = open
+    ? 'bg-[#16A34A] text-white'
+    : full ? 'bg-[#DC2626] text-white' : 'bg-[#1683F7] text-white'
+  const shape = open || full ? 'min-w-11 rounded-full px-2.5 py-1 text-[11px]' : 'h-8 w-8 rounded-[10px] text-[15px]'
+  const selectedTone = selected
+    ? 'scale-110 shadow-[0_0_0_3px_#fff,0_0_0_5px_#0B1F40,0_7px_18px_rgba(11,31,64,.34)]'
+    : 'shadow-[0_0_0_2px_#fff,0_5px_14px_rgba(11,31,64,.24)]'
   return (
-    <span className={`figure flex items-center gap-1 whitespace-nowrap rounded-[6px] px-1.5 py-0.5 text-[13px] transition-transform ${tone}`}>
-      {option.kind === 'carpark' && <span className="text-[11px] font-black">P</span>}
+    <span aria-label={availabilityLabel} className={`figure flex items-center justify-center whitespace-nowrap font-extrabold transition-transform ${shape} ${tone} ${selectedTone}`}>
       {label}
-      <span className={`ml-0.5 h-2 w-2 rounded-full ring-1 ring-white/90 ${availabilityTone}`} aria-label={availabilityLabel} />
     </span>
   )
 }

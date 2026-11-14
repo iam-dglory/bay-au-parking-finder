@@ -1,6 +1,6 @@
 # BAY Google Play listing — copy-ready
 
-Prepared: 5 November 2026  
+Prepared: 14 November 2026
 Package: `au.com.bayparking.app`  
 Scope: current public parking-discovery release; Marketplace V2 is excluded.
 
@@ -38,7 +38,7 @@ BUILT FOR HONEST PARKING INFORMATION
 
 BAY distinguishes a mapped parking location from a live availability reading. A marker does not guarantee that a space will be free when you arrive. Availability labels are shown only when a supported source has supplied a sufficiently recent reading.
 
-Prices, restrictions, opening hours and access conditions vary by location and source. When a source has not supplied a price, BAY says so instead of estimating one. Always check the physical parking sign, road markings and current operator terms before parking.
+Prices, restrictions, opening hours and access conditions vary by location and source. When a machine-readable rate is unavailable, BAY prompts the driver to check the current rate at the meter or entrance instead of estimating one. Always check the physical parking sign, road markings and current operator terms before parking.
 
 MELBOURNE PARKING AND BEYOND
 
@@ -68,8 +68,11 @@ Important: physical signs, road markings, local regulations and parking-operator
 - Default nearby search starts at 500 m with parking areas included.
 - Shows a total for the selected stay when a source publishes a compatible price.
 - Clearer separation between mapped places and fresh live availability readings.
-- Stale readings are hidden and labelled “No live data right now”.
-- Source-listed prices and restrictions are shown when supplied; missing prices are labelled honestly.
+- Stale readings are hidden and replaced with the neutral “Check on arrival” status.
+- Green markers mean live openings, red means confirmed full, and BAY blue marks parking where availability should be checked on arrival.
+- Source-listed prices and restrictions are shown when supplied; otherwise BAY directs drivers to check the current rate at the location.
+- Added the broader mapped Melbourne off-street catalogue to the main map and results.
+- Updated the app icon to the white-and-BAY-blue brand treatment.
 - Added a structured “Report incorrect parking information” flow for location, restriction, price and navigation issues.
 - Improved saved-place, activity and parking-guide experiences.
 - Reliability, responsive-layout and production-build improvements.
