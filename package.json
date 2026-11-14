@@ -1,7 +1,7 @@
 {
   "name": "bay-parking",
   "private": true,
-  "version": "1.2.1",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,9 +9,11 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "build:native": "tsc -b && VITE_ASSET_BASE_URL=${VITE_ASSET_BASE_URL:-https://iam-dglory.github.io/bay-au-parking-finder} vite build && node scripts/strip-native-data.mjs",
+    "build:native": "tsc -b && VITE_SKIP_PUBLIC_COPY=true VITE_ASSET_BASE_URL=${VITE_ASSET_BASE_URL:-https://iam-dglory.github.io/bay-au-parking-finder} vite build",
     "cap:android": "npm run build:native && npx cap sync android",
-    "cap:ios": "npm run build:native && npx cap sync ios"
+    "cap:ios": "npm run build:native && npx cap sync ios",
+    "validate:play-assets": "node scripts/validate-play-assets.mjs",
+    "validate:parking-data": "node scripts/validate-parking-data.mjs"
   },
   "dependencies": {
     "@capacitor/camera": "^8.2.4",

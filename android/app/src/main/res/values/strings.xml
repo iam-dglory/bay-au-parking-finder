@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Bay</string>
-    <string name="title_activity_main">Bay</string>
+    <string name="app_name">BAY: Find Parking</string>
+    <string name="title_activity_main">BAY: Find Parking</string>
     <string name="package_name">au.com.bayparking.app</string>
     <string name="custom_url_scheme">au.com.bayparking.app</string>
 </resources>

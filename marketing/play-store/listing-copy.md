@@ -6,7 +6,7 @@ Scope: current public parking-discovery release; Marketplace V2 is excluded.
 
 ## App title
 
-`BAY - Parking App`
+`BAY: Find Parking`
 
 17/30 characters.
 
@@ -59,13 +59,16 @@ Important: physical signs, road markings, local regulations and parking-operator
 
 ## What's new — short
 
-`Clearer parking details, 500 m default search, improved filters and issue reporting.`
+`Faster search, clearer rules, honest prices and freshness-aware live occupancy.`
 
 ## Detailed release notes
 
 - Refined nearby parking map and list experience.
+- Added Nearest, Cheapest and Available sorting with clear 30 min to all-day stay choices.
 - Default nearby search starts at 500 m with parking areas included.
+- Shows a total for the selected stay when a source publishes a compatible price.
 - Clearer separation between mapped places and fresh live availability readings.
+- Stale readings are hidden and labelled “No live data right now”.
 - Source-listed prices and restrictions are shown when supplied; missing prices are labelled honestly.
 - Added a structured “Report incorrect parking information” flow for location, restriction, price and navigation issues.
 - Improved saved-place, activity and parking-guide experiences.

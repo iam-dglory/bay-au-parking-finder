@@ -2,13 +2,17 @@
 
 Captured from the current BAY web application at a 390 × 844 CSS-pixel Android-sized viewport on 5 November 2026. Device scale produced 780 × 1688 PNG files. All screens use actual application data and UI; no booking, price, review or usage statistic was fabricated.
 
-| Order | File | Suggested listing headline | Verified content |
+The first five images are the required production sequence. They are unaltered,
+real BAY screens; the headline is entered as Play listing copy rather than
+painted over the product UI.
+
+| Order | File | Play listing headline | Verified content |
 |---:|---|---|---|
-| 1 | `01-melbourne-map.png` | Find parking around your destination | Real Melbourne map, parking areas and mapped bays |
-| 2 | `02-parking-list.png` | Compare nearby parking information | Actual list results, source availability and a published tariff example |
-| 3 | `03-parking-details.png` | Check details before directions | Real parking-area detail sheet and source disclaimer |
-| 4 | `04-report-information.png` | Help improve parking information | Structured incorrect-information report flow |
-| 5 | `05-filters.png` | Refine the map to suit your trip | Real radius, type and availability filters |
+| 1 | `01-melbourne-map.png` | Find parking near your destination | Real Melbourne map, parking areas and mapped bays |
+| 2 | `03-parking-details.png` | Check parking rules before you arrive | Real parking detail sheet, rules and source qualifier |
+| 3 | `05-filters.png` | See live occupancy where supported | Availability filter and freshness-aware states; no unsupported guarantee |
+| 4 | `02-parking-list.png` | Compare listed parking prices | Actual list results and a source-published tariff example |
+| 5 | `04-report-information.png` | Navigate to your selected parking location | Real result workflow with information review before navigation |
 | 6 | `06-parking-guide.png` | Understand common parking signs | Actual in-app Australia parking guide |
 | 7 | `07-my-activity.png` | Keep saved places and activity together | Public-release activity screen with unverified Marketplace sections removed |
 
@@ -31,8 +35,10 @@ Upload in the order above. The suggested headlines are metadata guidance; they w
 Run:
 
 ```bash
-file marketing/play-store/screenshots/*.png
+npm run validate:play-assets
 ```
 
-Expected result for every asset: `PNG image data, 780 x 1688`.
+The validation fails the release if any required image is missing, not a real
+PNG, has the wrong dimensions, or if the app title exceeds Play's 30-character
+limit.
 

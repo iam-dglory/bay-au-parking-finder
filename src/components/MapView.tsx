@@ -11,7 +11,7 @@ import { MapUnavailable, MeDot, PricePin, type Point } from './MapPins'
 setWorkerUrl(workerUrl)
 
 /** Free vector tiles from OpenFreeMap (no key, no usage limits; OpenStreetMap data). */
-const STYLE_URL = { light: 'https://tiles.openfreemap.org/styles/positron', dark: 'https://tiles.openfreemap.org/styles/dark' }
+const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const USE_GOOGLE = (import.meta.env.VITE_MAP_PROVIDER as string | undefined) === 'google' && !!(import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined)?.trim()
 // Only downloaded when switched on.
 const GoogleMapView = lazy(() => import('./GoogleMapView').then(m => ({ default: m.GoogleMapView })))
@@ -41,25 +41,10 @@ export function MapView(props: Props) {
   return <LibreMap {...props} />
 }
 
-function useDarkMode() {
-  const query = typeof window !== 'undefined' ? window.matchMedia?.('(prefers-color-scheme: dark)') : undefined
-  const [dark, setDark] = useState(() => !!query?.matches)
-  useEffect(() => {
-    if (!query) return
-    const on = (e: MediaQueryListEvent) => setDark(e.matches)
-    query.addEventListener('change', on)
-    return () => query.removeEventListener('change', on)
-  }, [query])
-  return dark
-}
-
 function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPickLocation, zoom = 15, myLocation, carParks = [], onSelectCarPark, onZoomChange, options, selectedOptionId, onSelectOption }: Props) {
   const container = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<MLMap | null>(null)
   const [failed, setFailed] = useState(false)
-  const dark = useDarkMode()
-  const darkRef = useRef(dark)
-  darkRef.current = dark
   const handlers = useRef({ onPickLocation, onZoomChange, pickMode })
   handlers.current = { onPickLocation, onZoomChange, pickMode }
 
@@ -70,7 +55,7 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
     try {
       instance = new MLMap({
         container: container.current,
-        style: STYLE_URL[dark ? 'dark' : 'light'],
+        style: STYLE_URL,
         center: [center.lng, center.lat],
         zoom: Math.min(zoom, 19) - 1, // MapLibre tiles are 512 px: one level less shows the same area as Google
         attributionControl: false,
@@ -81,7 +66,7 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
     } catch { setFailed(true); return }
     instance.touchZoomRotate.disableRotation()
     instance.addControl(new AttributionControl({ compact: true }), 'top-left')
-    instance.on('style.load', () => themeMap(instance, darkRef.current))
+    instance.on('style.load', () => themeMap(instance))
     instance.on('load', () => setMap(instance))
     instance.on('error', e => { if (!instance.loaded() && /Failed to fetch|NetworkError|style/i.test(String(e.error?.message))) setFailed(true) })
     instance.on('click', e => { if (handlers.current.pickMode) handlers.current.onPickLocation?.(e.lngLat.lat, e.lngLat.lng) })
@@ -89,14 +74,6 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
     return () => { instance.remove(); setMap(null) }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- created once; centre, zoom and theme are applied below
   }, [])
-
-  // Follow the phone's light/dark setting.
-  const firstTheme = useRef(true)
-  useEffect(() => {
-    if (!map) return
-    if (firstTheme.current) { firstTheme.current = false; return }
-    map.setStyle(STYLE_URL[dark ? 'dark' : 'light'])
-  }, [map, dark])
 
   // Pan when the search centre changes, without fighting the user's own panning.
   const last = useRef('')
@@ -124,14 +101,14 @@ function LibreMap({ center, spots, onSelectSpot, pickMode, pickedLocation, onPic
       ))}
       {spots.slice(0, MAX_PLAIN_MARKERS).map(spot => {
         const live = availability(spot).state
-        const color = live === 'vacant' ? '#059669' : live === 'occupied' ? '#e11d48' : '#102c40'
+        const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#64748B'
         return <Pin key={spot.id} map={map} at={spot} z={5} label={spot.address_text} onClick={() => spot.status && onSelectSpot?.(spot as ParkingSpot & { status: SpotStatus })}>
           <span className="block h-3.5 w-3.5 rounded-full border-2 border-white shadow" style={{ background: color }} />
         </Pin>
       })}
       {carParks.map(area => (
         <Pin key={area.id} map={map} at={area} z={8} label={area.address_text} onClick={() => onSelectCarPark?.(area)}>
-          <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border-2 border-white bg-[#102c40] text-xs font-black text-white shadow-md">P</span>
+          <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border-2 border-white bg-[#0B1F40] text-xs font-black text-white shadow-md">P</span>
         </Pin>
       ))}
       {pickedLocation && <Pin map={map} at={pickedLocation} z={60} label="Selected location"><span className="block h-5 w-5 rounded-full border-[3px] border-white bg-night shadow-lg" /></Pin>}
@@ -166,10 +143,8 @@ function Pin({ map, at, z, label, onClick, children }: { map: MLMap; at: Point; 
 
 /** Recolours OpenFreeMap's Positron/Dark styles into Bay's navy, cloud white
  * and lime, keeping roads readable and dropping visual noise. */
-function themeMap(map: MLMap, dark: boolean) {
-  const c = dark
-    ? { bg: '#0a1d2b', water: '#0c2a3e', park: '#0f2a26', building: '#12293a', minor: '#1b3a51', major: '#25506e', casing: '#0a1d2b', rail: '#1d3d55', label: '#9db1c1', halo: '#0a1d2b' }
-    : { bg: '#f7fafc', water: '#cddfeb', park: '#e8f1d6', building: '#e7edf2', minor: '#ffffff', major: '#ffffff', casing: '#d3dde5', rail: '#d3dde5', label: '#3e5568', halo: '#ffffff' }
+function themeMap(map: MLMap) {
+  const c = { bg: '#F5F7FB', water: '#DCEEFF', park: '#E8F5EA', building: '#E9EEF5', minor: '#FFFFFF', major: '#FFFFFF', casing: '#D8E1EC', rail: '#D8E1EC', label: '#334766', halo: '#FFFFFF' }
   const style = map.getStyle() as StyleSpecification | undefined
   for (const layer of style?.layers ?? []) {
     const id = layer.id

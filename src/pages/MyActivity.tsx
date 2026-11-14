@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Banknote, Bookmark, BriefcaseBusiness, CalendarCheck2, ChevronRight, CircleCheck, Clock3, CreditCard, FileText, Headphones, Home, Image, Loader2, MapPin, MessageSquarePlus } from 'lucide-react'
 import type { SavedLocations } from '../lib/savedLocations'
 import { supabase } from '../lib/supabaseClient'
@@ -32,7 +32,7 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
   const [loading, setLoading] = useState(true)
   const [selectedSign, setSelectedSign] = useState<(ParkingSpot & { status: SpotStatus }) | null>(null)
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true)
     const { data: userData } = await supabase.auth.getUser()
     const userId = userData.user?.id
@@ -57,7 +57,7 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
       setHostProfile(hostProfileRes.data ?? null)
     }
     setLoading(false)
-  }
+  }, [marketplaceEnabled])
 
   async function startPayoutOnboarding() {
     setPayoutLoading(true)
@@ -85,7 +85,7 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
     }
   }
 
-  useEffect(() => { void load() }, [center.lat, center.lng])
+  useEffect(() => { void load() }, [center.lat, center.lng, load])
 
   return <main className="h-full overflow-y-auto bg-tint pb-6 text-ink">
     <header className="relative overflow-hidden px-5 pb-7 pt-[max(1.25rem,env(safe-area-inset-top))]">

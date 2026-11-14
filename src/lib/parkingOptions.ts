@@ -138,6 +138,29 @@ export function rankOptions(options: ParkingOption[]): ParkingOption[] {
   return [...options].sort((a, b) => bucket(a) - bucket(b) || (price(a) ?? 0) - (price(b) ?? 0) || a.distanceM - b.distanceM)
 }
 
+export type ParkingSort = 'nearest' | 'cheapest' | 'available'
+
+/** The three driver-facing result orders. Unknown prices are deliberately last
+ * for Cheapest, and missing/stale sensor data never outranks a confirmed live
+ * vacancy for Available. A result that cannot fit the selected stay is always
+ * kept behind a suitable result. */
+export function sortParkingOptions(options: ParkingOption[], sort: ParkingSort): ParkingOption[] {
+  if (sort === 'cheapest') return rankOptions(options)
+  const fitBucket = (option: ParkingOption) => option.fits === false ? 1 : 0
+  if (sort === 'nearest') {
+    return [...options].sort((a, b) => fitBucket(a) - fitBucket(b) || a.distanceM - b.distanceM)
+  }
+  const availabilityBucket = (option: ParkingOption) => {
+    if (option.fits === false) return 3
+    if (option.live?.free && option.live.free > 0) return 0
+    if (!option.live) return 1
+    return 2
+  }
+  return [...options].sort((a, b) => availabilityBucket(a) - availabilityBucket(b)
+    || (b.live?.free ?? 0) - (a.live?.free ?? 0)
+    || a.distanceM - b.distanceM)
+}
+
 /** Driving directions in the driver's chosen navigation app. */
 export function directionsUrl(lat: number, lng: number) {
   return navigationUrl(lat, lng)

@@ -1,50 +1,20 @@
 {
-  "name": "Bay - Find real parking",
-  "short_name": "Bay",
-  "description": "Free, crowdsourced parking sign finder for Australia.",
+  "name": "BAY: Find Parking",
+  "short_name": "BAY",
+  "description": "Compare nearby parking, prices, time limits and live availability before you park.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f7fafc",
-  "theme_color": "#102c40",
+  "background_color": "#F5F7FB",
+  "theme_color": "#1683F7",
   "icons": [
     {
-      "src": "icons/icon-48.png",
-      "type": "image/png",
-      "sizes": "48x48",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-72.png",
-      "type": "image/png",
-      "sizes": "72x72",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-96.png",
-      "type": "image/png",
-      "sizes": "96x96",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-128.png",
-      "type": "image/png",
-      "sizes": "128x128",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-192.png",
+      "src": "brand/bay-icon-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-256.png",
-      "type": "image/png",
-      "sizes": "256x256",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-512.png",
+      "src": "brand/bay-icon-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"

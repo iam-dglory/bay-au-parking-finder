@@ -57,7 +57,7 @@ export function GoogleMapView({
       >
         <Recenter center={center} zoom={zoom} />
         <AdvancedMarker position={myLocation ?? center} zIndex={1} title="You are here">
-          <span className="block h-4 w-4 rounded-full border-[3px] border-white bg-[#102c40] shadow-[0_0_0_6px_rgba(219,255,0,.45)]" />
+          <span className="block h-4 w-4 rounded-full border-[3px] border-white bg-[#1683F7] shadow-[0_0_0_6px_rgba(22,131,247,.24)]" />
         </AdvancedMarker>
 
         {options?.map(option => (
@@ -68,7 +68,7 @@ export function GoogleMapView({
 
         {spots.slice(0, MAX_PLAIN_MARKERS).map(spot => {
           const live = availability(spot).state
-          const color = live === 'vacant' ? '#059669' : live === 'occupied' ? '#e11d48' : '#102c40'
+          const color = live === 'vacant' ? '#16A34A' : live === 'occupied' ? '#DC2626' : '#64748B'
           return (
             <AdvancedMarker key={spot.id} position={{ lat: spot.lat, lng: spot.lng }} zIndex={5} title={spot.address_text}
               onClick={() => spot.status && onSelectSpot?.(spot as ParkingSpot & { status: SpotStatus })}>
@@ -79,7 +79,7 @@ export function GoogleMapView({
 
         {carParks.map(area => (
           <AdvancedMarker key={area.id} position={{ lat: area.lat, lng: area.lng }} zIndex={8} title={area.address_text} onClick={() => onSelectCarPark?.(area)}>
-            <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border-2 border-white bg-[#102c40] text-xs font-black text-white shadow-md">P</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border-2 border-white bg-[#0B1F40] text-xs font-black text-white shadow-md">P</span>
           </AdvancedMarker>
         ))}
 

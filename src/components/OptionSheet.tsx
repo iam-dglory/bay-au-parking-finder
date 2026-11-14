@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BellRing, Check, ChevronDown, ExternalLink, Flag, Navigation, Radio, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
+import { BellRing, Check, ChevronDown, ExternalLink, Flag, Navigation, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
 import { toggleFavourite, useFavourites } from '../lib/favourites'
 import { SignPlate, TicketTime } from './Kerb'
 import { NAV_APP_LABEL, setNavApp, useNavApp, type NavApp } from '../lib/navigation'
@@ -49,7 +49,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
             <p className="flex flex-wrap items-baseline gap-x-2"><span className="figure text-[46px] leading-none text-ink">{price}</span><span className="text-sm text-ink-2">for {formatDurationShort(durationMinutes)}{later ? `, arriving ${clock(arrival)}` : ''}</span></p>
             {option.kind === 'carpark' && option.rateName && option.rateName !== 'Hourly' && <p className="mt-1 text-sm text-ink-2">{option.rateName} rate</p>}
 
-            {option.live && !later && <p className="mt-2 flex items-center gap-2 text-sm font-bold text-ok"><Radio className="h-4 w-4 shrink-0" />{option.live.free} of {option.live.reporting} bays free now</p>}
+            {option.range && <p className="mt-2 text-xs leading-5 text-ink-3">This street crosses more than one published meter zone. Check the price on the nearest meter.</p>}
             <span aria-hidden className="ticket-tear" />
             <div className="mt-5 flex h-[80px] items-center justify-between gap-3">
               <p className="min-w-0"><span className="block text-xs text-ink-3">Leave by</span><TicketTime className="block text-[28px] leading-8" date={leaveBy} /></p>
@@ -58,9 +58,15 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
           </>}
         </section>
 
+        <section className="mt-3 grid grid-cols-3 gap-2" aria-label="Parking facts">
+          <FactTile label="Price" value={price} />
+          <FactTile label="Time limit" value={option.limitMinutes == null ? 'Not listed' : formatDurationShort(option.limitMinutes)} />
+          <FactTile label="Live bays" value={later || !option.live ? 'No live data right now' : option.live.free > 0 ? `${option.live.free} available` : 'None available'} tone={!later && option.live ? (option.live.free > 0 ? 'good' : 'bad') : 'muted'} />
+        </section>
+
         <div className="mt-4 flex gap-2.5">
           <a href={directionsUrl(option.navTo?.lat ?? option.lat, option.navTo?.lng ?? option.lng)} target="_blank" rel="noreferrer" onClick={() => { if (onGo) onGo(option); else trackEvent('directions_open', { result_type: option.kind }) }}
-            className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-full cta text-[17px] font-extrabold transition-transform active:scale-[0.98]">
+            className="go-cta flex min-h-14 flex-1 items-center justify-center gap-2 rounded-full text-[17px] font-extrabold transition-transform active:scale-[0.98]">
             <Navigation className="h-5 w-5" />Go
           </a>
           {option.fits !== false && !later && (
@@ -100,7 +106,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
 
         <details className="group mt-4 [&[open]>*:not(summary)]:[animation:bay-fade_.2s_ease-out_both] border-t border-line pt-1">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-ink-2 [&::-webkit-details-marker]:hidden">
-            Price details<ChevronDown className="h-4 w-4 group-open:rotate-180" />
+            About this data<ChevronDown className="h-4 w-4 group-open:rotate-180" />
           </summary>
           {option.segments && option.segments.length > 0 && (
             <ul className="divide-y divide-line text-sm">
@@ -123,6 +129,11 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
       </div>
     </div>
   )
+}
+
+function FactTile({ label, value, tone }: { label: string; value: string; tone?: 'muted' | 'good' | 'bad' }) {
+  const dot = tone === 'good' ? 'bg-[#16A34A]' : tone === 'bad' ? 'bg-[#DC2626]' : 'bg-[#64748B]'
+  return <div className="min-w-0 rounded-2xl bg-tint px-3 py-3"><span className="block text-[10px] font-bold uppercase tracking-[.08em] text-ink-3">{label}</span><span className="mt-1 flex items-start gap-1.5 text-xs font-bold leading-4 text-ink">{tone && <i className={`mt-1 h-2 w-2 shrink-0 rounded-full ${dot}`} />}{value}</span></div>
 }
 
 const PROBLEMS = ['Price is wrong', 'Time limit is wrong', "Can't park here", 'Something else'] as const

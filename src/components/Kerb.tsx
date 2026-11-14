@@ -1,5 +1,8 @@
 import type { ParkingOption } from '../lib/parkingOptions'
 
+/* oxlint-disable react/only-export-components -- this module intentionally
+ * keeps the sign renderers beside their screen-reader formatting helpers. */
+
 /** Sign notation for a time limit: 30 → "½P", 120 → "2P". Null when the limit
  * isn't one a sign would show (e.g. free hours before a 2P starts). */
 export function signNotation(minutes: number | null): string | null {

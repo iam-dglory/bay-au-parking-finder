@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { carParkOptions, rankOptions, shortStreetName, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
+import { carParkOptions, rankOptions, shortStreetName, sortParkingOptions, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
 import type { ParkingSpot } from '../types'
 
 const now = new Date('2026-11-03T23:00:00Z') // Wed 10:00am Melbourne
@@ -52,6 +52,20 @@ describe('shortStreetName', () => {
   it('shortens council segment descriptions', () => {
     expect(shortStreetName("Queen Street between La Trobe Street and A'Beckett Street")).toBe("Queen St · La Trobe–A'Beckett")
     expect(shortStreetName('Flinders Lane')).toBe('Flinders Ln')
+  })
+})
+
+describe('sortParkingOptions', () => {
+  const option = (id: string, distanceM: number, cents: number | null, free?: number) => ({
+    kind: 'street' as const, id, name: id, lat: -37.81, lng: 144.96, distanceM,
+    cents, limitMinutes: 120, fits: true, source: { label: 'test', date: '2026-11-14' },
+    ...(free == null ? {} : { live: { free, reporting: 10 + free } }),
+  })
+  it('keeps all three driver-facing orders deterministic', () => {
+    const rows = [option('near', 20, null), option('cheap', 100, 200), option('live', 300, 500, 4)]
+    expect(sortParkingOptions(rows, 'nearest').map(row => row.id)).toEqual(['near', 'cheap', 'live'])
+    expect(sortParkingOptions(rows, 'cheapest').map(row => row.id)).toEqual(['cheap', 'live', 'near'])
+    expect(sortParkingOptions(rows, 'available').map(row => row.id)).toEqual(['live', 'near', 'cheap'])
   })
 })
 
