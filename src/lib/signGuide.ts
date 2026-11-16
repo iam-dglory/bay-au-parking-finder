@@ -17,15 +17,15 @@ export const SIGN_AVAILABILITY: Record<SignType, 'usable' | 'restricted'> = {
   ACCESSIBLE_PERMIT: 'restricted',
 }
 
-export const GUIDE_INTRO =
-  '“2P” means a two-hour time limit during the days and hours shown. It does not by itself tell you whether payment is required: check for “Meter”, “Ticket” or payment instructions. Read every plate and its arrows; different rules can apply at other times. Do not assume that parking is free or permitted outside one plate’s hours.'
+/** The one thing most drivers get wrong, in one line. */
+export const GUIDE_INTRO = '2P means 2 hours. It’s only free if there’s no meter or ticket sign.'
 
 /** One-line, plain-language meaning per sign type, kept separate from the
  * longer per-country hint text so the guide can stay short. */
 export const SIGN_TYPE_MEANING: Record<SignType, string> = {
   FREE_UNLIMITED: 'Park here any time, no limit.',
-  TIME_LIMITED: 'Free, but only for a set number of hours.',
-  PAID_METER: 'Pay to park, by meter or app.',
+  TIME_LIMITED: 'Free for the hours shown, e.g. 1P = 1 hour.',
+  PAID_METER: 'Pay at the meter or by app.',
   PERMIT_ONLY: 'Only permit holders can park here.',
   NO_STOPPING_CLEARWAY: 'No stopping, at all times or set hours.',
   LOADING_ZONE: 'Only for vehicles loading or unloading.',
