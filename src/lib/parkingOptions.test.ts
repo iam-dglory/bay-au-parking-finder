@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { carParkOptions, mappedCarParkOptions, rankOptions, shortStreetName, sortParkingOptions, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
+import { carParkOptions, mappedCarParkOptions, priceText, rankOptions, shortStreetName, sortParkingOptions, streetOptions, type CarParkRatesFile, type StreetRatesFile } from './parkingOptions'
 import type { ParkingSpot } from '../types'
 
 const now = new Date('2026-11-03T23:00:00Z') // Wed 10:00am Melbourne
@@ -28,7 +28,29 @@ describe('streetOptions', () => {
     expect([o.cents, o.range, o.limitMinutes]).toEqual([null, { min: 320, max: 550 }, 120])
   })
   it('leaves price unknown for streets without meter data', () => {
-    expect(streetOptions([bay('a', 'Side St')], rates, start, 60, now)[0].cents).toBeNull()
+    const [o] = streetOptions([bay('a', 'Side St')], rates, start, 60, now)
+    expect([o.cents, o.noData, priceText(o)]).toEqual([null, true, 'See sign'])
+  })
+})
+
+describe('streetOptions from council signs', () => {
+  // Little Bourke St (Swanston–Elizabeth): loading zone weekdays 7am–4pm, then 2P meter to 10pm.
+  const signRates: StreetRatesFile = {
+    ...rates,
+    sign_zones: { '7514': { days: [[[420, 1320, -1, 120]], ...Array.from({ length: 5 }, () => [[420, 960, -2, 0], [960, 1320, -1, 120]] as [number, number, number, number][]), [[420, 1320, -1, 120]]], signs: ['Mon-Fri 07:00–16:00: Loading zone', 'Mon-Fri 16:00–22:00: 2P meter'] } },
+    streets: { ...rates.streets, 'Little Bourke St': { segment: 20055, zones: [7514], exact: true, same_price: true, from_signs: true } },
+  }
+  it('says no parking during the loading zone', () => {
+    const [o] = streetOptions([bay('a', 'Little Bourke St')], signRates, start, 60, now) // Wed 10am
+    expect([o.noParkingAfterMinutes, o.fits, priceText(o)]).toEqual([0, false, 'No parking now'])
+  })
+  it('gives the meter time limit when the rate is not published', () => {
+    const [o] = streetOptions([bay('a', 'Little Bourke St')], signRates, { day: 3, minute: 17 * 60 }, 60, now)
+    expect([o.cents, o.priceUnpublished, o.limitMinutes, o.fits, priceText(o), o.signs?.length]).toEqual([null, true, 120, true, 'Meter', 2])
+  })
+  it('makes you leave before the loading zone starts', () => {
+    const [o] = streetOptions([bay('a', 'Little Bourke St')], signRates, { day: 3, minute: 6 * 60 }, 120, now) // 6am, 2 hrs
+    expect([o.limitMinutes, o.noParkingAfterMinutes, o.fits]).toEqual([60, 60, false])
   })
 })
 

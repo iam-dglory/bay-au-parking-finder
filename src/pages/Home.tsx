@@ -7,8 +7,8 @@ import { useNearbyParking } from '../lib/useNearbyParking'
 import { isMelbourneSearch } from '../lib/melbourneSensors'
 import { searchPlaces, type PlaceSearchResult } from '../lib/geocoding'
 import { useClock } from '../lib/useClock'
-import { formatCents, formatDurationShort, melbourneStart } from '../lib/parkingCost'
-import { carParkOptions, directionsUrl, loadCarParkRates, loadStreetRates, mappedCarParkOptions, sortParkingOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type ParkingSort, type StreetRatesFile } from '../lib/parkingOptions'
+import { formatDurationShort, melbourneStart } from '../lib/parkingCost'
+import { carParkOptions, directionsUrl, knownPriceText, priceText, loadCarParkRates, loadStreetRates, mappedCarParkOptions, sortParkingOptions, splitStreet, streetOptionHere, streetOptions, walkMinutes, type CarParkRatesFile, type ParkingOption, type ParkingSort, type StreetRatesFile } from '../lib/parkingOptions'
 import type { SavedLocations, SavedPlaceKind } from '../lib/savedLocations'
 import { trackEvent } from '../lib/analytics'
 import { endParking, startParking, useParkingSession } from '../lib/parkingTimer'
@@ -44,8 +44,6 @@ function arrivalTime(now: Date, when: ArriveIn): Date {
 const durationLabel = (d: number) => d === 540 ? 'All day' : formatDurationShort(d)
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
-const knownPriceText = (o: ParkingOption) => o.cents != null ? (o.cents === 0 ? 'Free' : formatCents(o.cents)) : o.range ? `${formatCents(o.range.min)}–${formatCents(o.range.max)}` : null
-const priceText = (o: ParkingOption) => knownPriceText(o) ?? 'Check rate'
 
 export function Home({ center, myLocation, driving = false, locationLabel, onUseCurrentLocation, savedLocations, onSavePlace, onSelectSavedPlace }: {
   center: { lat: number; lng: number }; myLocation?: { lat: number; lng: number }; driving?: boolean; locationLabel: string; onUseCurrentLocation: () => void
@@ -274,7 +272,7 @@ function Facts({ option, at, later }: { option: ParkingOption; at: Date; later: 
   const where = option.kind === 'carpark' ? option.operator ?? 'Car park' : splitStreet(option.name).block?.replace(/^Between /, '').replace(' and ', '–')
   const live = option.live && !later ? option.live : null
   const oddLimit = option.limitMinutes != null && signNotation(option.limitMinutes) == null
-  const priceKind = option.cents === 0 ? 'Free parking' : knownPriceText(option) ? 'Paid parking' : 'Check rate at location'
+  const priceKind = option.noParkingAfterMinutes === 0 ? 'Loading or permit zone now' : option.cents === 0 ? 'Free parking' : knownPriceText(option) ? 'Paid parking' : option.priceUnpublished ? 'Meter · rate not published' : 'Check the sign at the bay'
   return <span className="mt-1 grid gap-0.5 text-[12px] leading-[17px] text-ink-2">
     <span className="flex min-w-0 flex-wrap gap-x-2"><span className="whitespace-nowrap">{walkMinutes(option.distanceM)} min walk</span>{where && <span className="min-w-0 truncate">{where}</span>}</span>
     <span className="flex flex-wrap gap-x-2"><span className="font-semibold">{priceKind}</span>{oddLimit && <span className="whitespace-nowrap">Stay until {clock(new Date(at.getTime() + option.limitMinutes! * 60_000))}</span>}</span>
