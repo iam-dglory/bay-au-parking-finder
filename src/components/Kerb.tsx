@@ -20,7 +20,10 @@ export function SignPlate({ option, size = 'md' }: { option: ParkingOption; size
   if (option.kind === 'carpark') {
     return <span className={`plate plate-carpark ${box} shrink-0`} aria-hidden><span className={`${big} font-black`}>P</span><span className="plate-sub">Car park</span></span>
   }
-  const unknown = option.cents == null && !option.range
+  if (option.noParkingAfterMinutes === 0) {
+    return <span className={`plate plate-unknown ${box} shrink-0`} aria-hidden><span className={`${big} font-black tracking-[-.04em]`}>NO</span><span className="plate-sub">Parking</span></span>
+  }
+  const unknown = option.cents == null && !option.range && !option.priceUnpublished
   const rule = signNotation(option.limitMinutes) ?? 'P'
   const sub = unknown ? 'Check' : option.cents === 0 ? 'Free' : 'Meter'
   return <span className={`plate ${unknown ? 'plate-unknown' : ''} ${box} shrink-0`} aria-hidden>
@@ -31,9 +34,10 @@ export function SignPlate({ option, size = 'md' }: { option: ParkingOption; size
 /** How the plate reads aloud, for screen readers. */
 export function plateLabel(option: ParkingOption): string {
   if (option.kind === 'carpark') return 'Car park'
+  if (option.noParkingAfterMinutes === 0) return 'Street parking, loading or permit zone now'
   const rule = signNotation(option.limitMinutes)
   const limit = option.limitMinutes == null ? 'no time limit' : rule && rule !== 'P' ? `${rule} limit` : ''
-  const pay = option.cents == null && !option.range ? 'check the sign' : option.cents === 0 ? 'free' : 'meter'
+  const pay = option.cents == null && !option.range ? (option.priceUnpublished ? 'meter' : 'check the sign') : option.cents === 0 ? 'free' : 'meter'
   return ['Street parking', limit, pay].filter(Boolean).join(', ')
 }
 

@@ -1,7 +1,7 @@
 import type { CarPark, ParkingSpot } from '../types'
 import { availability } from './availability'
 import { haversineMeters } from './distance'
-import { carParkCost, streetCostRange, type CarParkRates, type LocalStart, type WeekSchedule } from './parkingCost'
+import { carParkCost, formatCents, streetCostRange, type CarParkRates, type LocalStart, type WeekSchedule } from './parkingCost'
 import { publicAssetUrl } from './publicAssets'
 import { navigationUrl } from './navigation'
 
@@ -10,7 +10,9 @@ import { navigationUrl } from './navigation'
 export interface StreetRatesFile {
   fetched: string
   zones: Record<string, { days: WeekSchedule; monday_inferred?: boolean }>
-  streets: Record<string, { segment: number; zones: number[]; exact: boolean; same_price: boolean }>
+  /** Blocks the council's pay-stay tables skip, described from its sign plates. */
+  sign_zones?: Record<string, { days: WeekSchedule; signs: string[] }>
+  streets: Record<string, { segment: number; zones: number[]; exact: boolean; same_price: boolean; from_signs?: boolean }>
 }
 export interface CarParkRecord {
   id: string; name: string; operator: string
@@ -64,9 +66,30 @@ export interface ParkingOption {
   segments?: { fromMinute: number; toMinute: number; centsPerHour: number }[]
   source: { label: string; url?: string; date: string; stale?: boolean }
   notes?: string
+  /** Metered, but the council doesn't publish this block's hourly rate. */
+  priceUnpublished?: boolean
+  /** Minutes after arrival when the kerb turns loading/permit-only (0 = now). */
+  noParkingAfterMinutes?: number
+  /** What the council's sign plates say for this block, in plain words. */
+  signs?: string[]
+  /** No council data at all for this block. */
+  noData?: boolean
 }
 
 const DAY_MS = 86_400_000
+
+/** The stay's price when the data gives one ("$12", "Free", "$9–$12"). */
+export function knownPriceText(o: ParkingOption): string | null {
+  if (o.cents != null) return o.cents === 0 ? 'Free' : formatCents(o.cents)
+  return o.range ? `${formatCents(o.range.min)}–${formatCents(o.range.max)}` : null
+}
+
+/** Price, or what to do when there isn't one: a meter whose rate the council
+ * doesn't publish says "Meter"; a block with no council data says "See sign". */
+export function priceText(o: ParkingOption): string {
+  if (o.noParkingAfterMinutes === 0) return 'No parking now'
+  return knownPriceText(o) ?? (o.priceUnpublished ? 'Meter' : 'See sign')
+}
 
 export function streetOptions(spots: ParkingSpot[], rates: StreetRatesFile | null, start: LocalStart, durationMinutes: number, now: Date): ParkingOption[] {
   const groups = new Map<string, ParkingSpot[]>()
@@ -90,22 +113,39 @@ export function streetOptions(spots: ParkingSpot[], rates: StreetRatesFile | nul
       bayCount: bays.length, bays,
     }
     if (!street || !rates) {
-      options.push({ ...base, cents: null, limitMinutes: null, fits: null, rateName: 'Check meter or sign', source: { label: 'Check the sign at the bay', date: rates?.fetched ?? '' } })
+      options.push({ ...base, cents: null, limitMinutes: null, fits: null, rateName: 'Check the sign', noData: true, source: { label: '', date: '' } })
       continue
     }
-    const schedules = street.zones.map(z => rates.zones[String(z)]?.days).filter((d): d is WeekSchedule => !!d)
-    const cost = streetCostRange(schedules, start, durationMinutes)
+    const fromSigns = !!street.from_signs
+    const zoneTable = fromSigns ? rates.sign_zones ?? {} : rates.zones
+    const schedules = street.zones.map(z => zoneTable[String(z)]?.days).filter((d): d is WeekSchedule => !!d)
+    if (!schedules.length) {
+      options.push({ ...base, cents: null, limitMinutes: null, fits: null, rateName: 'Check the sign', noData: true, source: { label: '', date: '' } })
+      continue
+    }
+    // A block with several sign zones can be part loading zone, part meter:
+    // offer the bays you can use now, and say the rest aren't.
+    const blockedNow = schedules.map(s => streetCostRange([s], start, durationMinutes).noParkingAfterMinutes === 0)
+    const partBlocked = blockedNow.some(Boolean) && !blockedNow.every(Boolean)
+    const usable = partBlocked ? schedules.filter((_, i) => !blockedNow[i]) : schedules
+    const cost = streetCostRange(usable, start, durationMinutes)
     const limit = cost.maxStayMinutes
+    const unpublished = cost.priceUnpublished
     options.push({
       ...base,
-      cents: cost.exact || cost.minCents === cost.maxCents ? cost.maxCents : null,
-      range: cost.minCents !== cost.maxCents ? { min: cost.minCents, max: cost.maxCents } : undefined,
-      rateName: cost.maxCents === 0 ? 'Free at this time' : 'Meter',
+      cents: unpublished ? null : cost.exact || cost.minCents === cost.maxCents ? cost.maxCents : null,
+      range: !unpublished && cost.minCents !== cost.maxCents ? { min: cost.minCents, max: cost.maxCents } : undefined,
+      rateName: unpublished ? 'Meter' : cost.maxCents === 0 ? 'Free at this time' : 'Meter',
       limitMinutes: limit,
       fits: limit == null ? true : durationMinutes <= limit,
-      source: { label: 'City of Melbourne Pay Stay data', url: 'https://data.melbourne.vic.gov.au/explore/dataset/pay-stay-parking-restrictions/', date: rates.fetched },
-      segments: cost.results.length === 1 ? cost.results[0].segments : undefined,
-      notes: street.exact ? undefined : 'Prices or time limits differ along this street. Check the meter.',
+      priceUnpublished: unpublished || undefined,
+      noParkingAfterMinutes: cost.noParkingAfterMinutes ?? undefined,
+      signs: fromSigns ? [...new Set(street.zones.flatMap(z => rates.sign_zones?.[String(z)]?.signs ?? []))] : undefined,
+      source: fromSigns
+        ? { label: 'City of Melbourne parking sign data', url: 'https://data.melbourne.vic.gov.au/explore/dataset/sign-plates-located-in-each-parking-zone/', date: rates.fetched }
+        : { label: 'City of Melbourne Pay Stay data', url: 'https://data.melbourne.vic.gov.au/explore/dataset/pay-stay-parking-restrictions/', date: rates.fetched },
+      segments: !unpublished && cost.results.length === 1 ? cost.results[0].segments : undefined,
+      notes: partBlocked ? 'Part of this block is a loading or permit zone right now. Use the bays signed for general parking.' : street.exact ? undefined : fromSigns ? 'Signs differ along this block. Check the sign at your bay.' : 'Prices or time limits differ along this street. Check the meter.',
     })
   }
   return options

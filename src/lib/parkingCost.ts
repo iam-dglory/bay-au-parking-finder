@@ -7,8 +7,12 @@
  * All times are Melbourne wall-clock minutes; a stay is at most 24 hours.
  */
 
-/** [fromMinute, toMinute, centsPerHour, maxStayMinutes] */
+/** [fromMinute, toMinute, centsPerHour, maxStayMinutes]. centsPerHour is
+ * RATE_UNPUBLISHED for a metered window whose price the council doesn't
+ * publish, or NO_PARKING for a loading / permit / disabled-only window. */
 export type RateWindow = [number, number, number, number]
+export const RATE_UNPUBLISHED = -1
+export const NO_PARKING = -2
 /** Index 0 = Sunday … 6 = Saturday */
 export type WeekSchedule = RateWindow[][]
 
@@ -36,6 +40,10 @@ export interface StreetCost {
   maxStayMinutes: number | null
   /** Paid segments, for "until 6:30pm $5.50/hr, then free". */
   segments: { fromMinute: number; toMinute: number; centsPerHour: number }[]
+  /** A metered window with no published price falls within the stay. */
+  priceUnpublished: boolean
+  /** Minutes after arrival when the kerb becomes no-parking (0 = right now). */
+  noParkingAfterMinutes: number | null
 }
 
 function windowAt(schedule: WeekSchedule, absMinute: number): RateWindow | null {
@@ -54,9 +62,18 @@ export function streetCost(schedule: WeekSchedule, start: LocalStart, durationMi
   const segments: StreetCost['segments'] = []
   let windowStartedAt: number | null = null
   let current: RateWindow | null = null
+  let priceUnpublished = false
+  let noParkingAfter: number | null = null
   for (let offset = 0; offset < horizon; offset++) {
     const w = windowAt(schedule, startAbs + offset)
     if (w !== current) { current = w; windowStartedAt = w ? offset : null }
+    if (w && w[2] === NO_PARKING) {
+      // Must be gone before a loading/permit zone starts, however long the stay.
+      if (limitAfter == null) limitAfter = offset
+      if (noParkingAfter == null) noParkingAfter = offset
+      break
+    }
+    if (w && w[2] === RATE_UNPUBLISHED && offset < durationMinutes) priceUnpublished = true
     if (w && w[3] > 0 && windowStartedAt != null && offset - windowStartedAt >= w[3] && limitAfter == null) limitAfter = offset
     if (offset >= durationMinutes) { if (limitAfter != null) break; continue }
     if (!w || w[2] <= 0) continue
@@ -70,6 +87,8 @@ export function streetCost(schedule: WeekSchedule, start: LocalStart, durationMi
     limitAfterMinutes: limitAfter != null && limitAfter < durationMinutes ? limitAfter : null,
     maxStayMinutes: limitAfter,
     segments,
+    priceUnpublished,
+    noParkingAfterMinutes: noParkingAfter,
   }
 }
 
@@ -85,6 +104,9 @@ export function streetCostRange(schedules: WeekSchedule[], start: LocalStart, du
     /** The strictest limit among the possible zones, so the advice is never too generous. */
     maxStayMinutes: Number.isFinite(shortest) ? shortest : null,
     exact: results.length === 1,
+    priceUnpublished: results.some(r => r.priceUnpublished),
+    /** Earliest no-parking start among the zones (strictest advice). */
+    noParkingAfterMinutes: results.reduce<number | null>((m, r) => r.noParkingAfterMinutes == null ? m : m == null ? r.noParkingAfterMinutes : Math.min(m, r.noParkingAfterMinutes), null),
     results,
   }
 }
