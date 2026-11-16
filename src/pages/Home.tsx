@@ -58,6 +58,18 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   const [searchOpen, setSearchOpen] = useState(false)
   const [savedOpen, setSavedOpen] = useState(false)
   const [expanded, setExpanded] = useState(false)
+  // The expanded list must stop below the top card, whatever its height on this phone.
+  const headerRef = useRef<HTMLElement>(null)
+  const [headerHeight, setHeaderHeight] = useState(150)
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const measure = () => setHeaderHeight(Math.ceil(el.getBoundingClientRect().height))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [streetRates, setStreetRates] = useState<StreetRatesFile | null>(null)
   const [carParkRates, setCarParkRates] = useState<CarParkRatesFile | null>(null)
@@ -155,22 +167,24 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
       </Suspense>
 
       {/* Top: where + how long, one card */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] lg:right-[430px]">
+      <header ref={headerRef} className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] lg:right-[430px]">
         <div className="pointer-events-auto mx-auto max-w-xl rounded-[24px] glass p-1.5">
           <div className="flex items-center gap-1">
-            <BrandMark size="sm" className="ml-2 mr-1 shrink-0" />
-            <span aria-hidden className="h-7 w-px shrink-0 bg-line" />
-            <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[18px] px-3 text-left transition-colors hover:bg-tint" aria-label="Where are you going?">
+            {/* Narrow phones get the square mark so "Where to?" keeps its room. */}
+            <SignMark className="ml-1.5 h-8 w-8 shrink-0 min-[500px]:hidden" title="Bay" />
+            <BrandMark size="sm" className="ml-2 mr-1 hidden shrink-0 min-[500px]:block" />
+            <span aria-hidden className="hidden h-7 w-px shrink-0 bg-line min-[500px]:block" />
+            <button onClick={() => setSearchOpen(true)} className="flex min-h-12 min-w-0 flex-1 items-center gap-2.5 rounded-[18px] px-2.5 text-left min-[500px]:gap-3 min-[500px]:px-3 transition-colors hover:bg-tint" aria-label="Where are you going?">
               <Search className="h-5 w-5 shrink-0 text-brand" />
               <span className="min-w-0 flex-1">
-                <span className="block text-[11px] font-semibold text-ink-3">{destination ? 'Parking near' : 'Where to?'}</span>
+                <span className="block whitespace-nowrap text-[11px] font-semibold text-ink-3">{destination ? 'Parking near' : 'Where to?'}</span>
                 <span className="block truncate text-[15px] font-semibold text-ink">{destination ? destination.label : /current location/i.test(locationLabel) ? 'Near you' : `Near ${locationLabel}`}</span>
               </span>
             </button>
             {melbourne && <div className="relative">
               <button onClick={() => setWhenOpen(v => !v)} aria-expanded={whenOpen} aria-label={`Arriving ${later ? clock(arrival) : 'now'}. Change arrival time`}
-                className={`flex h-11 items-center gap-1 rounded-[16px] px-3 text-sm font-bold tabular-nums transition-colors ${later ? 'bg-tint-2 text-brand' : 'text-ink-2 hover:bg-tint'}`}>
-                <Clock3 className="h-4 w-4" />{later ? clock(arrival).replace(':00', '') : 'Now'}<ChevronDown className="h-3.5 w-3.5" />
+                className={`flex h-11 shrink-0 items-center gap-1 whitespace-nowrap rounded-[16px] px-2 text-sm font-bold tabular-nums transition-colors min-[500px]:px-3 ${later ? 'bg-tint-2 text-brand' : 'text-ink-2 hover:bg-tint'}`}>
+                <Clock3 className="h-4 w-4 shrink-0 max-[359px]:hidden" />{later ? clock(arrival).replace(':00', '') : 'Now'}<ChevronDown className="hidden h-3.5 w-3.5 min-[500px]:block" />
               </button>
               {whenOpen && <WhenMenu value={arriveIn} now={now} onPick={v => { setArriveIn(v); setWhenOpen(false) }} onClose={() => setWhenOpen(false)} />}
             </div>}
@@ -195,14 +209,14 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
         </div>
       </header>
 
-      {melbourne && <div className="pointer-events-none absolute left-3 top-[136px] z-[420] flex items-center gap-3 rounded-full glass px-3 py-2 text-[10px] font-semibold text-ink-2 lg:top-[92px]" aria-label="Map availability legend">
+      {melbourne && <div className={`pointer-events-none absolute left-3 top-[136px] z-[420] flex items-center gap-3 rounded-full glass px-3 py-2 text-[10px] font-semibold text-ink-2 transition-opacity lg:top-[92px] ${expanded ? 'opacity-0 lg:opacity-100' : ''}`} aria-label="Map availability legend">
         <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#16A34A]" />Available now</span>
         <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#DC2626]" />Full now</span>
         <span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-[#1683F7]" />Check on arrival</span>
       </div>}
 
       {/* Bottom sheet: the answer first */}
-      <section className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] glass transition-[max-height] duration-300 lg:inset-y-3 lg:left-auto lg:right-3 lg:w-[410px] lg:max-h-none lg:rounded-[28px] ${expanded ? 'max-h-[78%]' : 'max-h-[44%]'}`}>
+      <section style={{ '--hdr': `${headerHeight + 10}px` } as React.CSSProperties} className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] glass transition-[max-height] duration-300 lg:inset-y-3 lg:left-auto lg:right-3 lg:w-[410px] lg:max-h-none lg:rounded-[28px] ${expanded ? 'max-h-[calc(100%-var(--hdr))]' : 'max-h-[44%]'}`}>
         {/* Floating actions ride on top of the sheet */}
         <div className={`pointer-events-none absolute -top-[60px] right-3 flex items-center gap-2 transition-opacity duration-200 ${expanded ? 'opacity-0 [&>*]:pointer-events-none' : 'opacity-100'}`} aria-hidden={expanded}>
           {melbourne && <button tabIndex={expanded ? -1 : 0} onClick={canIParkHere} className="pointer-events-auto flex h-12 items-center gap-2 rounded-full glass pl-3.5 pr-4 text-sm font-bold text-ink transition-transform active:scale-[0.97]">
