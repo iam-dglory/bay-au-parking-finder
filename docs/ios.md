@@ -4,6 +4,7 @@ The iOS app is the same web app as Android, wrapped by Capacitor in
 `ios/App/App.xcodeproj` (bundle ID `au.com.bayparking.app`, iOS 15+).
 Every change to `main` is compile-checked by `.github/workflows/ios-build.yml`
 on a GitHub macOS runner (unsigned simulator build, no Apple account needed).
+Release builds go to TestFlight via `.github/workflows/ios-testflight.yml`.
 
 ## Put it on your own iPhone (free, from a Mac)
 
@@ -39,12 +40,35 @@ After any code change: `npm run cap:ios`, then press Run again.
 Use Features -> Location -> Custom Location in the Simulator to put yourself
 in Melbourne (e.g. -37.8136, 144.9631).
 
-## Testers / App Store (paid)
+## TestFlight from GitHub (paid developer account)
 
-Sharing with other iPhones (TestFlight) or publishing needs the Apple
-Developer Program (A$149/year). Then: create the app in App Store Connect,
-pick that team in step 4, Product -> Archive -> Distribute App -> TestFlight.
-The remaining store checklist is in `docs/ios-app-store-readiness-2026-10-11.md`.
+Sharing with other iPhones or publishing needs the Apple Developer Program
+(A$149/year), held by the repo owner. One-time setup by the account holder:
+
+1. Enrol at developer.apple.com/programs (approval can take a day or two).
+2. App Store Connect -> Apps -> **+ New App**: platform iOS, name *BAY: Find
+   Parking* (or similar if taken), bundle ID `au.com.bayparking.app`
+   (register it under Certificates, Identifiers & Profiles -> Identifiers if
+   it isn't in the list), SKU `bay-ios`.
+3. App Store Connect -> Users and Access -> Integrations -> **App Store
+   Connect API** -> Team Keys -> **+**, access **Admin** (needed so Apple can
+   create the signing certificate). Download the `.p8` file (only offered
+   once) and note the **Key ID** and **Issuer ID**.
+4. Find the **Team ID** at developer.apple.com -> Account -> Membership.
+5. In GitHub: repo -> Settings -> Secrets and variables -> Actions:
+   - Secrets: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (paste the whole
+     `.p8` file contents, including the BEGIN/END lines)
+   - Variables: `APPLE_TEAM_ID`
+
+Then, for every release: Actions -> **iOS TestFlight** -> Run workflow. About
+15 minutes later the build appears in App Store Connect -> TestFlight (Apple
+then processes it for a few more minutes). Add testers there; they install
+the TestFlight app and get an email invite. Internal testers (people added to
+the team, up to 100) can test straight away; an external public link needs a
+short Apple beta review first.
+
+The remaining App Store checklist is in
+`docs/ios-app-store-readiness-2026-10-11.md`.
 
 ## What to check on a real iPhone
 
