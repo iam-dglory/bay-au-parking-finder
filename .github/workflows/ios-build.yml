@@ -1,0 +1,54 @@
+# Checks that the iOS app still compiles whenever main or an app PR changes.
+# Builds an unsigned iPhone Simulator app (no Apple account needed) and keeps
+# it as a run artifact. Putting Bay on a real iPhone still needs signing in
+# Xcode on a Mac -- see docs/ios.md.
+name: iOS build
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'public/**', 'ios/**', 'index.html', 'package*.json', 'capacitor.config.ts', 'vite.config.ts', '.github/workflows/ios-build.yml']
+  pull_request:
+    paths: ['src/**', 'public/**', 'ios/**', 'index.html', 'package*.json', 'capacitor.config.ts', 'vite.config.ts', '.github/workflows/ios-build.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build web app and copy it into the iOS project
+        run: npm run cap:ios
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ezwiagssiuvmhayvsmbk.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_5Swgqoy2CDhhz1URX9zzPA_Xv1m_Wah' }}
+          VITE_ASSET_BASE_URL: ${{ vars.VITE_ASSET_BASE_URL }}
+      - name: Build for iPhone Simulator (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build | tail -40
+      - name: Zip the simulator app
+        run: cd build/Build/Products/Debug-iphonesimulator && ditto -c -k --keepParent App.app "$GITHUB_WORKSPACE/bay-ios-simulator.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bay-ios-simulator
+          path: bay-ios-simulator.zip
+          retention-days: 14
