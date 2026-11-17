@@ -93,6 +93,8 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   const favourites = useFavourites()
   const favIds = useMemo(() => new Set(favourites.map(f => f.id)), [favourites])
   const [showTips, setShowTips] = useState(() => { try { return !localStorage.getItem(TIPS_KEY) } catch { return false } })
+  // Once someone picks a stay or a sort they've got it; the tip goes for good.
+  const dismissTips = () => { if (!showTips) return; setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }
 
   useEffect(() => {
     if (!melbourne) return
@@ -198,7 +200,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
           {melbourne && <div className="mt-1 border-t border-line px-1 pt-1.5">
             {/* Plain stay labels: drivers should not need to decode sign notation. */}
             <div className="flex items-stretch gap-1.5 px-1 pb-1 pt-1.5" role="radiogroup" aria-label="How long are you staying?">
-              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => setDuration(d)}
+              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => { setDuration(d); dismissTips() }}
                 className={`h-11 min-w-0 flex-1 rounded-[7px] transition-[background-color,color,box-shadow,transform] duration-200 active:scale-[0.96] ${duration === d
                   ? 'bg-sel text-sel-ink shadow-[0_6px_14px_rgba(22,131,247,.24)]'
                   : 'bg-white text-ink-2 shadow-[inset_0_0_0_1px_var(--line)]'}`}>
@@ -235,7 +237,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
           {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-brand hover:bg-tint">{expanded ? 'Less' : 'See all'}</button>}
         </div>
 
-        {melbourne && <SortBar value={sort} onChange={setSort} />}
+        {melbourne && <SortBar value={sort} onChange={value => { setSort(value); dismissTips() }} />}
 
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,var(--safe-area-inset-bottom,env(safe-area-inset-bottom)))]">
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
@@ -247,10 +249,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
             {loading && !best && <SkeletonRows />}
             {!loading && !best && <p className="px-2 py-3 text-sm text-ink-2">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
             {showParkedPrompt && heading && <ParkedPrompt heading={heading} onStart={() => void startFromHeading(heading)} onDismiss={() => setHeading(null)} />}
-            {showTips && !showParkedPrompt && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-night px-3.5 py-2.5 text-white">
-              <SignMark className="h-7 w-7 shrink-0" />
-              <p className="min-w-0 flex-1 text-[13px] leading-5">Choose your stay, then compare nearest, cheapest or live availability.</p>
-              <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
+            {showTips && !showParkedPrompt && best && <div role="note" className="bay-rise mb-2 flex items-center gap-2 rounded-xl bg-night py-1 pl-3 pr-1 text-white">
+              <p className="min-w-0 flex-1 truncate text-xs font-semibold">Pick your stay, then sort the list.</p>
+              <button onClick={dismissTips} aria-label="Dismiss tip" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white/80 hover:bg-white/10"><X className="h-4 w-4" /></button>
             </div>}
             <div key={`${duration}-${String(arriveIn)}`}>
             {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onGo={() => goTo(best)} onOpen={() => pick(best)} />}
