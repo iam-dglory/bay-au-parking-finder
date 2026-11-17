@@ -219,6 +219,8 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
       {/* Bottom sheet: the answer first */}
       <section style={{ '--hdr': `${headerHeight + 10}px` } as React.CSSProperties} className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] glass transition-[max-height] duration-300 lg:inset-y-3 lg:left-auto lg:right-3 lg:w-[410px] lg:max-h-none lg:rounded-[28px] ${expanded ? 'max-h-[calc(100%-var(--hdr))]' : 'max-h-[44%]'}`}>
+        {/* Map credit (required by OpenStreetMap's licence), faded, just above the list */}
+        {import.meta.env.VITE_MAP_PROVIDER !== 'google' && <p className={`pointer-events-none absolute -top-[18px] left-4 text-[9px] font-medium text-ink-3/80 transition-opacity lg:hidden ${expanded ? 'opacity-0' : ''}`}>© OpenStreetMap</p>}
         {/* Floating actions ride on top of the sheet */}
         <div className={`pointer-events-none absolute -top-[60px] right-3 flex items-center gap-2 transition-opacity duration-200 ${expanded ? 'opacity-0 [&>*]:pointer-events-none' : 'opacity-100'}`} aria-hidden={expanded}>
           {melbourne && <button tabIndex={expanded ? -1 : 0} onClick={canIParkHere} className="pointer-events-auto flex h-12 items-center gap-2 rounded-full glass pl-3.5 pr-4 text-sm font-bold text-ink transition-transform active:scale-[0.97]">

@@ -235,4 +235,6 @@ summary { touch-action: manipulation; }
 @media (prefers-color-scheme: dark) { .bay-map .maplibregl-ctrl-attrib-button { filter: invert(1); } }
 /* On the home screen the credit sits just under the search card, clear of the sheet. */
 .bay-home-map .maplibregl-ctrl-top-left { top: 132px; left: 6px; }
+/* Home shows its own map credit just above the list (Home.tsx); the control would sit under the search card. */
+@media (max-width: 1023px) { .bay-home-map .maplibregl-ctrl-attrib { display: none; } }
 .bay-map .maplibregl-marker { will-change: transform; }
