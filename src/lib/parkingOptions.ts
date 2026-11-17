@@ -12,7 +12,7 @@ export interface StreetRatesFile {
   zones: Record<string, { days: WeekSchedule; monday_inferred?: boolean }>
   /** Blocks the council's pay-stay tables skip, described from its sign plates. */
   sign_zones?: Record<string, { days: WeekSchedule; signs: string[] }>
-  streets: Record<string, { segment: number; zones: number[]; exact: boolean; same_price: boolean; from_signs?: boolean }>
+  streets: Record<string, { segment: number; zones: (number | string)[]; exact: boolean; same_price: boolean; from_signs?: boolean }>
 }
 export interface CarParkRecord {
   id: string; name: string; operator: string

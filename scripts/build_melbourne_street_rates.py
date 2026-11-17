@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import collections
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -51,6 +52,53 @@ COUNCIL_TO_JS = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 0}
 def minutes(hhmm: str) -> int:
     h, m = hhmm.strip().split(":")[:2]
     return int(h) * 60 + int(m)
+
+
+# Current City of Melbourne kerbside fees (cents/hour), checked 2026-11-18 at
+# https://www.melbourne.vic.gov.au/parking-and-transport/parking/Pages/kerbside-parking-fees.aspx
+# Peak = weekdays before 7pm; off-peak = weekdays after 7pm and all weekend.
+# The Pay Stay datasets still carry pre-2018 prices ($5.50 central, $3.20 outer,
+# $0.80 all-day), so they only tell us which tier a block is in, never the price.
+TARIFF_CHECKED = "2026-11-18"
+TARIFF_URL = "https://www.melbourne.vic.gov.au/parking-and-transport/parking/Pages/kerbside-parking-fees.aspx"
+TARIFF = {"central": (700, 400), "outer": (400, 200), "allday": (200, 200)}
+PEAK_END = 19 * 60
+TIER_RADIUS_M = 400
+
+
+def old_price_tier(cents: set[int]) -> str | None:
+    """Fee tier implied by a block's pre-2018 Pay Stay prices."""
+    paid = {c for c in cents if c > 0}
+    if not paid:
+        return None
+    if max(paid) >= 540:
+        return "central"
+    if paid == {80}:
+        return "allday"
+    return "outer"
+
+
+def price_days(days: list[list[list[int]]], tier: str | None) -> list[list[list[int]]]:
+    """Replace prices in paid/metered windows with today's tariff for the tier,
+    splitting weekday windows at 7pm into peak and off-peak. Free and no-parking
+    windows are left alone; with no tier, metered windows stay 'unpublished'."""
+    out = []
+    for day, windows in enumerate(days):
+        priced = []
+        for start, end, cents, max_stay in windows:
+            if cents == 0 or cents == NO_PARKING or tier is None:
+                priced.append([start, end, cents if tier or cents <= 0 else UNPUBLISHED, max_stay])
+                continue
+            peak, off = TARIFF[tier]
+            if 1 <= day <= 5:
+                if start < PEAK_END:
+                    priced.append([start, min(end, PEAK_END), peak, max_stay])
+                if end > PEAK_END:
+                    priced.append([max(start, PEAK_END), end, off, max_stay])
+            else:
+                priced.append([start, end, off, max_stay])
+        out.append(priced)
+    return out
 
 
 SIGN_DAYS = {
@@ -152,30 +200,61 @@ def main() -> int:
         desc_segments[b["roadsegmentdescription"]].add(b["roadsegmentid"])
         seg_bays[b["roadsegmentid"]] += 1
 
+    # Where each block is, for borrowing a neighbour's fee tier.
+    seg_points: dict[int, list[tuple[float, float]]] = collections.defaultdict(list)
+    for bay in bays:
+        seg_points[bay["roadsegmentid"]].append((bay["latitude"], bay["longitude"]))
+    seg_centre = {seg: (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)) for seg, pts in seg_points.items()}
+    zone_tier = {z: old_price_tier({w[2] for d in zones[z].values() for w in d}) for z in zones}
+    seg_tier: dict[int, str] = {}
+    for seg, zs in seg_zones.items():
+        tiers = {zone_tier[z] for z in zs} - {None}
+        if tiers:
+            seg_tier[seg] = "central" if "central" in tiers else "outer" if "outer" in tiers else "allday"
+    tier_points = [(seg_centre[seg], tier) for seg, tier in seg_tier.items() if seg in seg_centre]
+
+    def neighbour_tier(seg: int) -> str | None:
+        """Tier of the nearest priced block within TIER_RADIUS_M, else None."""
+        if seg not in seg_centre:
+            return None
+        lat, lng = seg_centre[seg]
+        best = None
+        for (plat, plng), tier in tier_points:
+            d = math.hypot((plat - lat) * 111_320, (plng - lng) * 111_320 * math.cos(math.radians(lat)))
+            if d <= TIER_RADIUS_M and (best is None or d < best[0]):
+                best = (d, tier)
+        # A metered sign is never all-day parking, so an all-day neighbour means the outer rate.
+        return None if best is None else "outer" if best[1] == "allday" else best[1]
+
     streets = {}
-    sign_zones: dict[int, dict] = {}
+    sign_zones: dict[str, dict] = {}
     counts = collections.Counter()
     for desc, segs in desc_segments.items():
         if len(segs) != 1:
             counts["ambiguous_description"] += sum(seg_bays[s] for s in segs)
             continue
         seg = next(iter(segs))
+        # Current kerb signs first: their hours are up to date (meters now run 7am-10pm).
+        signed = [(z, sign_zone(z)) for z in sorted(seg_parking_zones.get(seg, ()))]
+        if signed and all(r for _, r in signed):
+            tier = seg_tier.get(seg) or neighbour_tier(seg)
+            keys = []
+            for z, (days, lines) in signed:
+                key = f"{z}-{tier or 'unpriced'}"
+                sign_zones[key] = {"days": price_days(days, tier), "signs": lines}
+                keys.append(key)
+            exact = len({json.dumps(sign_zones[k]["days"]) for k in keys}) == 1
+            streets[desc] = {"segment": seg, "zones": keys, "exact": exact, "same_price": exact, "from_signs": True}
+            counts["from_signs" if tier else "from_signs_unpriced"] += seg_bays[seg]
+            continue
         zs = sorted(seg_zones.get(seg, ()))
         if not zs:
-            signed = [(z, sign_zone(z)) for z in sorted(seg_parking_zones.get(seg, ()))]
-            if signed and all(r for _, r in signed):
-                for z, (days, lines) in signed:
-                    sign_zones[z] = {"days": days, "signs": lines}
-                exact = len({json.dumps(r[0]) for _, r in signed}) == 1
-                streets[desc] = {"segment": seg, "zones": [z for z, _ in signed], "exact": exact, "same_price": exact, "from_signs": True}
-                counts["from_signs"] += seg_bays[seg]
-            else:
-                counts["no_paid_parking" if not signed else "unrecognised_signs"] += seg_bays[seg]
+            counts["no_paid_parking" if not signed else "unrecognised_signs"] += seg_bays[seg]
             continue
         exact = len({schedule(z) for z in zs}) == 1
         same_price = len({tuple(tuple((w[0], w[1], w[2]) for w in day) for day in schedule(z)) for z in zs}) == 1
         streets[desc] = {"segment": seg, "zones": zs, "exact": exact, "same_price": same_price}
-        counts["exact" if exact else "same_price_limits_vary" if same_price else "price_varies"] += seg_bays[seg]
+        counts["pay_stay_hours"] += seg_bays[seg]
 
     used = sorted({z for s in streets.values() if not s.get("from_signs") for z in s["zones"]})
     OUT.write_text(json.dumps({
@@ -185,9 +264,10 @@ def main() -> int:
         "currency": "AUD",
         "units": "windows are [from_minute, to_minute, cents_per_hour, max_stay_minutes] in Melbourne local time; days 0=Sunday..6=Saturday",
         "bay_counts": dict(counts),
-        "zones": {str(z): {"days": [zones[z].get(d, []) for d in range(7)], **({"monday_inferred": True} if z in monday_inferred else {})} for z in used},
+        "tariff": {"checked": TARIFF_CHECKED, "source": TARIFF_URL, "cents_per_hour": TARIFF, "peak": "weekdays before 7pm"},
+        "zones": {str(z): {"days": price_days([zones[z].get(d, []) for d in range(7)], zone_tier[z]), **({"monday_inferred": True} if z in monday_inferred else {})} for z in used},
         "sign_source": "City of Melbourne open data: parking-zones-linked-to-street-segments, sign-plates-located-in-each-parking-zone",
-        "sign_zones": {str(z): sign_zones[z] for z in sorted(sign_zones)},
+        "sign_zones": dict(sorted(sign_zones.items())),
         "streets": dict(sorted(streets.items())),
     }, separators=(",", ":")))
     print(f"wrote {OUT.relative_to(ROOT)}: {len(streets)} streets, {len(used)} zones")

@@ -94,3 +94,18 @@ describe('helpers', () => {
     expect([30, 60, 120, 90].map(formatDurationShort)).toEqual(['30 min', '1 hr', '2 hrs', '1 hr 30 min'])
   })
 })
+
+describe('peak to off-peak on one sign', () => {
+  // 2P Meter 7am-10pm: $7 until 7pm on weekdays, then $4.
+  const weekday: [number, number, number, number][] = [[420, 1140, 700, 120], [1140, 1320, 400, 120]]
+  const schedule = [[], weekday, weekday, weekday, weekday, weekday, []] as Parameters<typeof streetCost>[0]
+  it('charges each hour at its own rate', () => {
+    const cost = streetCost(schedule, { day: 3, minute: 18 * 60 }, 120)
+    expect(cost.cents).toBe(700 + 400)
+    expect(cost.limitAfterMinutes).toBeNull()
+  })
+  it('keeps counting the time limit across 7pm', () => {
+    const cost = streetCost(schedule, { day: 3, minute: 18 * 60 }, 180)
+    expect(cost.maxStayMinutes).toBe(120)
+  })
+})

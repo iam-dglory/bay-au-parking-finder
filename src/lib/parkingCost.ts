@@ -66,7 +66,13 @@ export function streetCost(schedule: WeekSchedule, start: LocalStart, durationMi
   let noParkingAfter: number | null = null
   for (let offset = 0; offset < horizon; offset++) {
     const w = windowAt(schedule, startAbs + offset)
-    if (w !== current) { current = w; windowStartedAt = w ? offset : null }
+    if (w !== current) {
+      // Peak then off-peak on the same sign (e.g. 2P Meter 7am-10pm, $7 then $4)
+      // is one restriction: the time limit keeps counting across the price change.
+      const samePlate = !!(current && w && current[1] === w[0] && current[3] === w[3] && current[2] !== 0 && w[2] !== 0 && current[2] !== NO_PARKING && w[2] !== NO_PARKING)
+      current = w
+      if (!samePlate) windowStartedAt = w ? offset : null
+    }
     if (w && w[2] === NO_PARKING) {
       // Must be gone before a loading/permit zone starts, however long the stay.
       if (limitAfter == null) limitAfter = offset
