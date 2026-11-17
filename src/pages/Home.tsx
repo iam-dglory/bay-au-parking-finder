@@ -85,8 +85,9 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   useEffect(() => { if (!driving) setPassenger(false) }, [driving])
   const melbourne = isMelbourneSearch(target.lat, target.lng)
   const now = useClock()
-  const { spots, loading: spotsLoading, error: spotsError, updatedAt, refresh: refreshSpots } = useNearbyParking(target, FAR_M)
-  const { carParks: mappedAreas, loading: areasLoading, error: areasError, refresh: refreshAreas } = useNearbyCarParks(target, FAR_M, melbourne)
+  const { spots, loading: spotsLoading, error: spotsError, updatedAt, offlineSince: spotsOffline, refresh: refreshSpots } = useNearbyParking(target, FAR_M)
+  const { carParks: mappedAreas, loading: areasLoading, error: areasError, offlineSince: areasOffline, refresh: refreshAreas } = useNearbyCarParks(target, FAR_M, melbourne)
+  const offlineSince = spotsOffline ?? areasOffline
   const loading = spotsLoading || areasLoading
   const parkingError = spotsError ?? areasError
   const refreshParking = () => { refreshSpots(); refreshAreas() }
@@ -245,6 +246,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
           {destination?.note && <p className="mx-2 mb-2 flex gap-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900"><Ticket className="h-4 w-4 shrink-0" />{destination.note}</p>}
           {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Rate details couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-amber-900">Retry</button></div>}
+          {offlineSince && !parkingError && <div role="status" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-tint-2 px-3 py-2 text-sm text-ink-2"><span className="min-w-0 flex-1">No signal. Showing parking saved at {clock(offlineSince)}. Free bays aren't live.</span><button onClick={() => refreshParking()} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-brand">Retry</button></div>}
           {parkingError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">{parkingError}</span><button onClick={() => refreshParking()} className="h-10 shrink-0 rounded-[12px] bg-white px-3 font-bold text-amber-900">Retry</button></div>}
 
           {melbourne && <>
