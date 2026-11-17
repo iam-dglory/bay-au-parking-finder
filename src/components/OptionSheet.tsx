@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BellRing, Check, ChevronDown, Flag, Navigation, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
 import { toggleFavourite, useFavourites } from '../lib/favourites'
 import { SignPlate, TicketTime } from './Kerb'
@@ -9,6 +9,7 @@ import type { ParkingOption } from '../lib/parkingOptions'
 import { directionsUrl, priceText, shortStreetName, splitStreet, walkMinutes } from '../lib/parkingOptions'
 import { formatCents, formatDurationShort } from '../lib/parkingCost'
 import { trackEvent } from '../lib/analytics'
+import { approvedSignNotes, submitSignNote, type KerbSignNote } from '../lib/kerbSigns'
 
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
@@ -54,6 +55,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
 
             {option.priceUnpublished && <p className="mt-2 text-xs leading-5 text-ink-3">Paid at the meter. The hourly rate for this block isn't published, so check the meter.</p>}
             {option.noData && <p className="mt-2 text-xs leading-5 text-ink-3">No rules are published for this block. Read the sign at your bay.</p>}
+            {option.noData && option.kind === 'street' && <SignNote block={option.name} />}
             {option.range && <p className="mt-2 text-xs leading-5 text-ink-3">This street crosses more than one published meter zone. Check the price on the nearest meter.</p>}
             <span aria-hidden className="ticket-tear" />
             <div className="mt-5 flex h-[80px] items-center justify-between gap-3">
@@ -173,6 +175,34 @@ function ReportProblem({ placeId, placeName }: { placeId: string; placeName: str
       <button type="button" onClick={() => setOpen(false)} className="h-11 rounded-[14px] px-4 text-sm font-semibold text-ink-2">Cancel</button>
     </div>
   </form>
+}
+
+/** What drivers say the sign reads, for blocks with no published rules:
+ * shows an approved note and lets anyone send one for review. */
+function SignNote({ block }: { block: string }) {
+  const [note, setNote] = useState<KerbSignNote | null>(null)
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  useEffect(() => {
+    let live = true
+    void approvedSignNotes().then(notes => { if (live) setNote(notes.get(block) ?? null) })
+    return () => { live = false }
+  }, [block])
+  return <div className="mt-2">
+    {note && <p className="rounded-xl bg-tint px-3 py-2 text-sm text-ink"><span className="font-semibold">Drivers say the sign reads:</span> “{note.signText}”</p>}
+    {state === 'sent' ? <p role="status" className="bay-rise mt-2 flex items-center gap-2 text-sm text-ok"><Check className="h-4 w-4" />Thanks. We'll check it and add it for other drivers.</p>
+    : !open ? <button onClick={() => setOpen(true)} className="mt-1 min-h-10 text-sm font-semibold text-brand">{note ? 'Sign looks different? Tell us' : 'Know what the sign says? Tell us'}</button>
+    : <form className="bay-rise mt-2 flex gap-2" onSubmit={async e => {
+        e.preventDefault(); setState('sending')
+        try { await submitSignNote(block, text); setState('sent') } catch { setState('error') }
+      }}>
+        <input value={text} onChange={e => setText(e.target.value)} maxLength={200} autoFocus placeholder="e.g. 2P Meter 7am–10pm" aria-label="What the sign says"
+          className="h-11 min-w-0 flex-1 rounded-xl bg-surface px-3 text-sm text-ink shadow-[inset_0_0_0_1px_var(--line)] outline-none focus:shadow-[inset_0_0_0_2px_var(--brand)]" />
+        <button type="submit" disabled={text.trim().length < 2 || state === 'sending'} className="h-11 shrink-0 rounded-[14px] cta px-4 text-sm font-bold text-white disabled:opacity-50">{state === 'sending' ? 'Sending…' : 'Send'}</button>
+      </form>}
+    {state === 'error' && <p className="mt-1 text-xs text-warn">Couldn't send. Check your connection and try again.</p>}
+  </div>
 }
 
 /** Native share sheet where available, otherwise copy to clipboard. */
