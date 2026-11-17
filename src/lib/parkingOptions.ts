@@ -75,6 +75,9 @@ export interface ParkingOption {
   signs?: string[]
   /** No council data at all for this block. */
   noData?: boolean
+  /** Paying in EasyPark: the council's four-digit zone (when one zone covers
+   * the block) and whether short stops under 15 min are free there. */
+  pay?: { zone?: string; freeShortStop: boolean }
 }
 
 const DAY_MS = 86_400_000
@@ -142,6 +145,7 @@ export function streetOptions(spots: ParkingSpot[], rates: StreetRatesFile | nul
       priceUnpublished: unpublished || undefined,
       noParkingAfterMinutes: cost.noParkingAfterMinutes ?? undefined,
       signs: fromSigns ? [...new Set(street.zones.flatMap(z => rates.sign_zones?.[String(z)]?.signs ?? []))] : undefined,
+      pay: cost.maxCents > 0 || unpublished ? payInfo(street.zones, fromSigns) : undefined,
       source: fromSigns
         ? { label: 'City of Melbourne parking sign data', url: 'https://data.melbourne.vic.gov.au/explore/dataset/sign-plates-located-in-each-parking-zone/', date: rates.fetched }
         : { label: 'City of Melbourne Pay Stay data', url: 'https://data.melbourne.vic.gov.au/explore/dataset/pay-stay-parking-restrictions/', date: rates.fetched },
@@ -210,6 +214,15 @@ export function rankOptions(options: ParkingOption[]): ParkingOption[] {
 }
 
 export type ParkingSort = 'nearest' | 'cheapest' | 'available'
+
+/** Sign-based zone keys look like "7514-central": the council's parking zone
+ * number, which is the four-digit number EasyPark asks for, and the fee tier. */
+function payInfo(zones: (number | string)[], fromSigns: boolean): ParkingOption['pay'] {
+  if (!fromSigns) return { freeShortStop: false }
+  const parsed = zones.map(z => /^(\d{4})-(\w+)$/.exec(String(z))).filter((m): m is RegExpExecArray => !!m)
+  const numbers = [...new Set(parsed.map(m => m[1]))]
+  return { zone: numbers.length === 1 ? numbers[0] : undefined, freeShortStop: parsed.length > 0 && parsed.every(m => m[2] === 'central') }
+}
 
 /** True when the card can tell the driver more than "check the sign". */
 export function hasUsefulInfo(o: ParkingOption): boolean {

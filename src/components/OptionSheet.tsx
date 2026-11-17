@@ -10,6 +10,7 @@ import { directionsUrl, priceText, shortStreetName, splitStreet, walkMinutes } f
 import { formatCents, formatDurationShort } from '../lib/parkingCost'
 import { trackEvent } from '../lib/analytics'
 import { approvedSignNotes, submitSignNote, type KerbSignNote } from '../lib/kerbSigns'
+import { easyParkUrl } from '../lib/payParking'
 
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
@@ -110,6 +111,13 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
         {reminder === 'in-app-only' && <p role="status" className="mt-2 text-xs text-ink-3">Reminder set. In a browser it only shows while Bay is open.</p>}
         {reminder === 'denied' && <p role="status" className="mt-2 text-xs text-warn">Notifications are off for Bay, so keep an eye on the countdown on the home screen.</p>}
         {option.notes && <p className="mt-3 text-sm text-ink-2">{option.notes}</p>}
+        {option.kind === 'street' && option.pay && <div className="mt-3 flex items-center gap-3 rounded-2xl bg-tint px-3.5 py-2.5">
+          <span className="min-w-0 flex-1 text-sm leading-5 text-ink-2">
+            Pay at the meter by card, or in EasyPark{option.pay.zone ? <> with zone <strong className="tabular-nums text-ink">{option.pay.zone}</strong> (check it matches the number by the sign)</> : <> with the zone number by the sign</>}.
+            {option.pay.freeShortStop && <span className="block text-xs text-ink-3">Stops under 15 min are free here when you use EasyPark.</span>}
+          </span>
+          <a href={easyParkUrl()} target="_blank" rel="noreferrer" className="flex h-10 shrink-0 items-center rounded-[12px] bg-surface px-3 text-sm font-bold text-brand shadow-[inset_0_0_0_1px_var(--line)]">EasyPark</a>
+        </div>}
 
         <details className="group mt-4 [&[open]>*:not(summary)]:[animation:bay-fade_.2s_ease-out_both] border-t border-line pt-1">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-ink-2 [&::-webkit-details-marker]:hidden">

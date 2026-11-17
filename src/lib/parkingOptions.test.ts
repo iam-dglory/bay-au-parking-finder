@@ -48,6 +48,15 @@ describe('streetOptions from council signs', () => {
     const [o] = streetOptions([bay('a', 'Little Bourke St')], signRates, { day: 3, minute: 17 * 60 }, 60, now)
     expect([o.cents, o.priceUnpublished, o.limitMinutes, o.fits, priceText(o), o.signs?.length]).toEqual([null, true, 120, true, 'Meter', 2])
   })
+  it('gives the EasyPark zone and the free short stop in the central city', () => {
+    const priced: StreetRatesFile = {
+      ...signRates,
+      sign_zones: { '7189-central': { days: Array.from({ length: 7 }, () => [[420, 1320, 700, 120]] as [number, number, number, number][]), signs: [] } },
+      streets: { 'Collins St': { segment: 1, zones: ['7189-central'], exact: true, same_price: true, from_signs: true } },
+    }
+    const [o] = streetOptions([bay('a', 'Collins St')], priced, { day: 3, minute: 10 * 60 }, 60, now)
+    expect([o.cents, o.pay]).toEqual([700, { zone: '7189', freeShortStop: true }])
+  })
   it('makes you leave before the loading zone starts', () => {
     const [o] = streetOptions([bay('a', 'Little Bourke St')], signRates, { day: 3, minute: 6 * 60 }, 120, now) // 6am, 2 hrs
     expect([o.limitMinutes, o.noParkingAfterMinutes, o.fits]).toEqual([60, 60, false])
