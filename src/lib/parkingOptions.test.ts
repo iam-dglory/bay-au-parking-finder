@@ -77,6 +77,14 @@ describe('shortStreetName', () => {
   })
 })
 
+describe('mappedCarParkOptions vehicle types', () => {
+  const area = (id: string, vehicle_types?: string) => ({ id, kind: 'area', address_text: id, lat: -37.81, lng: 144.96, distance_m: 50, fee: 'no', vehicle_types }) as never
+  it('leaves out motorbike-only areas', () => {
+    const ids = mappedCarParkOptions([area('bikes', 'Two-wheelers'), area('both', 'Cars and two-wheelers'), area('plain')], 60).map(o => o.name)
+    expect(ids).toEqual(['both', 'plain'])
+  })
+})
+
 describe('sortParkingOptions', () => {
   const option = (id: string, distanceM: number, cents: number | null, free?: number) => ({
     kind: 'street' as const, id, name: id, lat: -37.81, lng: 144.96, distanceM,

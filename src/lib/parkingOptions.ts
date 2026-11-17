@@ -175,7 +175,9 @@ export function carParkOptions(file: CarParkRatesFile | null, center: { lat: num
  * catalogue is much broader than the small manually curated rate file, so it
  * must remain visible even when a facility has no machine-readable tariff. */
 export function mappedCarParkOptions(areas: CarPark[], durationMinutes: number): ParkingOption[] {
-  return areas.filter(area => area.kind === 'area' || area.kind == null).map(area => {
+  // Motorbike-only areas aren't parking for a car, however cheap they look.
+  const carsCanPark = (area: CarPark) => !/two-wheel|motorcycle|bicycle/i.test(area.vehicle_types ?? '') || /car/i.test(area.vehicle_types ?? '')
+  return areas.filter(area => (area.kind === 'area' || area.kind == null) && carsCanPark(area)).map(area => {
     const hours = durationMinutes / 60
     const min = area.hourly_rate_min != null ? Math.round(area.hourly_rate_min * 100 * hours) : null
     const max = area.hourly_rate_max != null ? Math.round(area.hourly_rate_max * 100 * hours) : min
