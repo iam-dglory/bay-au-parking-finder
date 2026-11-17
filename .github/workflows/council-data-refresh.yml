@@ -1,0 +1,58 @@
+# Weekly: re-fetch the City of Melbourne parking datasets, rebuild the street
+# rates file and, if anything changed, open (or update) a pull request.
+# Nothing reaches the app until that PR is merged.
+name: Council data refresh
+
+on:
+  schedule:
+    - cron: '41 20 * * 0' # 7:41am Melbourne (AEDT) on Mondays
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: council-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Download fresh council data
+        run: python3 scripts/refresh_melbourne_rates_sources.py
+      - name: Rebuild street rates
+        run: RATES_FETCHED=$(date -u +%F) python3 scripts/build_melbourne_street_rates.py
+      - run: npm ci
+      - name: Check the rebuilt data and app
+        run: npm run validate:parking-data && npm test
+      - name: Open or update the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The rates file's date stamp changes every run; only open a PR when the council data did.
+          if git diff --quiet -- datasets/melbourne-city-of-melbourne; then echo "No council data changes this week."; exit 0; fi
+          branch=data/council-refresh
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add datasets/melbourne-city-of-melbourne datasets/manifest.json public/data/melbourne/street-rates.json
+          git commit -m "data: refresh City of Melbourne parking data ($(date -u +%F))"
+          git push -f origin "$branch"
+          summary=$(python3 -c "import json;r=json.load(open('public/data/melbourne/street-rates.json'));print(', '.join(f'{k}: {v}' for k,v in r['bay_counts'].items()))")
+          body="Weekly refresh of the council parking datasets behind street rates. Bay coverage: $summary. Merge to put the new rates live; the site redeploys on merge."
+          if [ -n "$(gh pr list --head "$branch" --state open --json number --jq '.[0].number')" ]; then
+            gh pr edit "$branch" --body "$body"
+          else
+            gh pr create --head "$branch" --base main --title "Refresh council parking data" --body "$body"
+          fi
