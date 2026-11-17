@@ -183,7 +183,7 @@ export function mappedCarParkOptions(areas: CarPark[], durationMinutes: number):
     const cents = free ? 0 : min != null && max === min ? min : null
     return {
       kind: 'carpark', id: `mapped:${area.id}`, name: area.address_text,
-      operator: area.source_name ?? area.facility_type ?? 'Parking area',
+      operator: area.facility_type ?? 'Parking area',
       lat: area.lat, lng: area.lng, distanceM: area.distance_m,
       cents,
       range: min != null && max != null && max !== min ? { min, max } : undefined,

@@ -155,7 +155,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
     setArriveIn(0)
     const found = streetOptionHere(allOptions, myLocation ?? center)
     if (found) { setHereMessage(null); pick(found.option) }
-    else setHereMessage(myLocation ? 'No council bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
+    else setHereMessage(myLocation ? 'No street bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
   }
 
   return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent antialiased">
@@ -257,7 +257,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
             {others.length > 0 && <ul className="mt-3 px-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
             </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="The time limit is too short"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
-            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
+            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays updated {clock(updatedAt)}</p>}
           </>}
 
           {!melbourne && <div className="px-2 py-3">

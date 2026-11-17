@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BellRing, Check, ChevronDown, ExternalLink, Flag, Navigation, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
+import { BellRing, Check, ChevronDown, Flag, Navigation, Share2, Star, TriangleAlert, Volume2, X } from 'lucide-react'
 import { toggleFavourite, useFavourites } from '../lib/favourites'
 import { SignPlate, TicketTime } from './Kerb'
 import { NAV_APP_LABEL, setNavApp, useNavApp, type NavApp } from '../lib/navigation'
@@ -11,7 +11,6 @@ import { formatCents, formatDurationShort } from '../lib/parkingCost'
 import { trackEvent } from '../lib/analytics'
 
 const clock = (date: Date) => date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: 'Australia/Melbourne' })
-const dateLabel = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 /** Detail for one street or car park: total for the stay, leave-by time, how
  * the price is made up, live sensor readings and where the price came from. */
@@ -46,15 +45,15 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
         <section className="ticket mt-4 px-5 pt-5 text-ink">
           {option.fits === false ? <>
             <p className="text-2xl font-extrabold tracking-tight text-ink">{blockedNow ? 'No parking here now' : `Too short for ${formatDurationShort(durationMinutes)}`}</p>
-            {blockedNow ? <p className="mt-2 flex items-start gap-2 text-sm font-semibold text-warn"><TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />It's a loading or permit zone at this time. The council's signs for this block are under About this data.</p>
+            {blockedNow ? <p className="mt-2 flex items-start gap-2 text-sm font-semibold text-warn"><TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />It's a loading or permit zone at this time. The signs for this block are under Details.</p>
             : blockedAt ? <p className="mt-2 flex items-start gap-2 text-sm font-semibold text-warn"><TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />It becomes a loading or permit zone at {clock(blockedAt)}, so you'd have to leave by then.</p>
             : limitAt && <p className="mt-2 flex items-start gap-2 text-sm font-semibold text-warn"><TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />Max stay here is {formatDurationShort(option.limitMinutes!)}. You'd have to leave by {clock(limitAt)}.</p>}
           </> : <>
             <p className="flex flex-wrap items-baseline gap-x-2"><span className="figure text-[46px] leading-none text-ink">{price}</span><span className="text-sm text-ink-2">for {formatDurationShort(durationMinutes)}{later ? `, arriving ${clock(arrival)}` : ''}</span></p>
             {option.kind === 'carpark' && option.rateName && option.rateName !== 'Hourly' && <p className="mt-1 text-sm text-ink-2">{option.rateName} rate</p>}
 
-            {option.priceUnpublished && <p className="mt-2 text-xs leading-5 text-ink-3">Paid at the meter. City of Melbourne doesn't publish the hourly rate for this block.</p>}
-            {option.noData && <p className="mt-2 text-xs leading-5 text-ink-3">City of Melbourne doesn't publish the rules for this block. Read the sign at your bay.</p>}
+            {option.priceUnpublished && <p className="mt-2 text-xs leading-5 text-ink-3">Paid at the meter. The hourly rate for this block isn't published, so check the meter.</p>}
+            {option.noData && <p className="mt-2 text-xs leading-5 text-ink-3">No rules are published for this block. Read the sign at your bay.</p>}
             {option.range && <p className="mt-2 text-xs leading-5 text-ink-3">This street crosses more than one published meter zone. Check the price on the nearest meter.</p>}
             <span aria-hidden className="ticket-tear" />
             <div className="mt-5 flex h-[80px] items-center justify-between gap-3">
@@ -112,7 +111,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
 
         <details className="group mt-4 [&[open]>*:not(summary)]:[animation:bay-fade_.2s_ease-out_both] border-t border-line pt-1">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-ink-2 [&::-webkit-details-marker]:hidden">
-            About this data<ChevronDown className="h-4 w-4 group-open:rotate-180" />
+            Details<ChevronDown className="h-4 w-4 group-open:rotate-180" />
           </summary>
           {option.segments && option.segments.length > 0 && (
             <ul className="divide-y divide-line text-sm">
@@ -126,17 +125,14 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
             </ul>
           )}
           {option.signs && option.signs.length > 0 && (
-            <ul className="divide-y divide-line text-sm" aria-label="Council signs for this block">
+            <ul className="divide-y divide-line text-sm" aria-label="Signs for this block">
               {option.signs.map(line => { const [when, rule] = line.split(': '); return <li key={line} className="flex justify-between gap-3 py-2"><span className="tabular-nums text-ink-2">{when}</span><span className="text-right font-semibold">{rule}</span></li> })}
             </ul>
           )}
-          {option.noData ? <p className="mt-2 text-xs leading-5 text-ink-3 [text-wrap:pretty]">
-            City of Melbourne's open data has no price or time limit for this block. {option.live && 'Free bays come from council sensors and update every few minutes. '}The sign at the bay is what applies.
-          </p> : <p className="mt-2 text-xs leading-5 text-ink-3 [text-wrap:pretty]">
-            {option.kind === 'carpark' ? 'Drive-up rate' : option.signs ? 'Time limits' : 'Council rate'} from {option.source.url ? <a href={option.source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-0.5 font-semibold text-ink-2 underline">{option.source.label}<ExternalLink className="h-3 w-3" /></a> : option.source.label}
-            {option.source.date && <>, checked {dateLabel(option.source.date)}</>}{option.source.stale && <strong className="text-warn"> (may be out of date)</strong>}.
-            {' '}{option.live && 'Free bays come from council sensors and update every few minutes. '}Rates can change. The sign at the bay or the car park entrance is what applies.
-          </p>}
+          <p className="mt-2 text-xs leading-5 text-ink-3 [text-wrap:pretty]">
+            {option.source.stale && <strong className="text-warn">This rate may be out of date. </strong>}
+            {option.live && 'Free bays update every few minutes. '}{option.noData ? 'The sign at the bay is what applies.' : 'Rates can change. The sign at the bay or the car park entrance is what applies.'}
+          </p>
         </details>
         <ReportProblem placeId={option.id} placeName={option.name} />
       </div>

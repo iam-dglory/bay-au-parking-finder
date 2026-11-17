@@ -9,7 +9,6 @@ import { logVisit } from '../lib/visits'
 import { formatMaxStay } from '../lib/formatDuration'
 import { formatChangesAt } from '../lib/parkingStatus'
 import { availability, SENSOR_MAX_AGE_MINUTES } from '../lib/availability'
-import { MELBOURNE_SENSOR_SOURCE } from '../lib/melbourneSensors'
 import { directionsUrl } from '../lib/directions'
 import { ParkingInformationReportForm } from './ParkingInformationReportForm'
 import { trackEvent } from '../lib/analytics'
@@ -134,7 +133,7 @@ export function SpotDetailSheet({
           <AvailabilityBadge spot={spot} />
           {availability(spot).state !== 'unknown' && <span className="text-xs text-slate-500">Council sensor · updated {new Date(spot.sensor_status!.last_confirmed_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>}
         </div>
-        {availability(spot).state === 'unknown' && <p className="mt-1 text-xs text-slate-500">This location is mapped. Live vacancy is only shown where the council publishes a fresh bay reading.</p>}
+        {availability(spot).state === 'unknown' && <p className="mt-1 text-xs text-slate-500">This location is mapped. Live vacancy is only shown where there's a fresh bay reading.</p>}
 
         <div className={`mt-4 rounded-2xl border p-4 ${spot.status.status === 'free' ? 'border-emerald-200 bg-emerald-50' : spot.status.status === 'paid' ? 'border-blue-200 bg-blue-50' : spot.status.status === 'restricted' ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-slate-50'}`}>
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Can I park here now?</p>
@@ -163,7 +162,7 @@ export function SpotDetailSheet({
           Availability can change before you arrive. The sign at this bay controls parking times and fees.
         </p>
 
-        {spot.sensor_status && <details className="mt-3 text-xs text-slate-500"><summary className="cursor-pointer">About this reading</summary><p className="mt-1">The council last updated this sensor at {new Date(spot.sensor_status.last_confirmed_at).toLocaleString()}. Bay only shows its vacancy colour when that update and the feed refresh are within {SENSOR_MAX_AGE_MINUTES} minutes, with an exact council bay ID match. A sensor measures vehicle presence; it does not grant parking permission or reserve the bay.</p><a className="mt-1 inline-block text-blue-700 underline" href={MELBOURNE_SENSOR_SOURCE} target="_blank" rel="noreferrer">Council source</a></details>}
+        {spot.sensor_status && <details className="mt-3 text-xs text-slate-500"><summary className="cursor-pointer">About this reading</summary><p className="mt-1">This sensor last updated at {new Date(spot.sensor_status.last_confirmed_at).toLocaleString()}. Bay only shows its vacancy colour when that update and the feed refresh are within {SENSOR_MAX_AGE_MINUTES} minutes, with an exact bay match. A sensor measures vehicle presence; it does not grant parking permission or reserve the bay.</p></details>}
         <button type="button" onClick={() => setReportOpen(true)} className="mt-4 w-full rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-700">Report incorrect parking information</button>
       </div>
     </div>{reportOpen && <ParkingInformationReportForm locationKind="spot" locationId={spot.id} locationLabel={spot.address_text} onClose={() => setReportOpen(false)} />}</>
