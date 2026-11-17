@@ -1,4 +1,5 @@
 import type { CarPark, ParkingSpot } from '../types'
+import { withOfflineCopy } from './offlineStore'
 import { availability } from './availability'
 import { haversineMeters } from './distance'
 import { carParkCost, formatCents, streetCostRange, type CarParkRates, type LocalStart, type WeekSchedule } from './parkingCost'
@@ -27,10 +28,10 @@ export interface CarParkRatesFile { stale_after_days: number; car_parks: CarPark
 const cache = new Map<string, Promise<unknown>>()
 function loadJson<T>(path: string): Promise<T> {
   if (!cache.has(path)) {
-    cache.set(path, fetch(publicAssetUrl(path), { signal: AbortSignal.timeout(12000) }).then(r => {
+    cache.set(path, withOfflineCopy(path, () => fetch(publicAssetUrl(path), { signal: AbortSignal.timeout(12000) }).then(r => {
       if (!r.ok) throw new Error(`Could not load ${path}`)
       return r.json()
-    }).catch(error => { cache.delete(path); throw error }))
+    })).catch(error => { cache.delete(path); throw error }))
   }
   return cache.get(path) as Promise<T>
 }

@@ -6,12 +6,21 @@ import type { ParkingSpot } from '../types'
 import { catalogSpot, regionalNearby, mergeMappedBays } from './regionalParking'
 import { fetchMelbourneSensors, mergeMelbourneSensors, isMelbourneSearch } from './melbourneSensors'
 import { applyBayZoneRules, loadBayZoneRules } from './melbourneZoneRules'
+import { metresBetween, readOffline, saveOffline } from './offlineStore'
+
+/** An offline copy is used only near where it was saved, and only for a day. */
+const OFFLINE_KEY = 'nearby-spots'
+const OFFLINE_RADIUS_M = 1500
+const OFFLINE_MAX_AGE_MS = 24 * 3600_000
+type SpotsSnapshot = { lat: number; lng: number; rows: ParkingSpot[] }
 
 export function useNearbyParking(center: { lat: number; lng: number } | null, radiusM: number) {
   const [spots, setSpots] = useState<ParkingSpot[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
+  /** Set when showing the saved copy because the network failed. */
+  const [offlineSince, setOfflineSince] = useState<Date | null>(null)
   const sequence = useRef(0)
   const lat = center?.lat
   const lng = center?.lng
@@ -51,10 +60,21 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
         : null)
       setSpots(rows)
       setUpdatedAt(new Date())
+      setOfflineSince(null)
+      if (rows.length > 0) void saveOffline<SpotsSnapshot>(OFFLINE_KEY, { lat, lng, rows })
       if (recordSearch) logSearchEvent({ lat, lng }, radiusM, rows.length)
     } catch (err) {
       if (request === sequence.current) {
         console.error('Bay parking data request failed', err)
+        const copy = await readOffline<SpotsSnapshot>(OFFLINE_KEY)
+        if (request !== sequence.current) return
+        if (copy && Date.now() - Date.parse(copy.savedAt) < OFFLINE_MAX_AGE_MS && metresBetween(copy.data, { lat, lng }) < OFFLINE_RADIUS_M) {
+          // Free-bay counts from hours ago would mislead, so the saved copy has none.
+          setSpots(copy.data.rows.map(row => ({ ...row, sensor_status: null })))
+          setOfflineSince(new Date(copy.savedAt))
+          setError(null)
+          return
+        }
         const message = err instanceof TypeError || String((err as { message?: string })?.message ?? err).toLowerCase().includes('fetch')
           ? 'Parking data is temporarily unavailable. Check your connection and try again.'
           : (err instanceof Error ? err.message : (err as { message?: string })?.message ?? 'Could not refresh parking')
@@ -75,5 +95,5 @@ export function useNearbyParking(center: { lat: number; lng: number } | null, ra
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     return () => { sequence.current++; clearInterval(timer); document.removeEventListener('visibilitychange', onVisible) }
   }, [refresh])
-  return { spots, loading, error, updatedAt, refresh: () => refresh(false) }
+  return { spots, loading, error, updatedAt, offlineSince, refresh: () => refresh(false) }
 }
