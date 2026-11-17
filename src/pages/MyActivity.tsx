@@ -88,7 +88,7 @@ export function MyActivity({ center, savedLocations, onOpenFeedback, onAddSign }
   useEffect(() => { void load() }, [center.lat, center.lng, load])
 
   return <main className="h-full overflow-y-auto bg-tint pb-6 text-ink">
-    <header className="relative overflow-hidden px-5 pb-7 pt-[max(1.25rem,env(safe-area-inset-top))]">
+    <header className="relative overflow-hidden px-5 pb-7 pt-[max(1.25rem,var(--safe-area-inset-top,env(safe-area-inset-top)))]">
       <div className="pointer-events-none absolute -right-16 top-5 h-48 w-48 rounded-full bg-blue-100/70 blur-3xl" />
       <div className="relative"><BrandMark size="sm" /><p className="mt-8 text-[11px] font-bold uppercase tracking-[.18em] text-brand">Your Bay</p><h1 className="mt-2 text-4xl font-bold tracking-[-.055em]">My activity</h1><p className="mt-2 max-w-sm text-base leading-6 text-ink-3">Your saved places, parking history and signs you’ve contributed.</p></div>
     </header>

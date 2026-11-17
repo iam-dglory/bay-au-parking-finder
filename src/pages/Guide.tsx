@@ -34,7 +34,7 @@ const CANT_PARK = SIGN_OPTIONS.map(s => s.type).filter(t => SIGN_AVAILABILITY[t]
 
 export function Guide() {
   return <main className="h-full overflow-y-auto bg-tint pb-6 text-ink">
-    <div className="mx-auto max-w-2xl px-4 pb-7 pt-[max(1.4rem,env(safe-area-inset-top))]">
+    <div className="mx-auto max-w-2xl px-4 pb-7 pt-[max(1.4rem,var(--safe-area-inset-top,env(safe-area-inset-top)))]">
       <h1 className="px-1 text-[26px] font-bold tracking-tight text-ink">Parking signs</h1>
       <p className="mt-1 px-1 text-[15px] leading-6 text-ink-2">{GUIDE_INTRO}</p>
 

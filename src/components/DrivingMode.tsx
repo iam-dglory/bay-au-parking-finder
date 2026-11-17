@@ -9,7 +9,7 @@ import { trackEvent } from '../lib/analytics'
  * road rules allow a mounted phone to be touched briefly for navigation only). */
 export function DrivingOverlay({ target, onPassenger }: { target: { name: string; lat: number; lng: number } | null; onPassenger: () => void }) {
   const app = useNavApp()
-  return <div role="dialog" aria-modal="true" aria-label="Driving" className="bay-fade fixed inset-0 z-[1500] flex flex-col bg-night px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] text-white">
+  return <div role="dialog" aria-modal="true" aria-label="Driving" className="bay-fade fixed inset-0 z-[1500] flex flex-col bg-night px-6 pb-[max(1.5rem,var(--safe-area-inset-bottom,env(safe-area-inset-bottom)))] pt-[max(2rem,var(--safe-area-inset-top,env(safe-area-inset-top)))] text-white">
     <div className="flex items-center gap-3 text-white/70"><CarFront className="h-6 w-6" /><span className="text-lg font-semibold">Driving</span></div>
     <div className="flex flex-1 flex-col justify-center">
       {target ? <>

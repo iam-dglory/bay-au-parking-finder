@@ -31,7 +31,7 @@ export function OptionSheet({ option, durationMinutes, arrival, later = false, o
   const blockedAt = option.noParkingAfterMinutes != null && option.noParkingAfterMinutes === option.limitMinutes && limitAt ? limitAt : null
   return (
     <div className="bay-dim fixed inset-0 z-[1000] flex items-end justify-center bg-[rgba(6,12,28,.32)] sm:items-center" onClick={onClose}>
-      <div role="dialog" aria-label={`${option.name} parking cost`} className="bay-sheet bay-sheet-in max-h-[86dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] glass glass-strong px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:rounded-[28px]" onClick={e => e.stopPropagation()}>
+      <div role="dialog" aria-label={`${option.name} parking cost`} className="bay-sheet bay-sheet-in max-h-[86dvh] w-full max-w-md overflow-y-auto rounded-t-[28px] glass glass-strong px-5 pb-[max(1.5rem,var(--safe-area-inset-bottom,env(safe-area-inset-bottom)))] pt-3 sm:rounded-[28px]" onClick={e => e.stopPropagation()}>
         <div className="mx-auto h-1.5 w-11 rounded-full bg-slate-200" />
         <div className="mt-3 flex items-start gap-3">
           <SignPlate option={option} size="lg" />
