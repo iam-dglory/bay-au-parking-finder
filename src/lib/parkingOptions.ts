@@ -208,15 +208,22 @@ export function rankOptions(options: ParkingOption[]): ParkingOption[] {
 
 export type ParkingSort = 'nearest' | 'cheapest' | 'available'
 
+/** True when the card can tell the driver more than "check the sign". */
+export function hasUsefulInfo(o: ParkingOption): boolean {
+  return o.cents != null || o.range != null || o.limitMinutes != null || !!o.priceUnpublished || (o.live?.free ?? 0) > 0
+}
+
 /** The three driver-facing result orders. Unknown prices are deliberately last
  * for Cheapest, and missing/stale sensor data never outranks a confirmed live
  * vacancy for Available. A result that cannot fit the selected stay is always
  * kept behind a suitable result. */
 export function sortParkingOptions(options: ParkingOption[], sort: ParkingSort): ParkingOption[] {
   if (sort === 'cheapest') return rankOptions(options)
-  const fitBucket = (option: ParkingOption) => option.fits === false ? 1 : 0
   if (sort === 'nearest') {
-    return [...options].sort((a, b) => fitBucket(a) - fitBucket(b) || a.distanceM - b.distanceM)
+    // Places we can say something useful about (a price, a time limit, a
+    // meter or live free bays) come before ones that only say "see sign".
+    const infoBucket = (o: ParkingOption) => o.fits === false ? 2 : hasUsefulInfo(o) ? 0 : 1
+    return [...options].sort((a, b) => infoBucket(a) - infoBucket(b) || a.distanceM - b.distanceM)
   }
   const availabilityBucket = (option: ParkingOption) => {
     if (option.fits === false) return 3

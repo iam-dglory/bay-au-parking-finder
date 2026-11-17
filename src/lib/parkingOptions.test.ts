@@ -89,6 +89,11 @@ describe('sortParkingOptions', () => {
     expect(sortParkingOptions(rows, 'cheapest').map(row => row.id)).toEqual(['cheap', 'live', 'near'])
     expect(sortParkingOptions(rows, 'available').map(row => row.id)).toEqual(['live', 'near', 'cheap'])
   })
+  it('puts "see sign" places behind ones with a price, limit or meter in Nearest', () => {
+    const unknown = { ...option('sign', 10, null), limitMinutes: null, fits: null }
+    const rows = [unknown, option('priced', 200, 400), { ...option('blocked', 5, null), fits: false }]
+    expect(sortParkingOptions(rows, 'nearest').map(row => row.id)).toEqual(['priced', 'sign', 'blocked'])
+  })
 })
 
 describe('mappedCarParkOptions', () => {
