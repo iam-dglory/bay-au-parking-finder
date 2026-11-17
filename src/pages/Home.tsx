@@ -167,7 +167,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
       </Suspense>
 
       {/* Top: where + how long, one card */}
-      <header ref={headerRef} className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,env(safe-area-inset-top))] lg:right-[430px]">
+      <header ref={headerRef} className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-3 pt-[max(.75rem,var(--safe-area-inset-top,env(safe-area-inset-top)))] lg:right-[430px]">
         <div className="pointer-events-auto mx-auto max-w-xl rounded-[24px] glass p-1.5">
           <div className="flex items-center gap-1">
             {/* Narrow phones get the square mark so "Where to?" keeps its room. */}
@@ -237,7 +237,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
         {melbourne && <SortBar value={sort} onChange={setSort} />}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,env(safe-area-inset-bottom))]">
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,var(--safe-area-inset-bottom,env(safe-area-inset-bottom)))]">
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
           {destination?.note && <p className="mx-2 mb-2 flex gap-2 rounded-2xl bg-amber-50 px-3 py-2.5 text-xs text-amber-900"><Ticket className="h-4 w-4 shrink-0" />{destination.note}</p>}
           {rateError && <div role="alert" className="mx-2 mb-2 flex items-center gap-3 rounded-2xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><span className="min-w-0 flex-1">Rate details couldn't load. Check your connection and try again.</span><button onClick={() => setRetry(n => n + 1)} className="h-10 shrink-0 rounded-[12px] bg-surface px-3 font-bold text-amber-900">Retry</button></div>}
@@ -387,7 +387,7 @@ function SearchOverlay({ saved, onSaved, onPick, onVenue, onClose }: { saved: Fa
     const found = await searchPlaces(query).catch(() => [])
     if (id === request.current) { setResults(found); setBusy(false); setSearched(true) }
   }
-  return <div className="bay-fade fixed inset-0 z-[1100] overflow-y-auto glass glass-strong px-3 pb-8 pt-[max(.75rem,env(safe-area-inset-top))]">
+  return <div className="bay-fade fixed inset-0 z-[1100] overflow-y-auto glass glass-strong px-3 pb-8 pt-[max(.75rem,var(--safe-area-inset-top,env(safe-area-inset-top)))]">
     <div className="mx-auto max-w-xl">
       <form onSubmit={e => { e.preventDefault(); void run() }} className="flex items-center gap-2 rounded-[20px] bg-tint pl-3.5 pr-1.5 shadow-[inset_0_0_0_1px_var(--line)] focus-within:shadow-[inset_0_0_0_2px_var(--brand)]">
         <Search className="h-5 w-5 shrink-0 text-brand" />

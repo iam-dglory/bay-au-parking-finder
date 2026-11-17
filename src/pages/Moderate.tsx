@@ -34,7 +34,7 @@ export function Moderate() {
     setItems(current => current?.filter(item => item.id !== id) ?? null)
   }
 
-  return <main className="h-full overflow-y-auto bg-tint px-4 pb-8 pt-[max(1.25rem,env(safe-area-inset-top))] text-ink">
+  return <main className="h-full overflow-y-auto bg-tint px-4 pb-8 pt-[max(1.25rem,var(--safe-area-inset-top,env(safe-area-inset-top)))] text-ink">
     <div className="mx-auto max-w-2xl">
       <div className="flex items-center justify-between"><h1 className="text-2xl font-bold tracking-tight">Sign review</h1><button onClick={() => void load()} className="bay-icon-button h-10 w-10" aria-label="Refresh queue"><RefreshCw className="h-5 w-5" /></button></div>
       {userId && <p className="mt-2 flex items-center gap-2 text-xs text-ink-3">Account ID: <code className="rounded bg-surface px-1.5 py-0.5">{userId}</code><button aria-label="Copy account ID" onClick={() => void navigator.clipboard?.writeText(userId)}><Copy className="h-3.5 w-3.5" /></button></p>}

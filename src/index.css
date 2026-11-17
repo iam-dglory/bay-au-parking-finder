@@ -103,7 +103,7 @@ body::before {
     radial-gradient(30% 24% at 90% 38%, color-mix(in srgb, var(--sky) 45%, transparent), transparent 70%);
   filter: blur(40px);
 }
-#root { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+#root { min-height: 100dvh; padding-bottom: var(--safe-area-inset-bottom,env(safe-area-inset-bottom)); }
 /* In the base layer so Tailwind text/weight utilities on buttons still apply. */
 @layer base {
   button, input, select, textarea { font: inherit; }
