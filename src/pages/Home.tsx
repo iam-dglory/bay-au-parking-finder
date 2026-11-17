@@ -93,6 +93,8 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
   const favourites = useFavourites()
   const favIds = useMemo(() => new Set(favourites.map(f => f.id)), [favourites])
   const [showTips, setShowTips] = useState(() => { try { return !localStorage.getItem(TIPS_KEY) } catch { return false } })
+  // Once someone picks a stay or a sort they've got it; the tip goes for good.
+  const dismissTips = () => { if (!showTips) return; setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }
 
   useEffect(() => {
     if (!melbourne) return
@@ -155,7 +157,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
     setArriveIn(0)
     const found = streetOptionHere(allOptions, myLocation ?? center)
     if (found) { setHereMessage(null); pick(found.option) }
-    else setHereMessage(myLocation ? 'No council bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
+    else setHereMessage(myLocation ? 'No street bay within 40 m of you. Check the sign where you are.' : 'Turn on location so Bay can find the bay next to you.')
   }
 
   return <main className="relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent antialiased">
@@ -198,7 +200,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
           {melbourne && <div className="mt-1 border-t border-line px-1 pt-1.5">
             {/* Plain stay labels: drivers should not need to decode sign notation. */}
             <div className="flex items-stretch gap-1.5 px-1 pb-1 pt-1.5" role="radiogroup" aria-label="How long are you staying?">
-              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => setDuration(d)}
+              {DURATIONS.map(d => <button key={d} role="radio" aria-checked={duration === d} aria-label={durationLabel(d)} onClick={() => { setDuration(d); dismissTips() }}
                 className={`h-11 min-w-0 flex-1 rounded-[7px] transition-[background-color,color,box-shadow,transform] duration-200 active:scale-[0.96] ${duration === d
                   ? 'bg-sel text-sel-ink shadow-[0_6px_14px_rgba(22,131,247,.24)]'
                   : 'bg-white text-ink-2 shadow-[inset_0_0_0_1px_var(--line)]'}`}>
@@ -217,6 +219,8 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
 
       {/* Bottom sheet: the answer first */}
       <section style={{ '--hdr': `${headerHeight + 10}px` } as React.CSSProperties} className={`absolute inset-x-0 bottom-0 z-[450] mx-auto flex max-w-xl flex-col rounded-t-[28px] glass transition-[max-height] duration-300 lg:inset-y-3 lg:left-auto lg:right-3 lg:w-[410px] lg:max-h-none lg:rounded-[28px] ${expanded ? 'max-h-[calc(100%-var(--hdr))]' : 'max-h-[44%]'}`}>
+        {/* Map credit (required by OpenStreetMap's licence), faded, just above the list */}
+        {import.meta.env.VITE_MAP_PROVIDER !== 'google' && <p className={`pointer-events-none absolute -top-[18px] left-4 text-[9px] font-medium text-ink-3/80 transition-opacity lg:hidden ${expanded ? 'opacity-0' : ''}`}>© OpenStreetMap</p>}
         {/* Floating actions ride on top of the sheet */}
         <div className={`pointer-events-none absolute -top-[60px] right-3 flex items-center gap-2 transition-opacity duration-200 ${expanded ? 'opacity-0 [&>*]:pointer-events-none' : 'opacity-100'}`} aria-hidden={expanded}>
           {melbourne && <button tabIndex={expanded ? -1 : 0} onClick={canIParkHere} className="pointer-events-auto flex h-12 items-center gap-2 rounded-full glass pl-3.5 pr-4 text-sm font-bold text-ink transition-transform active:scale-[0.97]">
@@ -235,7 +239,7 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
           {melbourne && (others.length > 2 || notSuitable.length > 0) && <button onClick={() => setExpanded(v => !v)} className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-brand hover:bg-tint">{expanded ? 'Less' : 'See all'}</button>}
         </div>
 
-        {melbourne && <SortBar value={sort} onChange={setSort} />}
+        {melbourne && <SortBar value={sort} onChange={value => { setSort(value); dismissTips() }} />}
 
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(.75rem,var(--safe-area-inset-bottom,env(safe-area-inset-bottom)))]">
           {hereMessage && <p role="status" className="mx-2 mb-2 rounded-2xl bg-tint px-3 py-2.5 text-sm text-ink-2">{hereMessage}</p>}
@@ -247,17 +251,16 @@ export function Home({ center, myLocation, driving = false, locationLabel, onUse
             {loading && !best && <SkeletonRows />}
             {!loading && !best && <p className="px-2 py-3 text-sm text-ink-2">Nothing within a {walkMinutes(FAR_M)} min walk fits {durationLabel(duration).toLowerCase()}. Try a shorter stay.</p>}
             {showParkedPrompt && heading && <ParkedPrompt heading={heading} onStart={() => void startFromHeading(heading)} onDismiss={() => setHeading(null)} />}
-            {showTips && !showParkedPrompt && best && <div className="bay-rise mb-2 flex items-center gap-3 rounded-2xl bg-night px-3.5 py-2.5 text-white">
-              <SignMark className="h-7 w-7 shrink-0" />
-              <p className="min-w-0 flex-1 text-[13px] leading-5">Choose your stay, then compare nearest, cheapest or live availability.</p>
-              <button onClick={() => { setShowTips(false); try { localStorage.setItem(TIPS_KEY, '1') } catch { /* ignore */ } }} className="h-10 shrink-0 rounded-[12px] bg-white/15 px-3 text-xs font-bold">Got it</button>
+            {showTips && !showParkedPrompt && best && <div role="note" className="bay-rise mb-2 flex items-center gap-2 rounded-xl bg-night py-1 pl-3 pr-1 text-white">
+              <p className="min-w-0 flex-1 truncate text-xs font-semibold">Pick your stay, then sort the list.</p>
+              <button onClick={dismissTips} aria-label="Dismiss tip" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white/80 hover:bg-white/10"><X className="h-4 w-4" /></button>
             </div>}
             <div key={`${duration}-${String(arriveIn)}`}>
             {best && <BestCard option={best} duration={duration} at={arrival} later={later} starred={favIds.has(best.id)} onGo={() => goTo(best)} onOpen={() => pick(best)} />}
             {others.length > 0 && <ul className="mt-3 px-1">{(expanded ? others : others.slice(0, 2)).map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul>}
             </div>
             {expanded && notSuitable.length > 0 && <Group title={`Not suitable for ${durationLabel(duration).toLowerCase()} (${notSuitable.length})`} hint="The time limit is too short"><ul>{notSuitable.map(o => <OptionRow key={o.id} option={o} at={arrival} later={later} starred={favIds.has(o.id)} onClick={() => pick(o)} />)}</ul></Group>}
-            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays from City of Melbourne sensors · updated {clock(updatedAt)}</p>}
+            {!later && updatedAt && fitting.some(o => o.live) && <p className="mt-3 px-2 text-xs text-ink-3">Free bays updated {clock(updatedAt)}</p>}
           </>}
 
           {!melbourne && <div className="px-2 py-3">

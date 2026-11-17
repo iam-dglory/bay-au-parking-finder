@@ -32,6 +32,6 @@ export function ParkingAreaSheet({ area, onClose }: { area: CarPark | null; onCl
 function ParkingAreaPhoto({ area }: { area: CarPark }) {
   const [failed, setFailed] = useState(false)
   const url = area.photo_url?.startsWith('https://') ? area.photo_url : null
-  if (!url || failed) return <div className="mt-5 flex items-center gap-2 rounded-2xl border border-dashed border-line bg-tint px-3 py-3 text-xs text-ink-3"><ImageOff className="h-4 w-4 shrink-0 text-ink-3" />Photo not supplied by this parking source.</div>
+  if (!url || failed) return <div className="mt-5 flex items-center gap-2 rounded-2xl border border-dashed border-line bg-tint px-3 py-3 text-xs text-ink-3"><ImageOff className="h-4 w-4 shrink-0 text-ink-3" />No photo for this place yet.</div>
   return <figure className="mt-5 overflow-hidden rounded-2xl border border-line bg-tint"><img src={url} alt={`Parking area: ${area.address_text}`} onError={() => setFailed(true)} className="h-44 w-full object-cover" />{area.photo_attribution && <figcaption className="px-3 py-2 text-[11px] text-ink-3">{area.photo_attribution}</figcaption>}</figure>
 }

@@ -175,7 +175,9 @@ export function carParkOptions(file: CarParkRatesFile | null, center: { lat: num
  * catalogue is much broader than the small manually curated rate file, so it
  * must remain visible even when a facility has no machine-readable tariff. */
 export function mappedCarParkOptions(areas: CarPark[], durationMinutes: number): ParkingOption[] {
-  return areas.filter(area => area.kind === 'area' || area.kind == null).map(area => {
+  // Motorbike-only areas aren't parking for a car, however cheap they look.
+  const carsCanPark = (area: CarPark) => !/two-wheel|motorcycle|bicycle/i.test(area.vehicle_types ?? '') || /car/i.test(area.vehicle_types ?? '')
+  return areas.filter(area => (area.kind === 'area' || area.kind == null) && carsCanPark(area)).map(area => {
     const hours = durationMinutes / 60
     const min = area.hourly_rate_min != null ? Math.round(area.hourly_rate_min * 100 * hours) : null
     const max = area.hourly_rate_max != null ? Math.round(area.hourly_rate_max * 100 * hours) : min
@@ -183,7 +185,7 @@ export function mappedCarParkOptions(areas: CarPark[], durationMinutes: number):
     const cents = free ? 0 : min != null && max === min ? min : null
     return {
       kind: 'carpark', id: `mapped:${area.id}`, name: area.address_text,
-      operator: area.source_name ?? area.facility_type ?? 'Parking area',
+      operator: area.facility_type ?? 'Parking area',
       lat: area.lat, lng: area.lng, distanceM: area.distance_m,
       cents,
       range: min != null && max != null && max !== min ? { min, max } : undefined,
@@ -208,15 +210,22 @@ export function rankOptions(options: ParkingOption[]): ParkingOption[] {
 
 export type ParkingSort = 'nearest' | 'cheapest' | 'available'
 
+/** True when the card can tell the driver more than "check the sign". */
+export function hasUsefulInfo(o: ParkingOption): boolean {
+  return o.cents != null || o.range != null || o.limitMinutes != null || !!o.priceUnpublished || (o.live?.free ?? 0) > 0
+}
+
 /** The three driver-facing result orders. Unknown prices are deliberately last
  * for Cheapest, and missing/stale sensor data never outranks a confirmed live
  * vacancy for Available. A result that cannot fit the selected stay is always
  * kept behind a suitable result. */
 export function sortParkingOptions(options: ParkingOption[], sort: ParkingSort): ParkingOption[] {
   if (sort === 'cheapest') return rankOptions(options)
-  const fitBucket = (option: ParkingOption) => option.fits === false ? 1 : 0
   if (sort === 'nearest') {
-    return [...options].sort((a, b) => fitBucket(a) - fitBucket(b) || a.distanceM - b.distanceM)
+    // Places we can say something useful about (a price, a time limit, a
+    // meter or live free bays) come before ones that only say "see sign".
+    const infoBucket = (o: ParkingOption) => o.fits === false ? 2 : hasUsefulInfo(o) ? 0 : 1
+    return [...options].sort((a, b) => infoBucket(a) - infoBucket(b) || a.distanceM - b.distanceM)
   }
   const availabilityBucket = (option: ParkingOption) => {
     if (option.fits === false) return 3

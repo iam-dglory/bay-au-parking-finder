@@ -42,6 +42,8 @@ export function Guide() {
       <SignList title="You can't park" tone="no" types={CANT_PARK} />
 
       <p className="mt-6 px-1 text-sm text-ink-3">The sign at the bay always wins. <a className="font-semibold text-brand underline underline-offset-2" href="./privacy-policy.html">Privacy policy</a></p>
+      {/* Required by the data licences (ODbL, CC BY 4.0); kept off the parking screens. */}
+      <p className="mt-3 px-1 text-[11px] leading-4 text-ink-3">Map data © OpenStreetMap contributors. Includes City of Melbourne open data (CC BY 4.0).</p>
     </div>
   </main>
 }

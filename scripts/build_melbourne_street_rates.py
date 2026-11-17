@@ -34,13 +34,15 @@ from __future__ import annotations
 
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "datasets" / "melbourne-city-of-melbourne"
 OUT = ROOT / "public" / "data" / "melbourne" / "street-rates.json"
-FETCHED = "2026-09-26"  # datasets/manifest.json fetched_at for the same checksums
+# Date the source files were fetched; the weekly refresh job sets RATES_FETCHED.
+FETCHED = os.environ.get("RATES_FETCHED", "2026-09-26")
 
 # Council day_of_week: 1=Monday .. 7=Sunday. App uses JS getDay(): 0=Sunday .. 6=Saturday.
 COUNCIL_TO_JS = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 0}
