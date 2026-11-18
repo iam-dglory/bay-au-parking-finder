@@ -35,11 +35,13 @@ android {
     }
     buildTypes {
         release {
-            // Optimize native bytecode and remove resources that are not used by
-            // the Capacitor shell. Web assets remain unchanged and are loaded
-            // from Bay's versioned public asset host.
-            minifyEnabled true
-            shrinkResources true
+            // Off, as in Capacitor's own template. R8 shrinking only ran in the
+            // Play Store build (test APKs are debug builds) and that build opened
+            // to a blank screen on a phone where the test APK works. Capacitor and
+            // its plugins find classes, methods and resources by reflection, which
+            // shrinking can strip. The size saving is small for a WebView shell.
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
